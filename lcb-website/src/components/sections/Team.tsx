@@ -11,6 +11,7 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { FadeIn } from "@/components/motion/FadeIn";
 import { TeamCategoryNav } from "@/components/team/TeamCategoryNav";
 import { TeamCard } from "@/components/team/TeamCard";
+import { HallOfFameCard } from "@/components/team/HallOfFameCard";
 import { teamCategories } from "@/data/team";
 
 export function Team() {
@@ -67,29 +68,45 @@ export function Team() {
 
         {/* ── Member grid ──────────────────────────────────────────────── */}
         <AnimatePresence mode="wait">
-          <motion.div
-            key={activeCategoryId}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-            className="mt-10 grid grid-cols-1 gap-4 min-[400px]:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
-          >
-            {activeCategory.members.map((member, i) => (
-              <motion.div
-                key={member.id}
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{
-                  duration: 0.4,
-                  delay: Math.min(i * 0.05, 0.35),
-                  ease: [0.22, 1, 0.36, 1],
-                }}
-              >
-                <TeamCard member={member} />
-              </motion.div>
-            ))}
-          </motion.div>
+          {activeCategoryId === "star-awards" ? (
+            /* Hall of Fame — premium portrait grid */
+            <motion.div
+              key="star-awards"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+              className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
+            >
+              {activeCategory.members.map((member, i) => (
+                <HallOfFameCard key={member.id} member={member} index={i} />
+              ))}
+            </motion.div>
+          ) : (
+            <motion.div
+              key={activeCategoryId}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+              className="mt-10 grid grid-cols-1 gap-4 min-[400px]:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
+            >
+              {activeCategory.members.map((member, i) => (
+                <motion.div
+                  key={member.id}
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    duration: 0.4,
+                    delay: Math.min(i * 0.05, 0.35),
+                    ease: [0.22, 1, 0.36, 1],
+                  }}
+                >
+                  <TeamCard member={member} />
+                </motion.div>
+              ))}
+            </motion.div>
+          )}
         </AnimatePresence>
 
         {/* ── Campus leads CTA (only on campus-leads tab) ──────────────── */}
