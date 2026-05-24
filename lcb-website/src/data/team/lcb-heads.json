@@ -1,0 +1,14 @@
+[
+  { "id": "head-altaf-hossain-raj", "name": "Altaf Hossain Raju", "role": "Founder", "bio": "Building the country's first LinkedIn-based professional community. Obsessed with networks, narrative and the next generation of Bangladeshi leaders.", "badges": ["Founding Member"], "featured": true, "image": "/team/central/altaf-hossain-raju.jpg" },
+  { "id": "head-jahid-hossain-sunny", "name": "Jahid Hossain Sunny", "role": "Communication Lead", "badges": ["Department Lead"], "image": "/team/central/ct-100118.jpg" },
+  { "id": "head-md-abir-hossain", "name": "Md Abir Hossain", "role": "Marketing Lead", "badges": ["Department Lead"], "image": "/team/central/ct-100122.jpg" },
+  { "id": "head-md-yasin-islam", "name": "Md. Yasin Islam", "role": "Social Media Lead", "badges": ["Department Lead"], "image": "/team/central/ct-100102.jpg" },
+  { "id": "head-fabiya-ahsan-ahona", "name": "Fabiya Ahsan Ahona", "role": "Lead, Innovation & Transformation", "badges": ["Department Lead"], "image": "/team/central/ct-100125.jpg" },
+  { "id": "head-md-asadul-islam-anik", "name": "Md Asadul Islam Anik", "role": "Lead, Training & Development", "badges": ["Department Lead"], "image": "/team/central/ct-100138.jpg" },
+  { "id": "head-md-junayed-islam-mahi", "name": "Md Junayed Islam Mahi", "role": "Acting Lead, HR & Talent Acquisition", "badges": ["Department Lead"], "image": "/team/central/ct-100121.jpg" },
+  { "id": "head-kayum-rosul-razu", "name": "Kayum Rosul Razu", "role": "Acting Lead, Operation", "badges": ["Department Lead"], "image": "/team/central/ct-100127.jpg" },
+  { "id": "head-kazi-ruponti-islam-maliha", "name": "Kazi Ruponti Islam Maliha", "role": "Acting Lead, Partnership", "badges": ["Department Lead"], "image": "/team/central/ct-100131.jpg" },
+  { "id": "head-md-ezaz-ahamed-khan", "name": "Md. Ezaz Ahamed Khan", "role": "Acting Lead, Corporate Relations", "badges": ["Department Lead"], "image": "/team/central/ct-100137.jpg" },
+  { "id": "head-md-abu-talha", "name": "Md Abu Talha", "role": "Acting Deputy Head, Campus Lead Dept", "image": "/team/central/ct-100136.jpg" },
+  { "id": "head-shahrier-rabby-tonmoy", "name": "Shahrier Rabby Tonmoy", "role": "Acting Deputy Lead, Campus Lead Dept", "image": "/team/central/ct-100115.jpg" }
+]

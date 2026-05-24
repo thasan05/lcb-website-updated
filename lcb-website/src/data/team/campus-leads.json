@@ -1,0 +1,607 @@
+[
+  {
+    "id": "cl-200274",
+    "name": "Tanvir Hasan",
+    "role": "Campus Lead",
+    "university": "AIUB",
+    "city": "Dhaka",
+    "image": "/team/campus-leads/cl-200274.jpg",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/thasan05/",
+      "facebook": "https://www.facebook.com/THasan05/",
+      "website": "https://tanvirh.vercel.app/"
+    }
+  },
+  {
+    "id": "cl-200201",
+    "name": "Abdullah Al Nadrun",
+    "role": "Campus Lead",
+    "university": "SUST",
+    "city": "Sylhet",
+    "image": "/team/campus-leads/cl-200201.jpg"
+  },
+  {
+    "id": "cl-200202",
+    "name": "Montser Mamun",
+    "role": "Campus Lead",
+    "university": "Begum Rokeya University",
+    "city": "Rangpur",
+    "image": "/team/campus-leads/cl-200202.jpg"
+  },
+  {
+    "id": "cl-200203",
+    "name": "Maksuda Akter Mim",
+    "role": "Campus Lead",
+    "university": "Daffodil International University",
+    "city": "Dhaka",
+    "image": "/team/campus-leads/cl-200203.jpg"
+  },
+  {
+    "id": "cl-200204",
+    "name": "Joy Chandra Das",
+    "role": "Campus Lead",
+    "university": "Gopalganj Textile Engineering College",
+    "city": "Gopalganj",
+    "image": "/team/campus-leads/cl-200204.jpg"
+  },
+  {
+    "id": "cl-200205",
+    "name": "Hridi Chiran",
+    "role": "Campus Lead",
+    "university": "Jatiya Kabi Kazi Nazrul Islam University",
+    "city": "Mymensingh",
+    "image": "/team/campus-leads/cl-200205.jpg"
+  },
+  {
+    "id": "cl-200206",
+    "name": "Sayad Rafi Fahim",
+    "role": "Campus Lead",
+    "university": "Khulna University",
+    "city": "Khulna",
+    "image": "/team/campus-leads/cl-200206.jpg"
+  },
+  {
+    "id": "cl-200207",
+    "name": "Salman Johar",
+    "role": "Campus Lead",
+    "university": "University of Chittagong",
+    "city": "Chittagong",
+    "image": "/team/campus-leads/cl-200207.jpg"
+  },
+  {
+    "id": "cl-200208",
+    "name": "Sazia Sheikh",
+    "role": "Campus Lead",
+    "university": "Jatiya Kabi Kazi Nazrul Islam University",
+    "city": "Mymensingh",
+    "image": "/team/campus-leads/cl-200208.jpg"
+  },
+  {
+    "id": "cl-200209",
+    "name": "Sakibur Rahman",
+    "role": "Campus Lead",
+    "university": "United International University",
+    "city": "Dhaka",
+    "image": "/team/campus-leads/cl-200209.jpg"
+  },
+  {
+    "id": "cl-200210",
+    "name": "Md Sarwar Mahmud",
+    "role": "Campus Lead",
+    "university": "Islamic University Bangladesh",
+    "city": "Kushtia",
+    "image": "/team/campus-leads/cl-200210.jpg"
+  },
+  {
+    "id": "cl-200211",
+    "name": "Hridoy Hossain",
+    "role": "Campus Lead",
+    "university": "Khulna University",
+    "city": "Khulna",
+    "image": "/team/campus-leads/cl-200211.jpg"
+  },
+  {
+    "id": "cl-200212",
+    "name": "Aman Ullah",
+    "role": "Campus Lead",
+    "university": "Jahangirnagar University",
+    "city": "Savar",
+    "image": "/team/campus-leads/cl-200212.jpg"
+  },
+  {
+    "id": "cl-200213",
+    "name": "Samsun Nahar Riya",
+    "role": "Campus Lead",
+    "university": "Jagannath University",
+    "city": "Dhaka",
+    "image": "/team/campus-leads/cl-200213.jpg"
+  },
+  {
+    "id": "cl-200214",
+    "name": "Tasnim Azad Juhi",
+    "role": "Campus Lead",
+    "university": "Jatiya Kabi Kazi Nazrul Islam University",
+    "city": "Mymensingh",
+    "image": "/team/campus-leads/cl-200214.jpg"
+  },
+  {
+    "id": "cl-200215",
+    "name": "Sujana Amrin",
+    "role": "Campus Lead",
+    "university": "University of Dhaka",
+    "city": "Dhaka",
+    "image": "/team/campus-leads/cl-200215.jpg"
+  },
+  {
+    "id": "cl-200216",
+    "name": "Mehanos Tabassum",
+    "role": "Campus Lead",
+    "university": "University of Chittagong",
+    "city": "Chittagong",
+    "image": "/team/campus-leads/cl-200216.jpg"
+  },
+  {
+    "id": "cl-200217",
+    "name": "Silvia Hasda Shely",
+    "role": "Campus Lead",
+    "university": "Army Institute of Business Administration",
+    "city": "Savar",
+    "image": "/team/campus-leads/cl-200217.jpg"
+  },
+  {
+    "id": "cl-200218",
+    "name": "Sohel Rana",
+    "role": "Campus Lead",
+    "university": "University of Barishal",
+    "city": "Barishal",
+    "image": "/team/campus-leads/cl-200218.jpg"
+  },
+  {
+    "id": "cl-200219",
+    "name": "Jannatul Ferdous Ful",
+    "role": "Campus Lead",
+    "university": "Islamic University Bangladesh",
+    "city": "Kushtia",
+    "image": "/team/campus-leads/cl-200219.jpg"
+  },
+  {
+    "id": "cl-200220",
+    "name": "Tania Borsha",
+    "role": "Campus Lead",
+    "university": "HSTU",
+    "city": "Dinajpur",
+    "image": "/team/campus-leads/cl-200220.jpg"
+  },
+  {
+    "id": "cl-200221",
+    "name": "Sadia Salma",
+    "role": "Campus Lead",
+    "university": "Khulna University",
+    "city": "Khulna",
+    "image": "/team/campus-leads/cl-200221.jpg"
+  },
+  {
+    "id": "cl-200222",
+    "name": "Tanvir Rahman",
+    "role": "Campus Lead",
+    "university": "Dhaka College",
+    "city": "Dhaka",
+    "image": "/team/campus-leads/cl-200222.jpg"
+  },
+  {
+    "id": "cl-200223",
+    "name": "Mohammaddulla",
+    "role": "Campus Lead",
+    "university": "University Of Scholars",
+    "city": "Dhaka",
+    "image": "/team/campus-leads/cl-200223.jpg"
+  },
+  {
+    "id": "cl-200224",
+    "name": "Md. Walid Hasan",
+    "role": "Campus Lead",
+    "university": "NITER",
+    "city": "Dhaka",
+    "image": "/team/campus-leads/cl-200224.jpg"
+  },
+  {
+    "id": "cl-200225",
+    "name": "Susmit Das Swascha",
+    "role": "Campus Lead",
+    "university": "SUST",
+    "city": "Sylhet",
+    "image": "/team/campus-leads/cl-200225.jpg"
+  },
+  {
+    "id": "cl-200226",
+    "name": "Md. Farayej Hossain Parash",
+    "role": "Campus Lead",
+    "university": "Tejgaon College",
+    "city": "Dhaka",
+    "image": "/team/campus-leads/cl-200226.jpg"
+  },
+  {
+    "id": "cl-200227",
+    "name": "Md. Abdullah Al Mahmud",
+    "role": "Campus Lead",
+    "university": "United International University",
+    "city": "Dhaka",
+    "image": "/team/campus-leads/cl-200227.jpg"
+  },
+  {
+    "id": "cl-200228",
+    "name": "Tanjil Ahmed Shamim",
+    "role": "Campus Lead",
+    "university": "Bangladesh University of Textiles",
+    "city": "Dhaka",
+    "image": "/team/campus-leads/cl-200228.jpg"
+  },
+  {
+    "id": "cl-200229",
+    "name": "Faria Tashin Rucksher",
+    "role": "Campus Lead",
+    "university": "International Islamic University Chittagong",
+    "city": "Chittagong",
+    "image": "/team/campus-leads/cl-200229.jpg"
+  },
+  {
+    "id": "cl-200230",
+    "name": "Sadman Sahriar",
+    "role": "Campus Lead",
+    "university": "Jagannath University",
+    "city": "Dhaka",
+    "image": "/team/campus-leads/cl-200230.jpg"
+  },
+  {
+    "id": "cl-200231",
+    "name": "Pranto Chandra Dey",
+    "role": "Campus Lead",
+    "university": "Patuakhali Science and Technology University",
+    "city": "Patuakhali",
+    "image": "/team/campus-leads/cl-200231.jpg"
+  },
+  {
+    "id": "cl-200232",
+    "name": "Urmi Akter",
+    "role": "Campus Lead",
+    "university": "University of Barishal",
+    "city": "Barishal",
+    "image": "/team/campus-leads/cl-200232.jpg"
+  },
+  {
+    "id": "cl-200233",
+    "name": "Saifa Saidekin",
+    "role": "Campus Lead",
+    "university": "Pabna Textile Engineering College",
+    "city": "Pabna",
+    "image": "/team/campus-leads/cl-200233.jpg"
+  },
+  {
+    "id": "cl-200234",
+    "name": "Towfiqur Rahman",
+    "role": "Campus Lead",
+    "university": "Army Institute of Business Administration",
+    "city": "Savar",
+    "image": "/team/campus-leads/cl-200234.jpg"
+  },
+  {
+    "id": "cl-200235",
+    "name": "Sadia Akter Ananna",
+    "role": "Campus Lead",
+    "university": "University of Dhaka",
+    "city": "Dhaka",
+    "image": "/team/campus-leads/cl-200235.jpg"
+  },
+  {
+    "id": "cl-200236",
+    "name": "Md. Jihad Sarker",
+    "role": "Campus Lead",
+    "university": "Green University Of Bangladesh",
+    "city": "Dhaka",
+    "image": "/team/campus-leads/cl-200236.jpg"
+  },
+  {
+    "id": "cl-200237",
+    "name": "Abir Bin Awal",
+    "role": "Campus Lead",
+    "university": "Army Institute of Business Administration",
+    "city": "Savar",
+    "image": "/team/campus-leads/cl-200237.jpg"
+  },
+  {
+    "id": "cl-200238",
+    "name": "Gita Biswas Shrabonty",
+    "role": "Campus Lead",
+    "university": "BGC Trust University Bangladesh",
+    "city": "Chittagong",
+    "image": "/team/campus-leads/cl-200238.jpg"
+  },
+  {
+    "id": "cl-200239",
+    "name": "Md Emjajul Haque",
+    "role": "Campus Lead",
+    "university": "North South University",
+    "city": "Dhaka",
+    "image": "/team/campus-leads/cl-200239.jpg"
+  },
+  {
+    "id": "cl-200240",
+    "name": "Sanjida Afrose Yeana",
+    "role": "Campus Lead",
+    "university": "NSTU",
+    "city": "Noakhali",
+    "image": "/team/campus-leads/cl-200240.jpg"
+  },
+  {
+    "id": "cl-200241",
+    "name": "Khandaker Shahriar Rahman",
+    "role": "Campus Lead",
+    "university": "SUST",
+    "city": "Sylhet",
+    "image": "/team/campus-leads/cl-200241.jpg"
+  },
+  {
+    "id": "cl-200242",
+    "name": "Mahmuda Alam",
+    "role": "Campus Lead",
+    "university": "Bangladesh Agricultural University",
+    "city": "Mymensingh",
+    "image": "/team/campus-leads/cl-200242.jpg"
+  },
+  {
+    "id": "cl-200243",
+    "name": "Umme Hunny Usrat",
+    "role": "Campus Lead",
+    "university": "University of Chittagong",
+    "city": "Chittagong",
+    "image": "/team/campus-leads/cl-200243.jpg"
+  },
+  {
+    "id": "cl-200244",
+    "name": "Mohima Akter Sabha",
+    "role": "Campus Lead",
+    "university": "Rangamati Science and Technology University",
+    "city": "Rangamati",
+    "image": "/team/campus-leads/cl-200244.jpg"
+  },
+  {
+    "id": "cl-200245",
+    "name": "Tanvi Hoque",
+    "role": "Campus Lead",
+    "university": "Islamic University Kushtia",
+    "city": "Kushtia",
+    "image": "/team/campus-leads/cl-200245.jpg"
+  },
+  {
+    "id": "cl-200246",
+    "name": "Md. Riaz Hosen",
+    "role": "Campus Lead",
+    "university": "Mawlana Bhasani Science and Technology University",
+    "city": "Tangail",
+    "image": "/team/campus-leads/cl-200246.jpg"
+  },
+  {
+    "id": "cl-200247",
+    "name": "Hachib Shekh",
+    "role": "Campus Lead",
+    "university": "World University of Bangladesh",
+    "city": "Dhaka",
+    "image": "/team/campus-leads/cl-200247.jpg"
+  },
+  {
+    "id": "cl-200248",
+    "name": "Fahim Foysal Alvee",
+    "role": "Campus Lead",
+    "university": "SUST",
+    "city": "Sylhet",
+    "image": "/team/campus-leads/cl-200248.jpg"
+  },
+  {
+    "id": "cl-200249",
+    "name": "Saiful Islam",
+    "role": "Campus Lead",
+    "university": "East Delta University",
+    "city": "Chittagong",
+    "image": "/team/campus-leads/cl-200249.jpg"
+  },
+  {
+    "id": "cl-200250",
+    "name": "Shafkat Ullah Shihan",
+    "role": "Campus Lead",
+    "university": "Jashore University of Science and Technology",
+    "city": "Jashore",
+    "image": "/team/campus-leads/cl-200250.jpg"
+  },
+  {
+    "id": "cl-200251",
+    "name": "Niaz Morshed Razon",
+    "role": "Campus Lead",
+    "university": "East West University",
+    "city": "Dhaka",
+    "image": "/team/campus-leads/cl-200251.jpg"
+  },
+  {
+    "id": "cl-200252",
+    "name": "Nafi Ahnaf Rafid",
+    "role": "Campus Lead",
+    "university": "University of Rajshahi",
+    "city": "Rajshahi",
+    "image": "/team/campus-leads/cl-200252.jpg"
+  },
+  {
+    "id": "cl-200253",
+    "name": "Sabri Ador",
+    "role": "Campus Lead",
+    "university": "Army Institute of Business Administration",
+    "city": "Savar",
+    "image": "/team/campus-leads/cl-200253.jpg"
+  },
+  {
+    "id": "cl-200254",
+    "name": "Arpa Chowdhury",
+    "role": "Campus Lead",
+    "university": "University of Chittagong",
+    "city": "Chittagong",
+    "image": "/team/campus-leads/cl-200254.jpg"
+  },
+  {
+    "id": "cl-200255",
+    "name": "Likhon Saha",
+    "role": "Campus Lead",
+    "university": "Jatiya Kabi Kazi Nazrul Islam University",
+    "city": "Mymensingh",
+    "image": "/team/campus-leads/cl-200255.jpg"
+  },
+  {
+    "id": "cl-200256",
+    "name": "S. M. Maheer Labib",
+    "role": "Campus Lead",
+    "university": "North South University",
+    "city": "Dhaka",
+    "image": "/team/campus-leads/cl-200256.jpg"
+  },
+  {
+    "id": "cl-200257",
+    "name": "Talha Rashid Adar",
+    "role": "Campus Lead",
+    "university": "Patuakhali Science and Technology University",
+    "city": "Patuakhali",
+    "image": "/team/campus-leads/cl-200257.jpg"
+  },
+  {
+    "id": "cl-200258",
+    "name": "Hasan Mahmud Shafin",
+    "role": "Campus Lead",
+    "university": "Comilla University",
+    "city": "Comilla",
+    "image": "/team/campus-leads/cl-200258.jpg"
+  },
+  {
+    "id": "cl-200259",
+    "name": "Tanzil Sultan",
+    "role": "Campus Lead",
+    "university": "Tangail Textile Engineering College",
+    "city": "Tangail",
+    "image": "/team/campus-leads/cl-200259.jpg"
+  },
+  {
+    "id": "cl-200260",
+    "name": "Nur Mohammed Chowdhury Sakib",
+    "role": "Campus Lead",
+    "university": "MBSTU",
+    "city": "Tangail",
+    "image": "/team/campus-leads/cl-200260.jpg"
+  },
+  {
+    "id": "cl-200261",
+    "name": "Susmita Khanom Oishy",
+    "role": "Campus Lead",
+    "university": "EXIM Bank Agricultural University Bangladesh",
+    "city": "Chapainawabganj",
+    "image": "/team/campus-leads/cl-200261.jpg"
+  },
+  {
+    "id": "cl-200262",
+    "name": "Md. Mahin Munshi",
+    "role": "Campus Lead",
+    "university": "Jagannath University",
+    "city": "Dhaka",
+    "image": "/team/campus-leads/cl-200262.jpg"
+  },
+  {
+    "id": "cl-200263",
+    "name": "Kazi Naimul Huda",
+    "role": "Campus Lead",
+    "university": "NSTU",
+    "city": "Noakhali",
+    "image": "/team/campus-leads/cl-200263.jpg"
+  },
+  {
+    "id": "cl-200264",
+    "name": "Mahmudul Hasan Khan",
+    "role": "Campus Lead",
+    "university": "MBSTU",
+    "city": "Tangail",
+    "image": "/team/campus-leads/cl-200264.jpg"
+  },
+  {
+    "id": "cl-200265",
+    "name": "M Abdullah Al Jubaer Siam",
+    "role": "Campus Lead",
+    "university": "Begum Rokeya University",
+    "city": "Rangpur",
+    "image": "/team/campus-leads/cl-200265.jpg"
+  },
+  {
+    "id": "cl-200266",
+    "name": "Lamia Hossain",
+    "role": "Campus Lead",
+    "university": "Eden College",
+    "city": "Dhaka",
+    "image": "/team/campus-leads/cl-200266.jpg"
+  },
+  {
+    "id": "cl-200267",
+    "name": "Aujhia Rahman Limu",
+    "role": "Campus Lead",
+    "university": "Dhaka Mohanagar Mohila College",
+    "city": "Dhaka",
+    "image": "/team/campus-leads/cl-200267.jpg"
+  },
+  {
+    "id": "cl-200268",
+    "name": "Tanvir Ahmed",
+    "role": "Campus Lead",
+    "university": "Comilla University",
+    "city": "Comilla",
+    "image": "/team/campus-leads/cl-200268.jpg"
+  },
+  {
+    "id": "cl-200269",
+    "name": "Tanha Afroz Tisha",
+    "role": "Campus Lead",
+    "university": "Port City International University",
+    "city": "Chittagong",
+    "image": "/team/campus-leads/cl-200269.jpg"
+  },
+  {
+    "id": "cl-200270",
+    "name": "Md Limon Hossen",
+    "role": "Campus Lead",
+    "university": "Dhaka College",
+    "city": "Dhaka",
+    "image": "/team/campus-leads/cl-200270.jpg"
+  },
+  {
+    "id": "cl-200271",
+    "name": "Jobayer Ahmed Adnan",
+    "role": "Campus Lead",
+    "university": "University of Rajshahi",
+    "city": "Rajshahi",
+    "image": "/team/campus-leads/cl-200271.jpg"
+  },
+  {
+    "id": "cl-200272",
+    "name": "Md. Tasnimul Hasan",
+    "role": "Campus Lead",
+    "university": "AIUB",
+    "city": "Dhaka",
+    "image": "/team/campus-leads/cl-200272.jpg"
+  },
+  {
+    "id": "cl-200273",
+    "name": "Jabir Murtaza Madani",
+    "role": "Campus Lead",
+    "university": "HSTU",
+    "city": "Dinajpur",
+    "image": "/team/campus-leads/cl-200273.jpg"
+  },
+  {
+    "id": "cl-200275",
+    "name": "Hasan Morshed Shahriyar",
+    "role": "Campus Lead",
+    "university": "United International University",
+    "city": "Dhaka",
+    "image": "/team/campus-leads/cl-200275.jpg"
+  }
+]

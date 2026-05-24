@@ -1,0 +1,83 @@
+[
+  {
+    "id": "g1",
+    "src": "/gallery/story/featured.jpg",
+    "srcs": [
+      "/gallery/story/featured-9.jpg",
+      "/gallery/story/featured-2.jpg",
+      "/gallery/story/featured-3.jpg",
+      "/gallery/story/featured-10.jpg",
+      "/gallery/story/featured-4.jpg",
+      "/gallery/story/featured-5.jpg",
+      "/gallery/story/featured-6.jpg",
+      "/gallery/story/featured-8.jpg",
+      "/gallery/story/featured-11.jpg",
+      "/gallery/story/featured-12.jpg",
+      "/gallery/story/featured-13.jpg",
+      "/gallery/story/featured-14.jpg",
+      "/gallery/story/featured-16.jpg",
+      "/gallery/story/featured-18.jpg",
+      "/gallery/story/featured-19.jpg",
+      "/gallery/story/featured-20.jpg",
+      "/gallery/story/featured-21.jpg",
+      "/gallery/story/featured-22.jpg",
+      "/gallery/story/featured-23.jpg",
+      "/gallery/story/featured-24.jpg"
+    ],
+    "alt": "LCB session at university campus",
+    "caption": "Sessions hosted across 12 universities",
+    "span": "feature"
+  },
+  {
+    "id": "g2",
+    "src": "/gallery/story/voices.jpg",
+    "srcs": [
+      "/gallery/story/voices.jpg",
+      "/gallery/story/voices-2.jpg",
+      "/gallery/story/voices-3.jpg",
+      "/gallery/story/voices-4.jpg"
+    ],
+    "alt": "Speakers and founders at an LCB event",
+    "caption": "Founders & recruiters, in conversation",
+    "span": "tall"
+  },
+  {
+    "id": "g3",
+    "src": "/gallery/story/gathering.jpg",
+    "srcs": [
+      "/gallery/story/gathering-2.jpg",
+      "/gallery/story/gathering-3.jpg",
+      "/gallery/story/gathering-4.jpg",
+      "/gallery/story/gathering-5.jpg",
+      "/gallery/story/gathering-6.jpg"
+    ],
+    "alt": "LCB community networking night",
+    "caption": "Community gatherings, online & offline",
+    "span": "wide"
+  },
+  {
+    "id": "g4",
+    "src": "/gallery/story/leadership.jpg",
+    "srcs": [
+      "/gallery/story/leadership-2.jpg",
+      "/gallery/story/leadership-3.jpg"
+    ],
+    "alt": "Campus Leads workshop",
+    "caption": "Campus Leads, building the movement",
+    "span": "square"
+  },
+  {
+    "id": "g5",
+    "src": "/gallery/story/learning.jpg",
+    "srcs": [
+      "/gallery/story/learning-4.jpg",
+      "/gallery/story/learning-5.jpg",
+      "/gallery/story/learning-6.jpg",
+      "/gallery/story/learning-7.jpg",
+      "/gallery/story/learning-8.jpg"
+    ],
+    "alt": "Live audience at LCB masterclass",
+    "caption": "Masterclasses, every other week",
+    "span": "wide"
+  }
+]

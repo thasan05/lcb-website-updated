@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "categories": [
+    {
+      "id": "events",
+      "label": "Events"
+    },
+    {
+      "id": "sessions",
+      "label": "Sessions"
+    },
+    {
+      "id": "community",
+      "label": "Community"
+    },
+    {
+      "id": "behind-scenes",
+      "label": "Behind the Scenes"
+    },
+    {
+      "id": "achievements",
+      "label": "Achievements"
+    }
+  ],
+  "images": []
+}

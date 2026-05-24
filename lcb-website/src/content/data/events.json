@@ -1,0 +1,108 @@
+[
+  {
+    "id": "linkedin-networking-jnu",
+    "title": "LinkedIn for Networking & Career Growth",
+    "description": "A live online session exploring how to build a magnetic profile, find hidden opportunities and turn connections into careers.",
+    "date": "2026-06-08",
+    "dateLabel": "Jun 08, 2026",
+    "location": "Online · Live",
+    "format": "Online",
+    "status": "upcoming",
+    "partner": "Jagannath University Finance Club",
+    "speaker": { "name": "Altaf Hossain Raj", "role": "Founder, LCB" },
+    "image": "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=1400&q=80"
+  },
+  {
+    "id": "personal-branding-masterclass",
+    "title": "Personal Branding Masterclass",
+    "description": "Position yourself with intention. A deep-dive into the storytelling, signals and systems behind a memorable professional brand.",
+    "date": "2026-06-22",
+    "dateLabel": "Jun 22, 2026",
+    "location": "Online · Live",
+    "format": "Online",
+    "status": "upcoming",
+    "partner": "JKKNIU Marketing Club",
+    "image": "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1400&q=80"
+  },
+  {
+    "id": "campus-leads-summit",
+    "title": "Campus Leads Summit · Vol. 02",
+    "description": "Our quarterly gathering of LCB Campus Leads. Strategy sessions, leadership labs and the next chapter of the movement.",
+    "date": "2026-07-19",
+    "dateLabel": "Jul 19, 2026",
+    "location": "Dhaka · Hybrid",
+    "format": "Hybrid",
+    "status": "upcoming",
+    "image": "https://images.unsplash.com/photo-1591115765373-5207764f72e7?auto=format&fit=crop&w=1400&q=80"
+  },
+  {
+    "id": "founders-fireside",
+    "title": "Founders Fireside",
+    "description": "An intimate conversation with three Bangladeshi founders on building, breaking through and the role LinkedIn played in their journey.",
+    "date": "2026-05-04",
+    "dateLabel": "May 04, 2026",
+    "location": "Online",
+    "format": "Online",
+    "status": "past",
+    "image": "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=1400&q=80"
+  },
+  {
+    "id": "jnu-finance-club-career-session",
+    "title": "LinkedIn for Career Growth — JnU Finance Club Session",
+    "description": "LCB conducted an exclusive online session with the Finance Club of Jagannath University, covering LinkedIn strategies, networking skills and career-building frameworks for students and young professionals.",
+    "date": "2026-05-23",
+    "dateLabel": "May 23, 2026",
+    "location": "Online · Live",
+    "format": "Online",
+    "status": "past",
+    "partner": "Finance Club, Jagannath University",
+    "speaker": { "name": "Altaf Hossain Raju", "role": "Founder, LCB" },
+    "image": "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1400&q=80"
+  },
+  {
+    "id": "2nd-town-hall-lcb",
+    "title": "2nd Town Hall Meeting of LCB",
+    "description": "The second town hall brought together members across Bangladesh for strategic updates, community announcements and an open forum on the direction of LinkedIn Community Bangladesh.",
+    "date": "2026-05-22",
+    "dateLabel": "May 22, 2026",
+    "location": "Online · Live",
+    "format": "Online",
+    "status": "past",
+    "image": "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?auto=format&fit=crop&w=1400&q=80"
+  },
+  {
+    "id": "casecraft-think-beyond-limits",
+    "title": "CaseCraft: 'Think Beyond Limits' Workshop",
+    "description": "An online workshop helping Campus Leads understand case studies, develop structured problem-solving skills and learn how to present solutions effectively — preparation for LCB's first Case Competition.",
+    "date": "2026-05-22",
+    "dateLabel": "May 22, 2026",
+    "location": "Online · Google Meet",
+    "format": "Online",
+    "status": "past",
+    "image": "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=1400&q=80"
+  },
+  {
+    "id": "jkkniu-personal-branding-session",
+    "title": "Personal Branding & LinkedIn — JKKNIU Marketing Club",
+    "description": "A powerful online learning experience for the JKKNIU Marketing Club, covering personal branding, LinkedIn optimisation and career development strategies that go beyond the classroom.",
+    "date": "2026-05-21",
+    "dateLabel": "May 21, 2026",
+    "location": "Online · Live",
+    "format": "Online",
+    "status": "past",
+    "partner": "JKKNIU Marketing Club",
+    "image": "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=1400&q=80"
+  },
+  {
+    "id": "hamdard-personal-branding-seminar",
+    "title": "Personal Branding & LinkedIn Optimisation — Hamdard University",
+    "description": "The Voice of Business Club – HUB at Hamdard University Bangladesh hosted this on-campus seminar in collaboration with LCB, giving students hands-on strategies to build a standout professional identity.",
+    "date": "2026-05-20",
+    "dateLabel": "May 20, 2026",
+    "location": "Hamdard University Bangladesh · On Campus",
+    "format": "On-Campus",
+    "status": "past",
+    "partner": "Voice of Business Club – HUB, Hamdard University Bangladesh",
+    "image": "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=1400&q=80"
+  }
+]

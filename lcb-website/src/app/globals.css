@@ -1,0 +1,358 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   DESIGN TOKENS
+   ============================================================ */
+:root {
+  --bg-base: 4 6 20;
+  --bg-elevated: 10 14 32;
+  --bg-overlay: 14 20 46;
+
+  --fg: 240 245 255;
+  --fg-muted: 160 172 200;
+  --fg-subtle: 110 122 152;
+
+  --brand: 10 102 194;
+  --brand-light: 79 156 235;
+  --cyan: 34 211 238;
+  --indigo: 99 102 241;
+
+  --surface: 255 255 255;
+  --border: 255 255 255;
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* Cursor position (updated by Spotlight) */
+  --mx: 50%;
+  --my: 50%;
+}
+
+/* ============================================================
+   BASE
+   ============================================================ */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+html {
+  scroll-behavior: smooth;
+  background: rgb(var(--bg-base));
+  color-scheme: dark;
+}
+
+body {
+  background: rgb(var(--bg-base));
+  color: rgb(var(--fg));
+  font-feature-settings: "cv11", "ss01", "ss03";
+  overflow-x: hidden;
+}
+
+::selection {
+  background: rgba(var(--brand), 0.35);
+  color: rgb(var(--fg));
+}
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: rgb(var(--bg-base)); }
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 9999px;
+  border: 2px solid rgb(var(--bg-base));
+}
+::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.12); }
+
+/* ============================================================
+   ATMOSPHERIC BACKGROUND
+   ============================================================ */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 90% 70% at 50% -10%, rgba(10, 102, 194, 0.22), transparent 60%),
+    radial-gradient(ellipse 60% 40% at 100% 100%, rgba(34, 211, 238, 0.08), transparent 60%),
+    radial-gradient(ellipse 60% 40% at 0% 80%, rgba(99, 102, 241, 0.09), transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E");
+  opacity: 0.035;
+  pointer-events: none;
+  z-index: 1;
+  mix-blend-mode: overlay;
+}
+
+main, header, footer { position: relative; z-index: 2; }
+
+/* ============================================================
+   UTILITIES
+   ============================================================ */
+@layer utilities {
+  .text-gradient-brand {
+    background: linear-gradient(135deg, #ffffff 0%, #c8dffa 40%, #4f9ceb 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .text-gradient-cyan {
+    background: linear-gradient(135deg, #ffffff 0%, #22d3ee 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .text-gradient-muted {
+    background: linear-gradient(180deg, rgb(var(--fg)) 0%, rgb(var(--fg-muted)) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Hero headline — bright white top, barely-there blue tint at base.
+     Higher contrast than editorial; pairs with word-reveal animation. */
+  .text-gradient-hero {
+    background: linear-gradient(
+      170deg,
+      #ffffff 0%,
+      #e8f0ff 55%,
+      #b8ccf0 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Premium editorial gradient with subtle blue undertone */
+  .text-gradient-editorial {
+    background: linear-gradient(
+      180deg,
+      #ffffff 0%,
+      #f0f4ff 35%,
+      rgb(var(--fg-muted)) 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .border-hairline { border: 1px solid rgba(255, 255, 255, 0.08); }
+  .border-hairline-strong { border: 1px solid rgba(255, 255, 255, 0.12); }
+
+  .glass {
+    background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+    backdrop-filter: blur(20px) saturate(140%);
+    -webkit-backdrop-filter: blur(20px) saturate(140%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .glass-strong {
+    background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+    backdrop-filter: blur(28px) saturate(160%);
+    -webkit-backdrop-filter: blur(28px) saturate(160%);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+  }
+
+  .grid-bg {
+    background-image:
+      linear-gradient(to right, rgba(255,255,255,0.035) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,0.035) 1px, transparent 1px);
+    background-size: 64px 64px;
+  }
+
+  .mask-fade-edges {
+    mask-image: radial-gradient(ellipse 70% 60% at center, black 40%, transparent 100%);
+    -webkit-mask-image: radial-gradient(ellipse 70% 60% at center, black 40%, transparent 100%);
+  }
+
+  .mask-fade-bottom {
+    mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+  }
+
+  .serif-italic {
+    font-family: var(--font-instrument), Georgia, serif;
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+  }
+
+  .shimmer-text {
+    background: linear-gradient(
+      90deg,
+      rgba(255,255,255,0.6) 0%,
+      rgba(255,255,255,1) 50%,
+      rgba(255,255,255,0.6) 100%
+    );
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: shimmer 2.5s linear infinite;
+  }
+
+  .focus-ring:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px rgb(var(--bg-base)), 0 0 0 4px rgb(var(--brand));
+  }
+
+  /* Shine sweep — premium button highlight that travels diagonally on hover */
+  .shine-sweep {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .shine-sweep::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      105deg,
+      transparent 30%,
+      rgba(255, 255, 255, 0.25) 50%,
+      transparent 70%
+    );
+    transform: translateX(-120%);
+    transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+    pointer-events: none;
+    mix-blend-mode: overlay;
+  }
+  .shine-sweep:hover::after { transform: translateX(120%); }
+
+  /* Card 3D tilt — depth on hover, JS sets --rx, --ry */
+  .tilt-card {
+    transform: perspective(1100px) rotateX(var(--ry, 0deg)) rotateY(var(--rx, 0deg));
+    transform-style: preserve-3d;
+    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform;
+  }
+  .tilt-card .tilt-lift {
+    transform: translateZ(30px);
+    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* Cursor-following warm spotlight (mounted in hero) */
+  .cursor-spotlight {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(
+      600px circle at var(--mx) var(--my),
+      rgba(10, 102, 194, 0.18),
+      transparent 50%
+    );
+    transition: background 80ms linear;
+  }
+
+  /* Section connector — thin vertical line w/ inner glow, between sections */
+  .section-thread {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 1px;
+    height: 80px;
+    transform: translateX(-50%);
+    background: linear-gradient(to bottom, transparent, rgba(79, 156, 235, 0.35), transparent);
+  }
+  .section-thread::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: inherit;
+    filter: blur(4px);
+    opacity: 0.6;
+  }
+
+  /* Top edge fade for sections — softer entrance */
+  .section-fade-top::before {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    height: 140px;
+    background: linear-gradient(to bottom, rgb(var(--bg-base)), transparent);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* Animated network-graph dot pulse */
+  .node-pulse {
+    animation: nodePulse 3s ease-in-out infinite;
+  }
+
+  /* Hide scrollbar, keep scrollable */
+  .scrollbar-none {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .scrollbar-none::-webkit-scrollbar { display: none; }
+
+  /* Headline word reveal — each word rises + fades in.
+     NOTE: filter:blur intentionally removed — it creates a GPU compositing
+     layer that breaks background-clip:text on the parent, making words
+     render as invisible (transparent) text. Opacity + translateY is enough. */
+  .word-reveal > span {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(0.28em);
+    animation: wordIn 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+}
+
+/* ============================================================
+   KEYFRAMES
+   ============================================================ */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%      { transform: translate(30px, -30px) scale(1.05); }
+  66%      { transform: translate(-20px, 20px) scale(0.97); }
+}
+
+@keyframes nodePulse {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50%      { opacity: 1;   transform: scale(1.15); }
+}
+
+@keyframes nodeDrift {
+  0%, 100% { transform: translate(0, 0); }
+  50%      { transform: translate(var(--drift-x, 8px), var(--drift-y, -10px)); }
+}
+
+@keyframes wordIn {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.4; }
+  50%      { opacity: 0.7; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .word-reveal > span { opacity: 1; transform: none; }
+}

@@ -1,0 +1,24 @@
+[
+  {
+    "id": "star-2024-arif-hossain",
+    "name": "Arif Hossain",
+    "role": "LCB Star · 2024",
+    "bio": "Grew the NSU LCB chapter from 0 to 400 members in under 6 months.",
+    "university": "NSU",
+    "image": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80",
+    "social": { "linkedin": "https://linkedin.com" },
+    "badges": ["⭐ LCB Star 2024"],
+    "achievements": ["Built NSU chapter: 0 → 400 members", "Organised 8 on-campus events", "Top recruiter of the year"]
+  },
+  {
+    "id": "star-2024-nadia-islam",
+    "name": "Nadia Islam",
+    "role": "LCB Star · 2024",
+    "bio": "Pioneered LCB's Women in Tech track. First campus lead from RUET.",
+    "university": "RUET",
+    "image": "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=600&q=80",
+    "social": { "linkedin": "https://linkedin.com", "facebook": "https://facebook.com" },
+    "badges": ["⭐ LCB Star 2024"],
+    "achievements": ["First LCB Campus Lead at RUET", "Led 3 Women in Tech events", "Mentored 20+ students"]
+  }
+]

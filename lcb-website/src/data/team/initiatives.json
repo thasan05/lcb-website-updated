@@ -1,0 +1,13 @@
+[
+  { "id": "init-digital-horizon", "name": "Tanvir Hasan", "role": "Catalyst · LCB Digital Horizon", "badges": ["Initiative Lead"], "image": "/team/campus-leads/cl-200274.jpg" },
+  { "id": "init-lcb-certification", "name": "Farjana Yeasmin Rimi", "role": "Catalyst · LCB Certification & Recognition Excellence", "badges": ["Initiative Lead"], "image": "/team/central/ct-100103.jpg" },
+  { "id": "init-lcb-spotlight", "name": "Gazi Afia Nasir", "role": "Catalyst · LCB Spotlight Initiative", "badges": ["Initiative Lead"], "image": "/team/central/ct-100114.jpg" },
+  { "id": "init-jivon", "name": "Md. Tanvir Hossain", "role": "Catalyst · JIVON Initiative", "badges": ["Initiative Lead"], "image": "/team/central/ct-100113.jpg" },
+  { "id": "init-campus-lead-catalyst", "name": "Md Abu Talha", "role": "Catalyst · Campus Lead Catalyst Team", "badges": ["Initiative Lead"], "image": "/team/central/ct-100136.jpg" },
+  { "id": "init-star-award", "name": "Anisha Islam", "role": "Catalyst · LCB Star Award & Instagram Growth", "badges": ["Initiative Lead"], "image": "/team/central/ct-100126.jpg" },
+  { "id": "init-members-branding", "name": "Jeba Fawzia Anika", "role": "Catalyst · Member's Branding & Birthday Celebration", "badges": ["Initiative Lead"], "image": "/team/central/ct-100120.jpg" },
+  { "id": "init-rat-team", "name": "Kayum Rosul Razu", "role": "Catalyst · RAT Team", "badges": ["Initiative Lead"], "image": "/team/central/ct-100127.jpg" },
+  { "id": "init-event-architect", "name": "Talha Rashid Adar", "role": "Catalyst · LCB Event Architect", "badges": ["Initiative Lead"], "image": "/team/campus-leads/cl-200257.jpg" },
+  { "id": "init-content-master", "name": "Md Shafiul Hasan", "role": "Catalyst · LCB Content Master Team", "badges": ["Initiative Lead"], "image": "/team/central/ct-100116.jpg" },
+  { "id": "init-admin", "name": "Jobaid Ahammed", "role": "Catalyst · Admin Initiative", "badges": ["Initiative Lead"], "image": "/team/central/ct-100110.jpg" }
+]
