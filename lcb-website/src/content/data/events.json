@@ -9,8 +9,11 @@
     "format": "Online",
     "status": "upcoming",
     "partner": "Jagannath University Finance Club",
-    "speaker": { "name": "Altaf Hossain Raj", "role": "Founder, LCB" },
-    "image": "/lcb-placeholder.svg"
+    "speaker": {
+      "name": "Altaf Hossain Raj",
+      "role": "Founder, LCB"
+    },
+    "image": "/gallery/events/abu-helal-announcement.jpg"
   },
   {
     "id": "personal-branding-masterclass",
@@ -22,7 +25,7 @@
     "format": "Online",
     "status": "upcoming",
     "partner": "JKKNIU Marketing Club",
-    "image": "/lcb-placeholder.svg"
+    "image": "/gallery/story/featured-2.jpg"
   },
   {
     "id": "campus-leads-summit",
@@ -33,7 +36,7 @@
     "location": "Dhaka · Hybrid",
     "format": "Hybrid",
     "status": "upcoming",
-    "image": "/lcb-placeholder.svg"
+    "image": "/gallery/story/featured-3.jpg"
   },
   {
     "id": "founders-fireside",
@@ -44,7 +47,7 @@
     "location": "Online",
     "format": "Online",
     "status": "past",
-    "image": "/lcb-placeholder.svg"
+    "image": "/gallery/story/featured-4.jpg"
   },
   {
     "id": "jnu-finance-club-career-session",
@@ -56,8 +59,11 @@
     "format": "Online",
     "status": "past",
     "partner": "Finance Club, Jagannath University",
-    "speaker": { "name": "Altaf Hossain Raju", "role": "Founder, LCB" },
-    "image": "/lcb-placeholder.svg"
+    "speaker": {
+      "name": "Altaf Hossain Raju",
+      "role": "Founder, LCB"
+    },
+    "image": "/gallery/story/featured-5.jpg"
   },
   {
     "id": "2nd-town-hall-lcb",
@@ -68,7 +74,7 @@
     "location": "Online · Live",
     "format": "Online",
     "status": "past",
-    "image": "/lcb-placeholder.svg"
+    "image": "/gallery/story/featured-6.jpg"
   },
   {
     "id": "casecraft-think-beyond-limits",
@@ -79,7 +85,7 @@
     "location": "Online · Google Meet",
     "format": "Online",
     "status": "past",
-    "image": "/lcb-placeholder.svg"
+    "image": "/gallery/story/featured-8.jpg"
   },
   {
     "id": "jkkniu-personal-branding-session",
@@ -91,7 +97,7 @@
     "format": "Online",
     "status": "past",
     "partner": "JKKNIU Marketing Club",
-    "image": "/lcb-placeholder.svg"
+    "image": "/gallery/story/featured-9.jpg"
   },
   {
     "id": "hamdard-personal-branding-seminar",
@@ -103,6 +109,6 @@
     "format": "On-Campus",
     "status": "past",
     "partner": "Voice of Business Club – HUB, Hamdard University Bangladesh",
-    "image": "/lcb-placeholder.svg"
+    "image": "/gallery/story/featured-10.jpg"
   }
 ]
