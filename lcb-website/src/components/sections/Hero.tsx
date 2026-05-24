@@ -1,16 +1,19 @@
 "use client";
 
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowDown, ArrowUpRight, X } from "lucide-react";
 import { Container } from "@/components/ui/Container";
-import { AmbientGlow } from "@/components/background/AmbientGlow";
-import { GridOverlay } from "@/components/background/GridOverlay";
-import { NetworkGraph } from "@/components/background/NetworkGraph";
-import { Spotlight } from "@/components/background/Spotlight";
 import { ease } from "@/lib/motion";
 import { siteConfig } from "@/content/site";
 import type { ApplicationsConfig } from "@/lib/admin";
+
+// Lazy-load decorative bg components — don't block hero text paint
+const NetworkGraph = dynamic(() => import("@/components/background/NetworkGraph").then(m => ({ default: m.NetworkGraph })), { ssr: false });
+const AmbientGlow  = dynamic(() => import("@/components/background/AmbientGlow").then(m => ({ default: m.AmbientGlow })),   { ssr: false });
+const GridOverlay  = dynamic(() => import("@/components/background/GridOverlay").then(m => ({ default: m.GridOverlay })),   { ssr: false });
+const Spotlight    = dynamic(() => import("@/components/background/Spotlight").then(m => ({ default: m.Spotlight })),       { ssr: false });
 
 type HeroProps = {
   applicationsConfig?: ApplicationsConfig;
@@ -37,48 +40,40 @@ export function Hero({ applicationsConfig }: HeroProps) {
       <Container className="relative z-10">
         <div className="flex flex-col items-center text-center">
           {/* Eyebrow */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease, delay: 0.05 }}
-            className="inline-flex items-center gap-2 rounded-full glass px-3.5 py-1.5 text-[11px] font-medium uppercase tracking-[0.18em] text-white/70"
+          <div
+            className="hero-anim inline-flex items-center gap-2 rounded-full glass px-3.5 py-1.5 text-[11px] font-medium uppercase tracking-[0.18em] text-white/70"
+            style={{ animationDelay: "0.05s" }}
           >
             <span className="relative flex h-1.5 w-1.5">
               <span className="absolute inset-0 animate-ping rounded-full bg-cyan-400/60" />
               <span className="relative h-1.5 w-1.5 rounded-full bg-cyan-400" />
             </span>
             <span className="shimmer-text">Built for ambitious professionals</span>
-          </motion.div>
+          </div>
 
           {/* Headline */}
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease, delay: 0.15 }}
-            className="mt-8 font-display text-display-xl font-bold text-gradient-hero [text-wrap:balance]"
+          <h1
+            className="hero-anim mt-8 font-display text-display-xl font-bold text-gradient-hero [text-wrap:balance]"
+            style={{ animationDelay: "0.15s" }}
           >
             Where Bangladesh&apos;s
             <br className="hidden sm:inline" />
             {" "}future leaders{" "}
             <span className="serif-italic text-white/95">connect.</span>
-          </motion.h1>
+          </h1>
 
           {/* Subhead */}
-          <motion.p
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease, delay: 0.3 }}
-            className="mt-7 max-w-2xl text-balance text-lg leading-relaxed text-white/60 sm:text-xl"
+          <p
+            className="hero-anim mt-7 max-w-2xl text-balance text-lg leading-relaxed text-white/60 sm:text-xl"
+            style={{ animationDelay: "0.3s" }}
           >
             A nationwide movement helping students and young professionals build networks, gain opportunities, and grow into future-ready leaders.
-          </motion.p>
+          </p>
 
           {/* CTAs — premium shine-sweep treatment */}
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease, delay: 0.45 }}
-            className="mt-10 flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:gap-4"
+          <div
+            className="hero-anim mt-10 flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:gap-4"
+            style={{ animationDelay: "0.45s" }}
           >
             {/* Campus Lead button */}
             {open && formUrl ? (
@@ -125,7 +120,7 @@ export function Hero({ applicationsConfig }: HeroProps) {
                 <ArrowUpRight className="relative z-10 h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" strokeWidth={2.25} />
               </button>
             )}
-          </motion.div>
+          </div>
 
           {/* Applications-closed modal */}
           <AnimatePresence>
@@ -138,34 +133,25 @@ export function Hero({ applicationsConfig }: HeroProps) {
           </AnimatePresence>
 
           {/* Floating stat ticker */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.7, ease, delay: 0.6 }}
-            className="mt-16 grid grid-cols-2 justify-items-center gap-x-8 gap-y-3 text-xs uppercase tracking-[0.18em] text-white/40 sm:flex sm:flex-wrap sm:gap-x-12"
+          <div
+            className="hero-anim mt-16 grid grid-cols-2 justify-items-center gap-x-8 gap-y-3 text-xs uppercase tracking-[0.18em] text-white/40 sm:flex sm:flex-wrap sm:gap-x-12"
+            style={{ animationDelay: "0.6s" }}
           >
             <span className="flex items-center gap-2"><Dot /> 24K+ Members</span>
             <span className="flex items-center gap-2"><Dot /> 40+ Campus Leads</span>
             <span className="flex items-center gap-2"><Dot /> 192+ Career Sessions</span>
             <span className="flex items-center gap-2"><Dot /> Nationwide Network</span>
-          </motion.div>
+          </div>
         </div>
 
         {/* Scroll cue */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.8, duration: 0.7, ease }}
-          className="absolute inset-x-0 bottom-10 hidden flex-col items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-white/35 md:flex"
+        <div
+          className="hero-anim absolute inset-x-0 bottom-10 hidden flex-col items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-white/35 md:flex"
+          style={{ animationDelay: "0.8s" }}
         >
           <span>Scroll</span>
-          <motion.div
-            animate={{ y: [0, 6, 0] }}
-            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-          >
-            <ArrowDown className="h-3.5 w-3.5" />
-          </motion.div>
-        </motion.div>
+          <ArrowDown className="h-3.5 w-3.5 animate-bounce" />
+        </div>
       </Container>
     </section>
   );
