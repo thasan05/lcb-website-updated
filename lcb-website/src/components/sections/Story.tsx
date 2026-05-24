@@ -106,7 +106,7 @@ export function Story() {
             className="space-y-6 text-lg leading-relaxed text-white/65 lg:col-span-7 lg:pt-2"
           >
             <p>
-            LCB started with a simple belief — Bangladesh's next generation deserved a professional community built around growth, opportunity, and connection. Today, it has become the country's first LinkedIn-based professional movement. Students, founders, creators, and future leaders learning in public, building together, and opening doors for one another. This is more than networking. It's momentum.
+            LCB started with a simple belief — Bangladesh&apos;s next generation deserved a professional community built around growth, opportunity, and connection. Today, it has become the country&apos;s first LinkedIn-based professional movement. Students, founders, creators, and future leaders learning in public, building together, and opening doors for one another. This is more than networking. It&apos;s momentum.
             </p>
             <p>
               Two years on, it&apos;s the country&apos;s first LinkedIn-based community.
