@@ -24,7 +24,7 @@ export function Hero({ applicationsConfig }: HeroProps) {
   const centralFormUrl = applicationsConfig?.centralTeam.formUrl ?? siteConfig.centralApplications.formUrl;
 
   return (
-    <section className="relative flex min-h-[100svh] items-center overflow-hidden pt-20 sm:pt-28">
+    <section className="relative flex min-h-[100svh] items-start sm:items-center overflow-hidden pt-20 sm:pt-28">
       {/* Atmosphere stack — order matters: graph behind, glows on top */}
       <NetworkGraph />
       <AmbientGlow intensity="strong" />
