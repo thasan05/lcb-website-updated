@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import { Linkedin, Facebook, Globe } from "lucide-react";
 import { type TeamMember } from "@/data/team";
 import { TeamImage } from "@/components/ui/TeamImage";
-import { cn } from "@/lib/utils";
 
 const SOCIAL_CONFIG = {
   linkedin: { Icon: Linkedin, label: "LinkedIn" },
@@ -24,36 +23,24 @@ export function HallOfFameCard({ member, index = 0 }: HallOfFameCardProps) {
 
   return (
     <motion.article
-      className={cn(
-        "group relative w-full overflow-hidden rounded-3xl select-none",
-        "border border-amber-400/20",
-        "bg-gradient-to-b from-white/[0.05] to-white/[0.01]",
-        "backdrop-blur-sm transition-all duration-500",
-        "hover:border-amber-400/50",
-      )}
-      initial={{ opacity: 0, y: 24 }}
+      className="group relative w-full cursor-default select-none overflow-hidden rounded-2xl"
+      initial={{ opacity: 0, y: 28 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{
-        duration: 0.55,
-        delay: index * 0.07,
-        ease: [0.22, 1, 0.36, 1],
-      }}
-      whileHover={{ scale: 1.03, y: -6 }}
+      transition={{ duration: 0.5, delay: index * 0.06, ease: [0.22, 1, 0.36, 1] }}
+      whileHover={{ y: -6, scale: 1.025 }}
     >
-      {/* Ambient amber glow — intensifies on hover */}
+      {/* ── Border ring — pulses gold on hover ───────────────────────── */}
       <div
-        className="pointer-events-none absolute inset-0 z-10 rounded-3xl opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-        style={{
-          boxShadow:
-            "inset 0 0 0 1px rgba(251,191,36,0.35), 0 0 48px -12px rgba(251,191,36,0.45)",
-        }}
+        className="pointer-events-none absolute inset-0 z-30 rounded-2xl border border-amber-400/20 transition-all duration-500 group-hover:border-amber-400/55"
+        style={{ boxShadow: "0 0 0 0 rgba(251,191,36,0)" }}
+      />
+      <div
+        className="pointer-events-none absolute inset-0 z-30 rounded-2xl opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+        style={{ boxShadow: "0 8px 40px -8px rgba(251,191,36,0.4)" }}
       />
 
-      {/* Top hairline — gold */}
-      <div className="pointer-events-none absolute inset-x-0 top-0 z-20 h-px bg-gradient-to-r from-transparent via-amber-400/60 to-transparent" />
-
-      {/* ── Portrait image ──────────────────────────────────────────────── */}
-      <div className="relative aspect-[3/4] w-full overflow-hidden">
+      {/* ── Portrait image ───────────────────────────────────────────── */}
+      <div className="relative aspect-[3/4] w-full">
         {image ? (
           <TeamImage
             src={image}
@@ -62,64 +49,70 @@ export function HallOfFameCard({ member, index = 0 }: HallOfFameCardProps) {
             sizes="(max-width:640px) 50vw, (max-width:1024px) 33vw, 20vw"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-amber-900/40 to-amber-700/20">
-            <span className="font-display text-5xl font-bold text-amber-400/30">
+          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-amber-950/60 to-neutral-900">
+            <span className="font-display text-5xl font-bold text-amber-400/25">
               {name.split(" ").slice(0, 2).map((n) => n[0]).join("").toUpperCase()}
             </span>
           </div>
         )}
 
-        {/* Cinematic bottom gradient */}
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#040614] via-[#040614]/40 to-transparent" />
+        {/* Deep cinematic gradient — bottom 60% */}
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#040614] via-[#040614]/50 via-[40%] to-transparent" />
 
-        {/* Subtle gold shimmer sweep on hover */}
+        {/* Shimmer on hover */}
         <div
-          className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-amber-300/10 to-transparent transition-transform duration-[1200ms] ease-out group-hover:translate-x-full"
           aria-hidden
+          className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-amber-200/8 to-transparent transition-transform duration-[1400ms] ease-out group-hover:translate-x-full"
         />
 
-        {/* 🏆 Hall of Fame badge — top-left */}
-        <span className="absolute left-3 top-3 z-20 inline-flex items-center gap-1 rounded-full border border-amber-400/30 bg-amber-500/20 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.18em] text-amber-300 backdrop-blur-sm">
-          🏆 Hall of Fame
-        </span>
+        {/* ── Top-left badge only: HALL OF FAME ───────────────────────── */}
+        <div className="absolute left-3 top-3 z-20 inline-flex items-center gap-1.5 rounded-full border border-amber-400/35 bg-amber-500/20 px-2.5 py-1 backdrop-blur-md">
+          <span className="text-[10px]">🏆</span>
+          <span className="text-[9px] font-bold uppercase tracking-[0.16em] text-amber-300">
+            Hall of Fame
+          </span>
+        </div>
 
-        {/* Role pill — top-right */}
-        <span className="absolute right-3 top-3 z-20 rounded-full border border-white/[0.10] bg-black/40 px-2 py-0.5 text-[9px] font-medium uppercase tracking-[0.14em] text-white/55 backdrop-blur-sm">
-          {role}
-        </span>
+        {/* ── Bottom text block ────────────────────────────────────────── */}
+        <div className="absolute inset-x-0 bottom-0 z-20 p-4">
+          {/* Social icons — slide up on hover */}
+          {hasSocials && (
+            <div className="mb-2 flex translate-y-2 items-center gap-1.5 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+              {(Object.entries(social!) as [keyof typeof SOCIAL_CONFIG, string][]).map(
+                ([key, href]) => {
+                  const cfg = SOCIAL_CONFIG[key];
+                  if (!cfg || !href) return null;
+                  return (
+                    <Link
+                      key={key}
+                      href={href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`${name} on ${cfg.label}`}
+                      onClick={(e) => e.stopPropagation()}
+                      className="flex h-6 w-6 items-center justify-center rounded-full border border-amber-400/40 bg-amber-500/20 text-amber-300 backdrop-blur-sm transition-all duration-200 hover:scale-110 hover:bg-amber-500/35 hover:text-white"
+                    >
+                      <cfg.Icon className="h-3 w-3" strokeWidth={1.75} />
+                    </Link>
+                  );
+                }
+              )}
+            </div>
+          )}
 
-        {/* Social icons — float up on hover */}
-        {hasSocials && (
-          <div className="absolute inset-x-0 bottom-[4.5rem] z-20 flex translate-y-2 items-center gap-1.5 px-4 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-            {(Object.entries(social!) as [keyof typeof SOCIAL_CONFIG, string][]).map(
-              ([key, href]) => {
-                const cfg = SOCIAL_CONFIG[key];
-                if (!cfg || !href) return null;
-                return (
-                  <Link
-                    key={key}
-                    href={href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={`${name} on ${cfg.label}`}
-                    onClick={(e) => e.stopPropagation()}
-                    className="flex h-7 w-7 items-center justify-center rounded-full border border-amber-400/30 bg-amber-500/20 text-amber-300 backdrop-blur-sm transition-all duration-200 hover:scale-110 hover:border-amber-400/60 hover:text-white"
-                  >
-                    <cfg.Icon className="h-3 w-3" strokeWidth={1.75} />
-                  </Link>
-                );
-              }
-            )}
-          </div>
-        )}
-
-        {/* Name + achievement over image at bottom */}
-        <div className="absolute inset-x-0 bottom-0 z-20 px-4 pb-4">
-          <h3 className="font-display text-[15px] font-semibold leading-snug text-white drop-shadow-sm">
+          {/* Name */}
+          <h3 className="font-display text-[15px] font-semibold leading-snug text-white">
             {name}
           </h3>
-          {achievements && achievements.length > 0 && (
-            <p className="mt-1 text-[10px] font-medium tracking-wide text-amber-400/80">
+
+          {/* Role */}
+          <p className="mt-0.5 text-[11px] font-medium tracking-wide text-amber-400/75">
+            {role}
+          </p>
+
+          {/* Achievement */}
+          {achievements && achievements[0] && (
+            <p className="mt-1 text-[10px] text-white/40">
               {achievements[0]}
             </p>
           )}
