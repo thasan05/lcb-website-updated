@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -12,12 +12,25 @@ import { FadeIn } from "@/components/motion/FadeIn";
 import { TeamCategoryNav } from "@/components/team/TeamCategoryNav";
 import { TeamCard } from "@/components/team/TeamCard";
 import { HallOfFameCard } from "@/components/team/HallOfFameCard";
-import { teamCategories } from "@/data/team";
+import { teamCategories, type TeamMember } from "@/data/team";
 
 export function Team() {
   const [activeCategoryId, setActiveCategoryId] = useState(teamCategories[0].id);
+  // Live member overrides fetched from Redis — keyed by category id
+  const [liveMembers, setLiveMembers] = useState<Record<string, TeamMember[]>>({});
 
-  const activeCategory = teamCategories.find((c) => c.id === activeCategoryId)!;
+  useEffect(() => {
+    fetch("/api/admin/team")
+      .then((r) => r.json())
+      .then((data: Record<string, TeamMember[]>) => setLiveMembers(data))
+      .catch(() => {/* silently fall back to static data */});
+  }, []);
+
+  const staticCategory = teamCategories.find((c) => c.id === activeCategoryId)!;
+  const activeCategory = {
+    ...staticCategory,
+    members: liveMembers[activeCategoryId] ?? staticCategory.members,
+  };
 
   return (
     <Section id="team">
