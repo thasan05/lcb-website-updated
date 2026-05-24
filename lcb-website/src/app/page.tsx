@@ -11,11 +11,36 @@ import { News } from "@/components/sections/News";
 import { Testimonials } from "@/components/sections/Testimonials";
 import { CTA } from "@/components/sections/CTA";
 import { getApplicationsConfig } from "@/lib/admin";
+import { kvGet } from "@/lib/kv";
+import type { TeamMember } from "@/data/team";
 
 export const dynamic = "force-dynamic";
 
+const TEAM_KEYS: Record<string, string> = {
+  central:        "team:central",
+  "campus-leads": "team:campus-leads",
+  heads:          "team:lcb-heads",
+  professionals:  "team:professionals",
+  initiatives:    "team:initiatives",
+  "star-awards":  "team:star-awards",
+};
+
+async function getTeamData(): Promise<Record<string, TeamMember[]>> {
+  try {
+    const entries = await Promise.all(
+      Object.entries(TEAM_KEYS).map(async ([id, key]) => [id, await kvGet<TeamMember[]>(key)] as const)
+    );
+    return Object.fromEntries(entries);
+  } catch {
+    return {};
+  }
+}
+
 export default async function HomePage() {
-  const appsConfig = await getApplicationsConfig();
+  const [appsConfig, teamData] = await Promise.all([
+    getApplicationsConfig(),
+    getTeamData(),
+  ]);
 
   return (
     <>
@@ -25,7 +50,7 @@ export default async function HomePage() {
         <Story />
         <Stats />
         <Events />
-        <Team />
+        <Team liveMembers={teamData} />
         <Gallery />
         <News />
         <Testimonials />
