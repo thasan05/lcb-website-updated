@@ -73,6 +73,7 @@ export function News() {
                     alt={featured.title}
                     fill
                     sizes="(max-width: 1024px) 100vw, 60vw"
+                    unoptimized={featured.image.endsWith(".svg")}
                     className="object-cover transition-transform duration-[1500ms] ease-out group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-ink-100 via-ink-100/30 to-transparent" />
@@ -119,6 +120,7 @@ export function News() {
                         alt={item.title}
                         fill
                         sizes="160px"
+                        unoptimized={item.image.endsWith(".svg")}
                         className="object-cover transition-transform duration-[1500ms] group-hover:scale-105"
                       />
                       <div className="pointer-events-none absolute inset-0 rounded-2xl border border-white/[0.06]" />

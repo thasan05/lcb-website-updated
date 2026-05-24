@@ -78,6 +78,7 @@ export function EventImage({
         priority={priority}
         loading={priority ? "eager" : "lazy"}
         sizes={sizes}
+        unoptimized={src.endsWith(".svg")}
         className={cn(
           "object-cover",
           // Cinematic slow zoom on hover

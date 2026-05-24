@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 800" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1400" y2="800" gradientUnits="userSpaceOnUse">
+      <stop offset="0%"  stop-color="#040614"/>
+      <stop offset="100%" stop-color="#070d24"/>
+    </linearGradient>
+    <radialGradient id="glow1" cx="50%" cy="50%" r="55%">
+      <stop offset="0%"  stop-color="#0a66c2" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#040614" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow2" cx="80%" cy="20%" r="35%">
+      <stop offset="0%"  stop-color="#22d3ee" stop-opacity="0.09"/>
+      <stop offset="100%" stop-color="#040614" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"  stop-color="#4f9ceb"/>
+      <stop offset="100%" stop-color="#0a66c2"/>
+    </linearGradient>
+    <linearGradient id="textGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#ffffff"/>
+      <stop offset="55%"  stop-color="#c8dffa"/>
+      <stop offset="100%" stop-color="#4f9ceb"/>
+    </linearGradient>
+    <filter id="softBlur">
+      <feGaussianBlur stdDeviation="0.5"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1400" height="800" fill="url(#bg)"/>
+  <rect width="1400" height="800" fill="url(#glow1)"/>
+  <rect width="1400" height="800" fill="url(#glow2)"/>
+
+  <!-- Subtle grid -->
+  <g stroke="rgba(255,255,255,0.025)" stroke-width="1">
+    <line x1="0"    y1="100" x2="1400" y2="100"/>
+    <line x1="0"    y1="200" x2="1400" y2="200"/>
+    <line x1="0"    y1="300" x2="1400" y2="300"/>
+    <line x1="0"    y1="400" x2="1400" y2="400"/>
+    <line x1="0"    y1="500" x2="1400" y2="500"/>
+    <line x1="0"    y1="600" x2="1400" y2="600"/>
+    <line x1="0"    y1="700" x2="1400" y2="700"/>
+    <line x1="200"  y1="0"   x2="200"  y2="800"/>
+    <line x1="400"  y1="0"   x2="400"  y2="800"/>
+    <line x1="600"  y1="0"   x2="600"  y2="800"/>
+    <line x1="800"  y1="0"   x2="800"  y2="800"/>
+    <line x1="1000" y1="0"   x2="1000" y2="800"/>
+    <line x1="1200" y1="0"   x2="1200" y2="800"/>
+  </g>
+
+  <!-- Decorative ring — faint -->
+  <circle cx="700" cy="400" r="260" stroke="rgba(10,102,194,0.12)" stroke-width="1" fill="none"/>
+  <circle cx="700" cy="400" r="200" stroke="rgba(10,102,194,0.08)" stroke-width="1" fill="none"/>
+
+  <!-- LCB logo mark — rounded square -->
+  <rect x="612" y="312" width="176" height="176" rx="36" ry="36" fill="url(#logoGrad)"/>
+  <!-- Gloss overlay -->
+  <rect x="612" y="312" width="176" height="88" rx="36" ry="36" fill="rgba(255,255,255,0.15)"/>
+  <rect x="612" y="356" width="176" height="44" fill="rgba(255,255,255,0.15)"/>
+  <!-- "in" letterform -->
+  <text x="700" y="423" font-family="Georgia, serif" font-size="88" font-weight="700" fill="white" text-anchor="middle" dominant-baseline="middle" filter="url(#softBlur)">in</text>
+
+  <!-- LCB wordmark -->
+  <text x="700" y="548" font-family="system-ui, -apple-system, sans-serif" font-size="28" font-weight="700" letter-spacing="12" fill="url(#textGrad)" text-anchor="middle" opacity="0.9">LCB</text>
+
+  <!-- Tagline -->
+  <text x="700" y="586" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" letter-spacing="3" fill="rgba(255,255,255,0.3)" text-anchor="middle">LINKEDIN COMMUNITY BANGLADESH</text>
+
+  <!-- Cyan accent dot -->
+  <circle cx="700" cy="620" r="3" fill="#22d3ee" opacity="0.6"/>
+</svg>
