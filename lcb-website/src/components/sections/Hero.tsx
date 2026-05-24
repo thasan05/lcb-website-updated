@@ -38,9 +38,9 @@ export function Hero({ applicationsConfig }: HeroProps) {
         <div className="flex flex-col items-center text-center">
           {/* Eyebrow */}
           <motion.div
-            initial={{ opacity: 0, y: 12, filter: "blur(8px)" }}
-            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            transition={{ duration: 0.9, ease, delay: 0.05 }}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease, delay: 0.05 }}
             className="inline-flex items-center gap-2 rounded-full glass px-3.5 py-1.5 text-[11px] font-medium uppercase tracking-[0.18em] text-white/70"
           >
             <span className="relative flex h-1.5 w-1.5">
@@ -52,9 +52,9 @@ export function Hero({ applicationsConfig }: HeroProps) {
 
           {/* Headline */}
           <motion.h1
-            initial={{ opacity: 0, y: 24, filter: "blur(12px)" }}
-            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            transition={{ duration: 1.1, ease, delay: 0.2 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, ease, delay: 0.15 }}
             className="mt-8 font-display text-display-xl font-bold text-gradient-hero [text-wrap:balance]"
           >
             Where Bangladesh&apos;s
@@ -65,9 +65,9 @@ export function Hero({ applicationsConfig }: HeroProps) {
 
           {/* Subhead */}
           <motion.p
-            initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}
-            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            transition={{ duration: 1, ease, delay: 0.95 }}
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, ease, delay: 0.3 }}
             className="mt-7 max-w-2xl text-balance text-lg leading-relaxed text-white/60 sm:text-xl"
           >
             A nationwide movement helping students and young professionals build networks, gain opportunities, and grow into future-ready leaders.
@@ -77,7 +77,7 @@ export function Hero({ applicationsConfig }: HeroProps) {
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, ease, delay: 1.15 }}
+            transition={{ duration: 0.7, ease, delay: 0.45 }}
             className="mt-10 flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:gap-4"
           >
             {/* Campus Lead button */}
@@ -141,7 +141,7 @@ export function Hero({ applicationsConfig }: HeroProps) {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 1, ease, delay: 1.4 }}
+            transition={{ duration: 0.7, ease, delay: 0.6 }}
             className="mt-16 grid grid-cols-2 justify-items-center gap-x-8 gap-y-3 text-xs uppercase tracking-[0.18em] text-white/40 sm:flex sm:flex-wrap sm:gap-x-12"
           >
             <span className="flex items-center gap-2"><Dot /> 24K+ Members</span>
@@ -155,7 +155,7 @@ export function Hero({ applicationsConfig }: HeroProps) {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 1.7, duration: 1, ease }}
+          transition={{ delay: 0.8, duration: 0.7, ease }}
           className="absolute inset-x-0 bottom-10 hidden flex-col items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-white/35 md:flex"
         >
           <span>Scroll</span>
