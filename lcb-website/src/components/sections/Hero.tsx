@@ -5,7 +5,6 @@ import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowDown, ArrowUpRight, X } from "lucide-react";
 import { Container } from "@/components/ui/Container";
-import { ease } from "@/lib/motion";
 import { siteConfig } from "@/content/site";
 import type { ApplicationsConfig } from "@/lib/admin";
 
