@@ -107,8 +107,13 @@ function StatBlock({
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.9, ease, delay: index * 0.08 }}
       className={cn(
-        "relative flex flex-col gap-2 px-4 sm:px-6 lg:px-8",
-        !isLast && "lg:border-r lg:border-white/[0.06]"
+        "relative flex flex-col gap-2 px-4 pb-8 sm:px-6 lg:px-8 lg:pb-0",
+        // vertical dividers on desktop
+        !isLast && "lg:border-r lg:border-white/[0.06]",
+        // bottom divider after first row on mobile 2×2 grid
+        index < 2 && "border-b border-white/[0.06] lg:border-b-0",
+        // top spacing for second row on mobile
+        index >= 2 && "pt-8 lg:pt-0"
       )}
     >
       {/* Index label */}

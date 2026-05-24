@@ -310,6 +310,87 @@ main, header, footer { position: relative; z-index: 2; }
 }
 
 /* ============================================================
+   HERO CTA BUTTONS — eye-catching animated CTAs
+   ============================================================ */
+
+/* @property must live at top level, not inside @layer */
+@property --hero-border-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+/* Primary — shifting gradient bg + breathing glow ring */
+.hero-cta-primary {
+  background: linear-gradient(
+    135deg,
+    #0a66c2 0%,
+    #1a7ed6 28%,
+    #22c4d3 66%,
+    #0a66c2 100%
+  );
+  background-size: 300% 300%;
+  border: 1px solid rgba(79, 156, 235, 0.45);
+  animation:
+    heroCtaGradient 5s ease infinite,
+    heroCtaGlow     3s ease-in-out infinite;
+}
+
+/* Secondary — rotating conic-gradient border via mask technique */
+.hero-cta-secondary {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.07) 0%,
+    rgba(255, 255, 255, 0.025) 100%
+  );
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  border: 1px solid transparent;
+  background-clip: padding-box;
+}
+
+/* Spinning gradient border ring on secondary */
+.hero-cta-secondary::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: conic-gradient(
+    from var(--hero-border-angle),
+    rgba(79, 156, 235, 0)    0deg,
+    rgba(79, 156, 235, 0.65) 60deg,
+    rgba(34, 211, 238, 0.85) 120deg,
+    rgba(99, 102, 241, 0.65) 180deg,
+    rgba(79, 156, 235, 0)    240deg
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: heroBorderSpin 4s linear infinite;
+  pointer-events: none;
+}
+
+.hero-cta-secondary:hover {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.10) 0%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  box-shadow: 0 0 28px rgba(79, 156, 235, 0.28), 0 4px 18px rgba(0, 0, 0, 0.22);
+}
+
+/* Speed up border spin on hover */
+.hero-cta-secondary:hover::before {
+  animation-duration: 2s;
+}
+
+/* ============================================================
    KEYFRAMES
    ============================================================ */
 @keyframes shimmer {
@@ -347,6 +428,31 @@ main, header, footer { position: relative; z-index: 2; }
   50%      { opacity: 0.7; }
 }
 
+@keyframes heroCtaGradient {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes heroCtaGlow {
+  0%, 100% {
+    box-shadow:
+      0 0 22px rgba(10, 102, 194, 0.55),
+      0 0 44px rgba(10, 102, 194, 0.22),
+      0 4px 18px rgba(0, 0, 0, 0.30);
+  }
+  50% {
+    box-shadow:
+      0 0 32px rgba(34, 211, 238, 0.65),
+      0 0 64px rgba(10, 102, 194, 0.30),
+      0 4px 22px rgba(0, 0, 0, 0.30);
+  }
+}
+
+@keyframes heroBorderSpin {
+  to { --hero-border-angle: 360deg; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
@@ -355,4 +461,6 @@ main, header, footer { position: relative; z-index: 2; }
     scroll-behavior: auto !important;
   }
   .word-reveal > span { opacity: 1; transform: none; }
+  .hero-cta-primary { animation: none; }
+  .hero-cta-secondary::before { animation: none; }
 }

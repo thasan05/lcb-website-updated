@@ -67,7 +67,7 @@ export function News() {
             {/* Featured — large card */}
             <FadeIn className="lg:col-span-7">
               <GlassCard as="article" className="group h-full overflow-hidden">
-                <div className="relative aspect-[16/10] overflow-hidden">
+                <div className="relative aspect-[4/3] overflow-hidden sm:aspect-[16/10]">
                   <Image
                     src={featured.image}
                     alt={featured.title}

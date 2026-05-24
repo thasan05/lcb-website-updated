@@ -58,7 +58,7 @@ function MarqueeRow({
         {items.map((t, i) => (
           <article
             key={`${t.id}-${i}`}
-            className="group relative w-[360px] shrink-0 overflow-hidden rounded-3xl border border-white/[0.08] bg-gradient-to-b from-white/[0.04] to-white/[0.01] p-7 backdrop-blur-xl transition-colors duration-500 hover:border-white/[0.14] sm:w-[440px] sm:p-9"
+            className="group relative w-[min(85vw,360px)] shrink-0 overflow-hidden rounded-3xl border border-white/[0.08] bg-gradient-to-b from-white/[0.04] to-white/[0.01] p-6 backdrop-blur-xl transition-colors duration-500 hover:border-white/[0.14] sm:w-[440px] sm:p-9"
           >
             {/* Top highlight */}
             <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />

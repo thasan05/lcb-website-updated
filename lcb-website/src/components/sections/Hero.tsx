@@ -78,7 +78,7 @@ export function Hero({ applicationsConfig }: HeroProps) {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, ease, delay: 1.15 }}
-            className="mt-10 flex flex-col items-center gap-3 sm:flex-row sm:gap-4"
+            className="mt-10 flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:gap-4"
           >
             {/* Campus Lead button */}
             {open && formUrl ? (
@@ -86,7 +86,7 @@ export function Hero({ applicationsConfig }: HeroProps) {
                 href={formUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="shine-sweep focus-ring group relative inline-flex h-[54px] items-center justify-center gap-2 rounded-full border border-brand-400/40 bg-brand-500 px-7 text-base font-medium text-white shadow-glow transition-all duration-300 hover:-translate-y-0.5 hover:bg-brand-400 hover:shadow-glow-lg active:scale-[0.98]"
+                className="hero-cta-primary shine-sweep focus-ring group relative inline-flex h-[54px] w-full items-center justify-center gap-2 rounded-full px-7 text-base font-medium text-white transition-[transform,color] duration-300 hover:-translate-y-0.5 active:scale-[0.98] sm:w-auto"
               >
                 <span className="pointer-events-none absolute inset-0 rounded-full bg-gradient-to-b from-white/20 to-transparent opacity-60 mix-blend-overlay" />
                 <span className="relative z-10">Apply as a Campus Lead</span>
@@ -96,7 +96,7 @@ export function Hero({ applicationsConfig }: HeroProps) {
               <button
                 type="button"
                 onClick={() => setShowClosedModal("campus")}
-                className="shine-sweep focus-ring group relative inline-flex h-[54px] items-center justify-center gap-2 rounded-full border border-brand-400/40 bg-brand-500 px-7 text-base font-medium text-white shadow-glow transition-all duration-300 hover:-translate-y-0.5 hover:bg-brand-400 hover:shadow-glow-lg active:scale-[0.98]"
+                className="hero-cta-primary shine-sweep focus-ring group relative inline-flex h-[54px] w-full items-center justify-center gap-2 rounded-full px-7 text-base font-medium text-white transition-[transform,color] duration-300 hover:-translate-y-0.5 active:scale-[0.98] sm:w-auto"
               >
                 <span className="pointer-events-none absolute inset-0 rounded-full bg-gradient-to-b from-white/20 to-transparent opacity-60 mix-blend-overlay" />
                 <span className="relative z-10">Apply as a Campus Lead</span>
@@ -110,7 +110,7 @@ export function Hero({ applicationsConfig }: HeroProps) {
                 href={centralFormUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="focus-ring group relative inline-flex h-[54px] items-center justify-center gap-2 rounded-full border border-white/[0.14] bg-white/[0.06] px-7 text-base font-medium text-white/80 backdrop-blur transition-all duration-300 hover:-translate-y-0.5 hover:border-white/[0.22] hover:bg-white/[0.10] hover:text-white active:scale-[0.98]"
+                className="hero-cta-secondary focus-ring group relative inline-flex h-[54px] w-full items-center justify-center gap-2 rounded-full px-7 text-base font-medium text-white/80 transition-[transform,color] duration-300 hover:-translate-y-0.5 hover:text-white active:scale-[0.98] sm:w-auto"
               >
                 <span className="relative z-10">Apply in Central Team</span>
                 <ArrowUpRight className="relative z-10 h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" strokeWidth={2.25} />
@@ -119,7 +119,7 @@ export function Hero({ applicationsConfig }: HeroProps) {
               <button
                 type="button"
                 onClick={() => setShowClosedModal("central")}
-                className="focus-ring group relative inline-flex h-[54px] items-center justify-center gap-2 rounded-full border border-white/[0.14] bg-white/[0.06] px-7 text-base font-medium text-white/80 backdrop-blur transition-all duration-300 hover:-translate-y-0.5 hover:border-white/[0.22] hover:bg-white/[0.10] hover:text-white active:scale-[0.98]"
+                className="hero-cta-secondary focus-ring group relative inline-flex h-[54px] w-full items-center justify-center gap-2 rounded-full px-7 text-base font-medium text-white/80 transition-[transform,color] duration-300 hover:-translate-y-0.5 hover:text-white active:scale-[0.98] sm:w-auto"
               >
                 <span className="relative z-10">Apply in Central Team</span>
                 <ArrowUpRight className="relative z-10 h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" strokeWidth={2.25} />
@@ -142,7 +142,7 @@ export function Hero({ applicationsConfig }: HeroProps) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1, ease, delay: 1.4 }}
-            className="mt-16 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-xs uppercase tracking-[0.18em] text-white/40 sm:gap-x-12"
+            className="mt-16 grid grid-cols-2 justify-items-center gap-x-8 gap-y-3 text-xs uppercase tracking-[0.18em] text-white/40 sm:flex sm:flex-wrap sm:gap-x-12"
           >
             <span className="flex items-center gap-2"><Dot /> 24K+ Members</span>
             <span className="flex items-center gap-2"><Dot /> 40+ Campus Leads</span>

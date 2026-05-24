@@ -1,41 +1,36 @@
 import Link from "next/link";
-import fs from "fs";
-import path from "path";
-import { readJsonFile, getApplicationsConfig } from "@/lib/admin";
+import { kvGet } from "@/lib/kv";
+import { getApplicationsConfig } from "@/lib/admin";
 import type { NewsItem } from "@/content/news";
 import type { Event } from "@/content/events";
 
 export const dynamic = "force-dynamic";
 
-function readManifest() {
-  const p = path.join(process.cwd(), "src", "data", "gallery", "manifest.json");
-  return JSON.parse(fs.readFileSync(p, "utf-8")) as { images: unknown[] };
-}
-
 export default async function AdminDashboardPage() {
-  const news = readJsonFile<NewsItem[]>("news.json");
-  const events = readJsonFile<Event[]>("events.json");
-  const apps = getApplicationsConfig();
-  const gallery = readManifest();
+  const [news, events, apps, gallery] = await Promise.all([
+    kvGet<NewsItem[]>("data:news"),
+    kvGet<Event[]>("data:events"),
+    getApplicationsConfig(),
+    kvGet<{ images: unknown[] }>("data:gallery-manifest"),
+  ]);
 
   const upcomingCount = events.filter((e) => e.status === "upcoming").length;
-  const pastCount = events.filter((e) => e.status === "past").length;
   const featuredNews = news.find((n) => n.featured);
   const appsOpen =
     (apps.campusLeads.open ? 1 : 0) + (apps.centralTeam.open ? 1 : 0);
 
   const stats = [
-    { label: "News Items", value: news.length, href: "/admin/newsroom" },
-    { label: "Upcoming Events", value: upcomingCount, href: "/admin/events" },
-    { label: "Gallery Photos", value: gallery.images.length, href: "/admin/gallery" },
-    { label: "Applications Open", value: `${appsOpen}/2`, href: "/admin/applications" },
+    { label: "News Items",       value: news.length,            href: "/admin/newsroom" },
+    { label: "Upcoming Events",  value: upcomingCount,          href: "/admin/events" },
+    { label: "Gallery Photos",   value: gallery.images.length,  href: "/admin/gallery" },
+    { label: "Applications Open",value: `${appsOpen}/2`,        href: "/admin/applications" },
   ];
 
   const quickActions = [
-    { href: "/admin/newsroom", label: "Add News Item", icon: "📰" },
-    { href: "/admin/events", label: "Add Event", icon: "📅" },
-    { href: "/admin/gallery", label: "Add Photos", icon: "🖼️" },
-    { href: "/admin/applications", label: "Toggle Applications", icon: "📋" },
+    { href: "/admin/newsroom",     label: "Add News Item",        icon: "📰" },
+    { href: "/admin/events",       label: "Add Event",            icon: "📅" },
+    { href: "/admin/gallery",      label: "Add Photos",           icon: "🖼️" },
+    { href: "/admin/applications", label: "Toggle Applications",  icon: "📋" },
   ];
 
   return (
@@ -94,12 +89,16 @@ export default async function AdminDashboardPage() {
               </span>
               <div>
                 <p className="text-sm font-medium text-white">{featuredNews.title}</p>
-                <p className="mt-1 text-xs text-white/40">{featuredNews.dateLabel} · {featuredNews.category}</p>
+                <p className="mt-1 text-xs text-white/40">
+                  {featuredNews.dateLabel} · {featuredNews.category}
+                </p>
               </div>
             </div>
           </div>
         ) : (
-          <p className="text-sm text-white/30">No featured news set. Mark one item as featured in the Newsroom.</p>
+          <p className="text-sm text-white/30">
+            No featured news set. Mark one item as featured in the Newsroom.
+          </p>
         )}
       </div>
 
@@ -119,7 +118,9 @@ export default async function AdminDashboardPage() {
             >
               <span
                 className={`h-2 w-2 rounded-full ${
-                  config.open ? "bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]" : "bg-white/20"
+                  config.open
+                    ? "bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]"
+                    : "bg-white/20"
                 }`}
               />
               <div>

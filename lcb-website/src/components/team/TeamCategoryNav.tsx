@@ -31,7 +31,7 @@ export function TeamCategoryNav({
             aria-selected={isActive}
             onClick={() => onChange(cat.id as TeamCategoryId)}
             className={cn(
-              "relative rounded-xl px-3.5 py-1.5 text-sm font-medium transition-colors duration-200 focus-ring",
+              "relative rounded-xl px-3 py-2.5 text-sm font-medium transition-colors duration-200 focus-ring sm:px-3.5 sm:py-1.5",
               isActive ? "text-white" : "text-white/45 hover:text-white/70"
             )}
           >

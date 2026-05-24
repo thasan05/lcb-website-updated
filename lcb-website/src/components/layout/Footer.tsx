@@ -2,6 +2,8 @@ import Link from "next/link";
 import { Linkedin, Facebook, Users, Instagram } from "lucide-react";
 import { siteConfig, navigation } from "@/content/site";
 import { Container } from "@/components/ui/Container";
+import { FooterWordmark } from "./FooterWordmark";
+import { FooterLive } from "./FooterLive";
 
 const socialLinks = [
   { label: "LinkedIn", href: siteConfig.socials.linkedin, icon: Linkedin },
@@ -28,14 +30,7 @@ export function Footer() {
 
       {/* Giant brand wordmark */}
       <Container className="relative mb-12">
-        <div className="overflow-hidden">
-          <h2
-            aria-hidden
-            className="font-display select-none text-[clamp(4rem,16vw,14rem)] font-bold leading-[0.85] tracking-[-0.05em] text-gradient-editorial opacity-[0.85]"
-          >
-            LinkedIn Community Bangladesh
-          </h2>
-        </div>
+        <FooterWordmark />
       </Container>
 
       <Container className="relative">
@@ -65,7 +60,7 @@ export function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={s.label}
-                  className="flex h-10 w-10 items-center justify-center rounded-full glass text-white/70 transition-all duration-300 hover:-translate-y-0.5 hover:border-brand-400/30 hover:text-white hover:shadow-glow"
+                  className="flex h-11 w-11 items-center justify-center rounded-full glass text-white/70 transition-all duration-300 hover:-translate-y-0.5 hover:border-brand-400/30 hover:text-white hover:shadow-glow"
                 >
                   <s.icon className="h-4 w-4" strokeWidth={1.75} />
                 </Link>
@@ -120,13 +115,10 @@ export function Footer() {
         {/* Bottom bar */}
         <div className="mt-16 flex flex-col items-start justify-between gap-4 border-t border-white/[0.06] py-8 text-xs text-white/40 sm:flex-row sm:items-center">
           <p>
-            © {new Date().getFullYear()} {siteConfig.name}. A movement, not a meetup.
+            © {new Date().getFullYear()} {siteConfig.shortName}. A movement, not a meetup.
           </p>
 
-          <p className="flex items-center gap-2">
-            <span className="inline-block h-1.5 w-1.5 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.7)]" />
-            Built by Tanvir Hasan.
-          </p>
+          <FooterLive />
         </div>
       </Container>
     </footer>

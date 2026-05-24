@@ -82,13 +82,13 @@ export function CTA() {
 
             <motion.div
               variants={fadeUp}
-              className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4"
+              className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-center sm:gap-4"
             >
               <a
                 href={siteConfig.socials.linkedin}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="shine-sweep focus-ring group relative inline-flex h-[54px] items-center justify-center gap-2 rounded-full border border-brand-400/40 bg-brand-500 px-7 text-base font-medium text-white shadow-glow transition-all duration-300 hover:-translate-y-0.5 hover:bg-brand-400 hover:shadow-glow-lg active:scale-[0.98]"
+                className="shine-sweep focus-ring group relative inline-flex h-[54px] w-full items-center justify-center gap-2 rounded-full border border-brand-400/40 bg-brand-500 px-7 text-base font-medium text-white shadow-glow transition-all duration-300 hover:-translate-y-0.5 hover:bg-brand-400 hover:shadow-glow-lg active:scale-[0.98] sm:w-auto"
               >
                 <span className="pointer-events-none absolute inset-0 rounded-full bg-gradient-to-b from-white/20 to-transparent opacity-60 mix-blend-overlay" />
                 <span className="relative z-10">Follow LCB on LinkedIn</span>
@@ -101,7 +101,7 @@ export function CTA() {
                 href={siteConfig.socials.facebookGroup}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="focus-ring inline-flex h-[54px] items-center justify-center rounded-full glass-strong px-7 text-base font-medium text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-white/[0.08] active:scale-[0.98]"
+                className="focus-ring inline-flex h-[54px] w-full items-center justify-center rounded-full glass-strong px-7 text-base font-medium text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-white/[0.08] active:scale-[0.98] sm:w-auto"
               >
                 Join the Facebook group
               </a>

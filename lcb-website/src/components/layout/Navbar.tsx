@@ -4,10 +4,17 @@ import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Linkedin, Facebook, Users, Instagram } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { navigation, siteConfig } from "@/content/site";
 import { Button } from "@/components/ui/Button";
+
+const mobileSocials = [
+  { label: "LinkedIn", href: siteConfig.socials.linkedin, Icon: Linkedin },
+  { label: "Facebook", href: siteConfig.socials.facebookPage, Icon: Facebook },
+  { label: "Group",    href: siteConfig.socials.facebookGroup, Icon: Users },
+  { label: "Instagram",href: siteConfig.socials.instagram, Icon: Instagram },
+];
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -198,6 +205,30 @@ export function Navbar() {
                 <Button href={siteConfig.socials.linkedin} external arrow size="lg">
                   Represent LCB on your campus
                 </Button>
+              </motion.li>
+
+              {/* Social links */}
+              <motion.li
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.62, duration: 0.5 }}
+                className="mt-8"
+              >
+                <div className="flex items-center gap-4">
+                  {mobileSocials.map(({ label, href, Icon }) => (
+                    <Link
+                      key={label}
+                      href={href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={label}
+                      onClick={() => setOpen(false)}
+                      className="flex h-11 w-11 items-center justify-center rounded-full border border-white/[0.10] bg-white/[0.04] text-white/50 transition-all duration-200 hover:border-brand-400/30 hover:text-white"
+                    >
+                      <Icon className="h-4 w-4" strokeWidth={1.75} />
+                    </Link>
+                  ))}
+                </div>
               </motion.li>
             </motion.ul>
           </motion.div>

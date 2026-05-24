@@ -36,13 +36,18 @@ export function Team() {
         />
 
         {/* ── Category nav ─────────────────────────────────────────────── */}
-        <FadeIn delay={0.15} className="mt-12 w-full overflow-x-auto scrollbar-none pb-1">
+        <FadeIn delay={0.15} className="relative mt-12 w-full">
+          {/* Fade masks — visible only when content overflows on mobile */}
+          <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-8 bg-gradient-to-r from-ink-100 to-transparent sm:hidden" />
+          <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-8 bg-gradient-to-l from-ink-100 to-transparent sm:hidden" />
+          <div className="overflow-x-auto scrollbar-none pb-1">
           <div className="flex justify-center min-w-max mx-auto px-4 sm:px-0">
             <TeamCategoryNav
               categories={teamCategories}
               activeId={activeCategoryId}
               onChange={setActiveCategoryId}
             />
+          </div>
           </div>
         </FadeIn>
 
@@ -68,7 +73,7 @@ export function Team() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-            className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
+            className="mt-10 grid grid-cols-1 gap-4 min-[400px]:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
           >
             {activeCategory.members.map((member, i) => (
               <motion.div

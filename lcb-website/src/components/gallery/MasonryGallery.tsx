@@ -67,6 +67,29 @@ export function MasonryGallery({
 
   return (
     <div>
+      {/* ── Category filter tabs ─────────────────────────────────────────── */}
+      {categories.length > 0 && (
+        <div className="mb-8 flex flex-wrap justify-center gap-2">
+          {allCategories.map((cat) => {
+            const isActive = activeCategory === cat.id;
+            return (
+              <button
+                key={cat.id}
+                onClick={() => changeCategory(cat.id)}
+                className={[
+                  "rounded-full px-4 py-2 text-sm font-medium transition-all duration-200",
+                  isActive
+                    ? "bg-brand-500 text-white shadow-glow"
+                    : "border border-white/[0.08] bg-white/[0.03] text-white/55 hover:border-white/[0.14] hover:text-white",
+                ].join(" ")}
+              >
+                {cat.label}
+              </button>
+            );
+          })}
+        </div>
+      )}
+
       {/* ── Masonry grid ────────────────────────────────────────────────── */}
       <AnimatePresence mode="wait">
         <motion.div

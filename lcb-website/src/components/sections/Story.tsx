@@ -264,15 +264,20 @@ export function Story() {
         </FadeIn>
 
         {/* Pull-quote — editorial moment */}
-        <FadeIn delay={0.1} className="mx-auto mt-24 max-w-3xl text-center lg:mt-32">
-          <span className="font-display text-6xl text-brand-400/60 serif-italic">&ldquo;</span>
-          <p className="mt-2 font-display text-display-sm font-medium text-gradient-editorial [text-wrap:balance]">
-            A movement, not a meetup. You can feel it in every session, every post,
-            every introduction.
-          </p>
-          <p className="mt-6 text-xs uppercase tracking-[0.22em] text-white/40">
-            — Tanvir Hasan · Campus Lead · AIUB
-          </p>
+        <FadeIn delay={0.1} className="mx-auto mt-24 max-w-3xl lg:mt-32">
+          {/* Mobile: left-border card. Desktop: centered editorial block */}
+          <div className="border-l-2 border-brand-400/40 pl-6 sm:border-0 sm:pl-0 sm:text-center">
+            <span className="hidden font-display text-6xl text-brand-400/60 serif-italic sm:inline">&ldquo;</span>
+            <p className="font-display text-display-sm font-medium text-gradient-editorial [text-wrap:balance]">
+              <span className="serif-italic text-brand-300 sm:hidden">&ldquo;</span>
+              A movement, not a meetup. You can feel it in every session, every post,
+              every introduction.
+              <span className="serif-italic text-brand-300 sm:hidden">&rdquo;</span>
+            </p>
+            <p className="mt-6 text-xs uppercase tracking-[0.22em] text-white/40">
+              — Tanvir Hasan · Campus Lead · AIUB
+            </p>
+          </div>
         </FadeIn>
       </Container>
     </Section>

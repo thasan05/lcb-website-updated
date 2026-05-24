@@ -85,7 +85,7 @@ export function Events() {
             {/* Toggle button */}
             <button
               onClick={() => setPastOpen((o) => !o)}
-              className="group flex w-full items-center justify-between rounded-2xl border border-white/[0.07] bg-white/[0.02] px-6 py-4 text-left transition-colors duration-200 hover:bg-white/[0.04] sm:px-8"
+              className="group flex w-full items-center justify-between rounded-2xl border border-white/[0.07] bg-white/[0.02] px-4 py-4 text-left transition-colors duration-200 hover:bg-white/[0.04] sm:px-8"
               aria-expanded={pastOpen}
             >
               <div className="flex items-center gap-4">
@@ -186,7 +186,7 @@ function EventCard({ event, featured }: { event: Event; featured: boolean }) {
         )}
       </div>
 
-      <div className="flex flex-1 flex-col p-7 sm:p-8">
+      <div className="flex flex-1 flex-col p-5 sm:p-8">
         <div className="flex flex-wrap items-center gap-x-5 gap-y-1 text-xs text-white/45">
           <span className="flex items-center gap-1.5">
             <Calendar className="h-3.5 w-3.5" strokeWidth={1.75} />
