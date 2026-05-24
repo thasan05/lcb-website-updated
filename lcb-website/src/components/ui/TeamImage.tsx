@@ -15,7 +15,7 @@ interface TeamImageProps {
   objectPosition?: string;
   priority?: boolean;
   sizes?: string;
-  /** Grayscale → color on hover. Default true for team aesthetic. */
+  /** Grayscale → color on hover. Default false — show full colour. */
   grayscale?: boolean;
   /** Additional classes on the <Image> element itself */
   imageClassName?: string;
@@ -35,7 +35,7 @@ export function TeamImage({
   objectPosition = "center 20%",
   priority = false,
   sizes = "280px",
-  grayscale = true,
+  grayscale = false,
   imageClassName,
   className,
 }: TeamImageProps) {
