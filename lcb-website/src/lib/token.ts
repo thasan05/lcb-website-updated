@@ -12,12 +12,6 @@ function toHex(buf: ArrayBuffer): string {
   return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
-function fromHexToUint8Array(hex: string): Uint8Array {
-  const arr = new Uint8Array(hex.length / 2);
-  for (let i = 0; i < arr.length; i++)
-    arr[i] = parseInt(hex.slice(i * 2, i * 2 + 2), 16);
-  return arr;
-}
 
 async function importKey(secret: string, usage: KeyUsage[]) {
   return crypto.subtle.importKey(
