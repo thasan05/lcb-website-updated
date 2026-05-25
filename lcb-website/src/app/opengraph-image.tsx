@@ -81,6 +81,8 @@ export default function OGImage() {
         <div style={{ display: "flex", flexDirection: "column", gap: 20, zIndex: 1 }}>
           <div
             style={{
+              display: "flex",
+              flexDirection: "column",
               fontSize: 72,
               fontWeight: 800,
               color: "#ffffff",
@@ -89,10 +91,11 @@ export default function OGImage() {
               maxWidth: 900,
             }}
           >
-            Where Bangladesh&apos;s
-            <br />
-            future leaders{" "}
-            <span style={{ color: "#4f9ceb" }}>connect.</span>
+            <span>Where Bangladesh&apos;s</span>
+            <span>
+              future leaders{" "}
+              <span style={{ color: "#4f9ceb" }}>connect.</span>
+            </span>
           </div>
 
           {/* Stats row */}
