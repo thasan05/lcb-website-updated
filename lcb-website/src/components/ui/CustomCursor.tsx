@@ -2,9 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { motion, useMotionValue, useSpring } from "framer-motion";
+import { usePathname } from "next/navigation";
 
 export function CustomCursor() {
-  const [visible, setVisible] = useState(false);
+  const pathname  = usePathname();
+  const isAdmin   = pathname?.startsWith("/admin") ?? false;
+
+  const [visible,  setVisible]  = useState(false);
   const [hovering, setHovering] = useState(false);
   const [clicking, setClicking] = useState(false);
 
@@ -15,7 +19,11 @@ export function CustomCursor() {
   const springY = useSpring(mouseY, { stiffness: 350, damping: 28 });
 
   useEffect(() => {
-    // Desktop only
+    // Disabled on admin pages and touch devices
+    if (isAdmin) {
+      document.documentElement.style.cursor = "";
+      return;
+    }
     if (typeof window === "undefined") return;
     if (window.matchMedia("(hover: none)").matches) return;
 
@@ -30,8 +38,8 @@ export function CustomCursor() {
       setHovering(el.closest("a, button, [role='button'], label, input, select, textarea") !== null);
     };
 
-    const onDown = () => setClicking(true);
-    const onUp   = () => setClicking(false);
+    const onDown  = () => setClicking(true);
+    const onUp    = () => setClicking(false);
     const onLeave = () => setVisible(false);
     const onEnter = () => setVisible(true);
 
@@ -42,7 +50,6 @@ export function CustomCursor() {
     document.addEventListener("mouseleave", onLeave);
     document.addEventListener("mouseenter", onEnter);
 
-    // Hide native cursor
     document.documentElement.style.cursor = "none";
 
     return () => {
@@ -54,9 +61,9 @@ export function CustomCursor() {
       document.removeEventListener("mouseenter", onEnter);
       document.documentElement.style.cursor = "";
     };
-  }, [mouseX, mouseY]);
+  }, [mouseX, mouseY, isAdmin]);
 
-  if (!visible) return null;
+  if (!visible || isAdmin) return null;
 
   return (
     <>

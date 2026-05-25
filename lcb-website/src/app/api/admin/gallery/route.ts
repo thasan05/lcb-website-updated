@@ -58,9 +58,13 @@ export async function PUT(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
-    const { id } = await request.json();
+    const body = await request.json();
+    // Accept { id: string } for single or { ids: string[] } for bulk
+    const ids: string[] = body.ids ?? (body.id ? [body.id] : []);
+    if (!ids.length) return NextResponse.json({ error: "No id(s) provided" }, { status: 400 });
     const manifest = await kvGet<Manifest>(KEY);
-    manifest.images = manifest.images.filter((img) => img.id !== id);
+    const toDelete = new Set(ids);
+    manifest.images = manifest.images.filter((img) => !toDelete.has(img.id));
     await kvSet(KEY, manifest);
     return NextResponse.json({ success: true });
   } catch {

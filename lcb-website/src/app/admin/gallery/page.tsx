@@ -46,6 +46,10 @@ export default function GalleryAdminPage() {
   const [deleting, setDeleting] = useState<string | null>(null);
   const [filterCat, setFilterCat] = useState<string>("all");
 
+  // Bulk select
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [bulkDeleting, setBulkDeleting] = useState(false);
+
   // Category editor
   const [showCatEditor, setShowCatEditor] = useState(false);
   const [newCatLabel, setNewCatLabel] = useState("");
@@ -218,6 +222,37 @@ export default function GalleryAdminPage() {
       body: JSON.stringify({ type: "categories", categories: updated }),
     });
     await load();
+  }
+
+  // ── Bulk select helpers ─────────────────────────────────────────────────────
+  function toggleSelect(id: string) {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  }
+
+  function selectAll(ids: string[]) {
+    setSelected(new Set(ids));
+  }
+
+  function clearSelection() {
+    setSelected(new Set());
+  }
+
+  async function handleBulkDelete() {
+    if (!selected.size) return;
+    if (!confirm(`Delete ${selected.size} photo${selected.size !== 1 ? "s" : ""}? This cannot be undone.`)) return;
+    setBulkDeleting(true);
+    await fetch("/api/admin/gallery", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ids: Array.from(selected) }),
+    });
+    clearSelection();
+    await load();
+    setBulkDeleting(false);
   }
 
   // ── Render ──────────────────────────────────────────────────────────────────
@@ -428,12 +463,12 @@ export default function GalleryAdminPage() {
         </div>
       )}
 
-      {/* ── Category filter tabs ── */}
-      <div className="flex flex-wrap gap-2">
+      {/* ── Category filter tabs + bulk toolbar ── */}
+      <div className="flex flex-wrap items-center gap-2">
         {allCats.map((cat) => (
           <button
             key={cat.id}
-            onClick={() => setFilterCat(cat.id)}
+            onClick={() => { setFilterCat(cat.id); clearSelection(); }}
             className={`rounded-full px-3 py-1 text-xs font-medium transition ${
               filterCat === cat.id
                 ? "bg-[#4F9CEB] text-white"
@@ -448,6 +483,37 @@ export default function GalleryAdminPage() {
             )}
           </button>
         ))}
+
+        {/* Bulk controls — appear once any are selected */}
+        <div className="ml-auto flex items-center gap-2">
+          {selected.size > 0 ? (
+            <>
+              <span className="text-xs text-white/40">{selected.size} selected</span>
+              <button
+                onClick={clearSelection}
+                className="rounded-full border border-white/[0.08] px-3 py-1 text-xs text-white/50 transition hover:text-white"
+              >
+                Deselect all
+              </button>
+              <button
+                onClick={handleBulkDelete}
+                disabled={bulkDeleting}
+                className="rounded-full border border-red-500/30 bg-red-500/10 px-3 py-1 text-xs text-red-400 transition hover:bg-red-500/20 disabled:opacity-40"
+              >
+                {bulkDeleting ? "Deleting…" : `Delete ${selected.size}`}
+              </button>
+            </>
+          ) : (
+            filtered.length > 0 && (
+              <button
+                onClick={() => selectAll(filtered.map((i) => i.id))}
+                className="rounded-full border border-white/[0.08] px-3 py-1 text-xs text-white/40 transition hover:text-white"
+              >
+                Select all
+              </button>
+            )
+          )}
+        </div>
       </div>
 
       {/* ── Photo grid ── */}
@@ -457,49 +523,73 @@ export default function GalleryAdminPage() {
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-          {filtered.map((img) => (
-            <div
-              key={img.id}
-              className="group relative overflow-hidden rounded-xl border border-white/[0.07] bg-white/[0.02]"
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={img.src}
-                alt={img.alt}
-                className="aspect-[4/3] w-full object-cover opacity-80 transition group-hover:opacity-100"
-              />
-              <span className="absolute left-2 top-2 rounded-full bg-black/60 px-2 py-0.5 text-[10px] text-white/70 backdrop-blur-sm">
-                {manifest.categories.find((c) => c.id === img.category)?.label ?? img.category}
-              </span>
+          {filtered.map((img) => {
+            const isSelected = selected.has(img.id);
+            return (
+              <div
+                key={img.id}
+                className={`group relative overflow-hidden rounded-xl border bg-white/[0.02] transition ${
+                  isSelected ? "border-[#4F9CEB]/60 ring-1 ring-[#4F9CEB]/30" : "border-white/[0.07]"
+                }`}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={img.src}
+                  alt={img.alt}
+                  className="aspect-[4/3] w-full object-cover opacity-80 transition group-hover:opacity-100"
+                />
+                <span className="absolute left-2 top-2 rounded-full bg-black/60 px-2 py-0.5 text-[10px] text-white/70 backdrop-blur-sm">
+                  {manifest.categories.find((c) => c.id === img.category)?.label ?? img.category}
+                </span>
 
-              {/* Hover actions */}
-              <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/60 opacity-0 transition group-hover:opacity-100">
+                {/* Checkbox — top right, always visible when selected, else on hover */}
                 <button
-                  onClick={() => openEdit(img)}
-                  className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/10 text-white backdrop-blur hover:bg-white/20"
+                  onClick={() => toggleSelect(img.id)}
+                  className={`absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded border transition ${
+                    isSelected
+                      ? "border-[#4F9CEB] bg-[#4F9CEB] opacity-100"
+                      : "border-white/40 bg-black/50 opacity-0 group-hover:opacity-100"
+                  }`}
+                  aria-label={isSelected ? "Deselect" : "Select"}
                 >
-                  <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                  </svg>
+                  {isSelected && (
+                    <svg className="h-3 w-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                  )}
                 </button>
-                <button
-                  onClick={() => handleDelete(img.id)}
-                  disabled={deleting === img.id}
-                  className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-500/20 text-red-300 backdrop-blur hover:bg-red-500/40 disabled:opacity-40"
-                >
-                  <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                  </svg>
-                </button>
+
+                {/* Hover actions (edit + single delete) — hidden when in bulk-select mode */}
+                {selected.size === 0 && (
+                  <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/60 opacity-0 transition group-hover:opacity-100">
+                    <button
+                      onClick={() => openEdit(img)}
+                      className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/10 text-white backdrop-blur hover:bg-white/20"
+                    >
+                      <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      </svg>
+                    </button>
+                    <button
+                      onClick={() => handleDelete(img.id)}
+                      disabled={deleting === img.id}
+                      className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-500/20 text-red-300 backdrop-blur hover:bg-red-500/40 disabled:opacity-40"
+                    >
+                      <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                  </div>
+                )}
+
+                {img.caption && (
+                  <div className="border-t border-white/[0.06] px-2.5 py-2">
+                    <p className="truncate text-[11px] text-white/40">{img.caption}</p>
+                  </div>
+                )}
               </div>
-
-              {img.caption && (
-                <div className="border-t border-white/[0.06] px-2.5 py-2">
-                  <p className="truncate text-[11px] text-white/40">{img.caption}</p>
-                </div>
-              )}
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
