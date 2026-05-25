@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { verifySessionToken } from "@/lib/token";
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Public admin routes — never block these
+  // ── Public admin routes — never block ──────────────────────────────────────
   if (
     pathname === "/admin/login" ||
     pathname.startsWith("/api/admin/auth")
@@ -12,13 +13,15 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // All other /admin/* routes require authentication
+  // ── Protected admin routes ─────────────────────────────────────────────────
   if (pathname.startsWith("/admin") || pathname.startsWith("/api/admin")) {
-    const token = request.cookies.get("lcb_admin_token")?.value;
-    const password = process.env.ADMIN_PASSWORD;
+    const token  = request.cookies.get("lcb_admin_session")?.value;
+    const secret = process.env.SESSION_SECRET;
 
-    if (!password || !token || token !== password) {
-      // API routes → 401 JSON; pages → redirect to login
+    const valid =
+      token && secret ? await verifySessionToken(token, secret) : false;
+
+    if (!valid) {
       if (pathname.startsWith("/api/")) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
       }
