@@ -115,7 +115,7 @@ export function Footer() {
         {/* Bottom bar */}
         <div className="mt-16 flex flex-col items-start justify-between gap-4 border-t border-white/[0.06] py-8 text-xs text-white/40 sm:flex-row sm:items-center">
           <p>
-            © {new Date().getFullYear()} {siteConfig.shortName}. A movement, not a meetup.
+            © {new Date().getFullYear()} {siteConfig.shortName}. All rights reserved.
           </p>
 
           <FooterLive />
