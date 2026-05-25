@@ -7,6 +7,7 @@ import { ScrollProgress } from "@/components/ui/ScrollProgress";
 import { CustomCursor } from "@/components/ui/CustomCursor";
 import { StickyJoinCTA } from "@/components/ui/StickyJoinCTA";
 import { ToastProvider } from "@/components/ui/Toast";
+import { ThemeScript } from "@/components/ui/ThemeToggle";
 
 const geistSans = Geist({
   subsets: ["latin"],
@@ -88,6 +89,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`${geistSans.variable} ${geistMono.variable} ${instrumentSerif.variable} ${jakartaSans.variable}`}
       suppressHydrationWarning
     >
+      {/* Inject theme before first paint to prevent flash */}
+      <head>
+        {/* eslint-disable-next-line @next/next/no-before-interactive-script-outside-document */}
+        <script dangerouslySetInnerHTML={{ __html: ThemeScript }} />
+      </head>
       <body className="font-sans antialiased">
         <ToastProvider>
           <ScrollProgress />

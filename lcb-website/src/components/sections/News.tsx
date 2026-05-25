@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Image from "next/image";
-import { ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowUpRight, ChevronLeft, ChevronRight, Search, X } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { Eyebrow } from "@/components/ui/Eyebrow";
@@ -10,27 +10,49 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { Stagger } from "@/components/motion/Stagger";
 import { FadeIn } from "@/components/motion/FadeIn";
-import { news as staticNews, type NewsItem } from "@/content/news";
+import { SafeHtml } from "@/components/ui/RichTextEditor";
+import { news as staticNews, type NewsItem, type NewsCategory } from "@/content/news";
 import { cn } from "@/lib/utils";
 
 /** Items visible per page: 1 featured large card + up to 3 secondary */
 const NEWS_PER_PAGE = 4;
+const CATEGORIES: NewsCategory[] = ["Announcement", "Event", "Milestone", "Partnership", "Spotlight"];
 
 export function News({ liveNews }: { liveNews?: NewsItem[] }) {
   const [page, setPage] = useState(1);
+  const [query, setQuery] = useState("");
+  const [catFilter, setCatFilter] = useState<NewsCategory | "All">("All");
 
   const source = (liveNews ?? staticNews).filter((n) => n.published !== false);
 
-  // Always sort newest first — no need to maintain order in news.ts
-  const sorted = [...source].sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-  );
+  // Search + category filter
+  const sorted = useMemo(() => {
+    const q = query.toLowerCase().trim();
+    const base = source.filter((n) => {
+      if (catFilter !== "All" && n.category !== catFilter) return false;
+      if (!q) return true;
+      return (
+        n.title.toLowerCase().includes(q) ||
+        n.summary.toLowerCase().includes(q)
+      );
+    });
+    return [...base].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  }, [source, query, catFilter]);
+
+  function changeFilter(cat: NewsCategory | "All") {
+    setCatFilter(cat);
+    setPage(1);
+  }
+  function changeQuery(q: string) {
+    setQuery(q);
+    setPage(1);
+  }
+
+  const hasFilters = query || catFilter !== "All";
+  const noResults  = sorted.length === 0 && hasFilters;
 
   const totalPages = Math.max(1, Math.ceil(sorted.length / NEWS_PER_PAGE));
-  const pageItems = sorted.slice(
-    (page - 1) * NEWS_PER_PAGE,
-    page * NEWS_PER_PAGE
-  );
+  const pageItems  = sorted.slice((page - 1) * NEWS_PER_PAGE, page * NEWS_PER_PAGE);
 
   // Page 1: honour the explicit  featured: true  flag.
   // Other pages: treat first item on that page as featured.
@@ -63,8 +85,55 @@ export function News({ liveNews }: { liveNews?: NewsItem[] }) {
           </FadeIn>
         </div>
 
+        {/* ── Search + Category filter ─────────────────────────────────────── */}
+        <FadeIn className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center">
+          <div className="relative flex-1">
+            <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-white/30" strokeWidth={1.75} />
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => changeQuery(e.target.value)}
+              placeholder="Search news…"
+              className="w-full rounded-full border border-white/[0.08] bg-white/[0.04] py-2 pl-10 pr-9 text-sm text-white placeholder-white/25 outline-none transition-all focus:border-brand-400/40 focus:bg-white/[0.06]"
+            />
+            {query && (
+              <button onClick={() => changeQuery("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-white" aria-label="Clear search">
+                <X className="h-3.5 w-3.5" />
+              </button>
+            )}
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            {(["All", ...CATEGORIES] as const).map((cat) => (
+              <button
+                key={cat}
+                onClick={() => changeFilter(cat as NewsCategory | "All")}
+                className={cn(
+                  "rounded-full px-3.5 py-1.5 text-xs font-medium transition-all duration-200",
+                  catFilter === cat
+                    ? "bg-brand-500 text-white shadow-glow"
+                    : "border border-white/[0.08] bg-white/[0.03] text-white/50 hover:border-white/[0.14] hover:text-white"
+                )}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        </FadeIn>
+
+        {/* ── No-results ──────────────────────────────────────────────────── */}
+        {noResults && (
+          <FadeIn>
+            <div className="mt-12 rounded-2xl border border-white/[0.06] bg-white/[0.02] py-14 text-center">
+              <p className="text-sm text-white/40">No news matches <span className="text-white/70">&ldquo;{query}&rdquo;</span>.</p>
+              <button onClick={() => { changeQuery(""); changeFilter("All"); }} className="mt-4 text-sm text-brand-300 hover:underline">
+                Clear filters
+              </button>
+            </div>
+          </FadeIn>
+        )}
+
         {/* ── News grid ───────────────────────────────────────────────────── */}
-        {featured && (
+        {!noResults && featured && (
           <div className="mt-16 grid grid-cols-1 gap-6 lg:grid-cols-12">
             {/* Featured — large card */}
             <FadeIn className="lg:col-span-7">
@@ -96,9 +165,10 @@ export function News({ liveNews }: { liveNews?: NewsItem[] }) {
                   <h3 className="mt-4 font-display text-3xl font-medium text-white sm:text-4xl [text-wrap:balance]">
                     {featured.title}
                   </h3>
-                  <p className="mt-4 max-w-xl text-[15px] leading-relaxed text-white/55">
-                    {featured.summary}
-                  </p>
+                  <SafeHtml
+                    html={featured.summary}
+                    className="mt-4 max-w-xl text-[15px] leading-relaxed text-white/55"
+                  />
                   {featured.social && (
                     <SocialLinks social={featured.social} size="md" />
                   )}
@@ -142,9 +212,7 @@ export function News({ liveNews }: { liveNews?: NewsItem[] }) {
                         <h4 className="mt-2 line-clamp-2 font-display text-base font-medium text-white sm:text-lg [text-wrap:balance]">
                           {item.title}
                         </h4>
-                        <p className="mt-1.5 line-clamp-2 text-sm text-white/55">
-                          {item.summary}
-                        </p>
+                        <SafeHtml html={item.summary} className="mt-1.5 line-clamp-2 text-sm text-white/55" />
                       </div>
                       <div className="mt-3 flex items-center justify-between gap-2">
                         <span className="inline-flex items-center gap-1.5 text-xs font-medium text-white/55 transition-colors group-hover:text-brand-300">
