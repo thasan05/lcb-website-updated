@@ -16,6 +16,10 @@ import type { TeamMember } from "@/data/team";
 import type { Event } from "@/content/events";
 import type { NewsItem } from "@/content/news";
 
+type GalleryCategory = { id: string; label: string };
+type GalleryImage    = { id: string; src: string; category: string; alt: string; caption?: string };
+type GalleryManifest = { version: number; categories: GalleryCategory[]; images: GalleryImage[] };
+
 export const dynamic = "force-dynamic";
 
 const TEAM_KEYS: Record<string, string> = {
@@ -39,11 +43,12 @@ async function getTeamData(): Promise<Record<string, TeamMember[]>> {
 }
 
 export default async function HomePage() {
-  const [appsConfig, teamData, liveEvents, liveNews] = await Promise.all([
+  const [appsConfig, teamData, liveEvents, liveNews, liveGallery] = await Promise.all([
     getApplicationsConfig(),
     getTeamData(),
     kvGet<Event[]>("data:events").catch(() => null),
     kvGet<NewsItem[]>("data:news").catch(() => null),
+    kvGet<GalleryManifest>("data:gallery-manifest").catch(() => null),
   ]);
 
   return (
@@ -55,7 +60,7 @@ export default async function HomePage() {
         <Stats />
         <Events liveEvents={liveEvents ?? undefined} />
         <Team liveMembers={teamData} />
-        <Gallery />
+        <Gallery liveManifest={liveGallery ?? undefined} />
         <News liveNews={liveNews ?? undefined} />
         <Testimonials />
         <CTA />

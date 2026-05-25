@@ -3,20 +3,19 @@ import { Section } from "@/components/ui/Section";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { MasonryGallery } from "@/components/gallery/MasonryGallery";
-import manifest from "@/data/gallery/manifest.json";
+import staticManifest from "@/data/gallery/manifest.json";
 
-/**
- * Gallery section — data-driven from /src/data/gallery/manifest.json
- *
- * To add photos locally:
- *   1. Drop images into /public/gallery/{category}/
- *   2. Run:  npm run gallery
- *   3. Commit the updated manifest.json
- *
- * To add remote/CDN images:
- *   Edit manifest.json directly — add an entry with a full https:// src URL.
- */
-export function Gallery() {
+type GalleryCategory = { id: string; label: string };
+type GalleryImage    = { id: string; src: string; category: string; alt: string; caption?: string };
+type Manifest        = { version: number; categories: GalleryCategory[]; images: GalleryImage[] };
+
+interface Props {
+  liveManifest?: Manifest;
+}
+
+export function Gallery({ liveManifest }: Props) {
+  const manifest = liveManifest ?? (staticManifest as Manifest);
+
   return (
     <Section id="gallery">
       <Container>
