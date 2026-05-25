@@ -10,17 +10,19 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { Stagger } from "@/components/motion/Stagger";
 import { FadeIn } from "@/components/motion/FadeIn";
-import { news, type NewsItem } from "@/content/news";
+import { news as staticNews, type NewsItem } from "@/content/news";
 import { cn } from "@/lib/utils";
 
 /** Items visible per page: 1 featured large card + up to 3 secondary */
 const NEWS_PER_PAGE = 4;
 
-export function News() {
+export function News({ liveNews }: { liveNews?: NewsItem[] }) {
   const [page, setPage] = useState(1);
 
+  const source = liveNews ?? staticNews;
+
   // Always sort newest first — no need to maintain order in news.ts
-  const sorted = [...news].sort(
+  const sorted = [...source].sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
   );
 

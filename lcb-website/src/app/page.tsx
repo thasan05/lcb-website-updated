@@ -13,6 +13,8 @@ import { CTA } from "@/components/sections/CTA";
 import { getApplicationsConfig } from "@/lib/admin";
 import { kvGet } from "@/lib/kv";
 import type { TeamMember } from "@/data/team";
+import type { Event } from "@/content/events";
+import type { NewsItem } from "@/content/news";
 
 export const dynamic = "force-dynamic";
 
@@ -37,9 +39,11 @@ async function getTeamData(): Promise<Record<string, TeamMember[]>> {
 }
 
 export default async function HomePage() {
-  const [appsConfig, teamData] = await Promise.all([
+  const [appsConfig, teamData, liveEvents, liveNews] = await Promise.all([
     getApplicationsConfig(),
     getTeamData(),
+    kvGet<Event[]>("data:events").catch(() => null),
+    kvGet<NewsItem[]>("data:news").catch(() => null),
   ]);
 
   return (
@@ -49,10 +53,10 @@ export default async function HomePage() {
         <Hero applicationsConfig={appsConfig} />
         <Story />
         <Stats />
-        <Events />
+        <Events liveEvents={liveEvents ?? undefined} />
         <Team liveMembers={teamData} />
         <Gallery />
-        <News />
+        <News liveNews={liveNews ?? undefined} />
         <Testimonials />
         <CTA />
       </main>

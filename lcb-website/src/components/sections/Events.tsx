@@ -10,21 +10,23 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { Stagger } from "@/components/motion/Stagger";
 import { FadeIn } from "@/components/motion/FadeIn";
-import { events, type Event } from "@/content/events";
+import { events as staticEvents, type Event } from "@/content/events";
 import { cn } from "@/lib/utils";
 
 const PAST_PER_PAGE = 4;
 
-export function Events() {
+export function Events({ liveEvents }: { liveEvents?: Event[] }) {
   const [pastPage, setPastPage] = useState(1);
   const [pastOpen, setPastOpen] = useState(false);
 
+  const source = liveEvents ?? staticEvents;
+
   // Split and sort — no need to maintain order in events.ts
-  const upcoming = [...events]
+  const upcoming = [...source]
     .filter((e) => e.status !== "past")
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
-  const past = [...events]
+  const past = [...source]
     .filter((e) => e.status === "past")
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
