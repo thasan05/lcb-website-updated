@@ -3,6 +3,9 @@ import { Geist, Geist_Mono, Instrument_Serif, Plus_Jakarta_Sans } from "next/fon
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { siteConfig } from "@/content/site";
+import { ScrollProgress } from "@/components/ui/ScrollProgress";
+import { CustomCursor } from "@/components/ui/CustomCursor";
+import { ToastProvider } from "@/components/ui/Toast";
 
 const geistSans = Geist({
   subsets: ["latin"],
@@ -85,7 +88,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       suppressHydrationWarning
     >
       <body className="font-sans antialiased">
-        {children}
+        <ToastProvider>
+          <ScrollProgress />
+          <CustomCursor />
+          {children}
+        </ToastProvider>
         <Analytics />
       </body>
     </html>

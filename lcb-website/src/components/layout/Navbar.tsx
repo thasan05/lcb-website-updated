@@ -8,6 +8,7 @@ import { Menu, X, Linkedin, Facebook, Users, Instagram } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { navigation, siteConfig } from "@/content/site";
 import { Button } from "@/components/ui/Button";
+import { SearchModal } from "@/components/ui/SearchModal";
 
 const mobileSocials = [
   { label: "LinkedIn", href: siteConfig.socials.linkedin, Icon: Linkedin },
@@ -119,6 +120,7 @@ export function Navbar() {
           </ul>
 
           <div className="flex items-center gap-2">
+            <SearchModal />
             <Button
               href={siteConfig.socials.linkedin}
               external
