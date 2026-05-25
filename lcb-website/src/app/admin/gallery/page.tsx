@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback, useRef, DragEvent } from "react";
+import { uploadToCloudinary } from "@/lib/cloudinary-upload";
 
 type GalleryCategory = { id: string; label: string };
 type GalleryImage = {
@@ -123,17 +124,13 @@ export default function GalleryAdminPage() {
       updateStaged(item.key, { status: "uploading" });
 
       try {
-        // 1. Upload file
-        const fd = new FormData();
-        fd.append("file", item.file);
-        const uploadRes = await fetch("/api/admin/upload", { method: "POST", body: fd });
-        const uploadData = await uploadRes.json();
-        if (!uploadData.url) throw new Error(uploadData.error ?? "Upload failed");
+        // 1. Upload directly to Cloudinary (bypasses Vercel 4.5 MB body limit)
+        const url = await uploadToCloudinary(item.file);
 
         // 2. Add to manifest
         const image: GalleryImage = {
           id: `img-${slugify(item.alt) || "photo"}-${Date.now()}`,
-          src: uploadData.url,
+          src: url,
           category: batchCategory,
           alt: item.alt || item.file.name,
           caption: item.caption || undefined,
@@ -144,7 +141,7 @@ export default function GalleryAdminPage() {
           body: JSON.stringify(image),
         });
 
-        updateStaged(item.key, { status: "done", uploadedSrc: uploadData.url });
+        updateStaged(item.key, { status: "done", uploadedSrc: url });
       } catch (err) {
         updateStaged(item.key, { status: "error", errorMsg: (err as Error).message });
       }

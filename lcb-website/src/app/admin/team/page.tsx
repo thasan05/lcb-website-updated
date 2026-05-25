@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { uploadToCloudinary } from "@/lib/cloudinary-upload";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 type Social = { linkedin?: string; facebook?: string; website?: string };
@@ -97,13 +98,9 @@ export default function TeamAdminPage() {
   async function handleUpload(file: File) {
     setUploading(true);
     try {
-      const fd = new FormData();
-      fd.append("file", file);
-      const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
-      const data = await res.json();
-      if (data.url) setForm((f) => ({ ...f, image: data.url }));
-      else setError("Upload failed: " + (data.error ?? "unknown"));
-    } catch { setError("Upload failed"); }
+      const url = await uploadToCloudinary(file);
+      setForm((f) => ({ ...f, image: url }));
+    } catch (err) { setError("Upload failed: " + (err as Error).message); }
     finally { setUploading(false); }
   }
 

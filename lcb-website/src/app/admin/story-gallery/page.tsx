@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { uploadToCloudinary } from "@/lib/cloudinary-upload";
 
 type GalleryItem = {
   id: string;
@@ -81,13 +82,9 @@ export default function StoryGalleryAdminPage() {
     const urls: string[] = [];
     for (const file of Array.from(files)) {
       try {
-        const fd = new FormData();
-        fd.append("file", file);
-        const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
-        const data = await res.json();
-        if (data.url) urls.push(data.url);
-        else setError("Upload failed: " + (data.error ?? "unknown"));
-      } catch { setError("Upload failed"); }
+        const url = await uploadToCloudinary(file);
+        urls.push(url);
+      } catch (err) { setError("Upload failed: " + (err as Error).message); }
     }
     if (urls.length) {
       const srcs = [...(form.srcs ?? []), ...urls];
