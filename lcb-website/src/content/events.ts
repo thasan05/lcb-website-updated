@@ -15,6 +15,8 @@ export type Event = {
   partner?: string;
   image: string;
   href?: string;
+  /** undefined / true = published; false = draft (hidden from public site) */
+  published?: boolean;
 };
 
 // ── HOW TO UPDATE EVENTS ──────────────────────────────────────────────────────

@@ -44,6 +44,8 @@ export async function PUT(request: NextRequest) {
     const manifest = await kvGet<Manifest>(KEY);
     if (body.type === "categories") {
       manifest.categories = body.categories;
+    } else if (body.type === "reorder") {
+      manifest.images = body.images;
     } else {
       manifest.images = manifest.images.map((img) =>
         img.id === body.id ? body : img

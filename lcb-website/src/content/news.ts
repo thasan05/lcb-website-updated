@@ -17,6 +17,8 @@ export type NewsItem = {
   image: string;
   href?: string;
   featured?: boolean;
+  /** undefined / true = published; false = draft (hidden from public site) */
+  published?: boolean;
   social?: {
     linkedin?: string;
     facebook?: string;

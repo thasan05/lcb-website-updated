@@ -19,7 +19,7 @@ export function Events({ liveEvents }: { liveEvents?: Event[] }) {
   const [pastPage, setPastPage] = useState(1);
   const [pastOpen, setPastOpen] = useState(false);
 
-  const source = liveEvents ?? staticEvents;
+  const source = (liveEvents ?? staticEvents).filter((e) => e.published !== false);
 
   // Split and sort — no need to maintain order in events.ts
   const upcoming = [...source]

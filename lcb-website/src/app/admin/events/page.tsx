@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import type { Event, EventStatus } from "@/content/events";
+import { uploadToCloudinary } from "@/lib/cloudinary-upload";
 
 const EMPTY_EVENT: Omit<Event, "id"> = {
   title: "",
@@ -15,6 +16,7 @@ const EMPTY_EVENT: Omit<Event, "id"> = {
   href: "",
   partner: "",
   speaker: undefined,
+  published: true,
 };
 
 function slugify(text: string) {
@@ -77,17 +79,10 @@ export default function EventsAdminPage() {
   async function handleImageUpload(file: File) {
     setUploading(true);
     try {
-      const fd = new FormData();
-      fd.append("file", file);
-      const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
-      const data = await res.json();
-      if (data.url) setForm((f) => ({ ...f, image: data.url }));
-      else setError("Upload failed: " + (data.error ?? "unknown error"));
-    } catch {
-      setError("Upload failed");
-    } finally {
-      setUploading(false);
-    }
+      const url = await uploadToCloudinary(file);
+      setForm((f) => ({ ...f, image: url }));
+    } catch (err) { setError("Upload failed: " + (err as Error).message); }
+    finally { setUploading(false); }
   }
 
   async function handleSave() {
@@ -308,6 +303,20 @@ export default function EventsAdminPage() {
                 />
               </Field>
 
+              {/* Publish toggle */}
+              <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-white/[0.07] bg-white/[0.03] px-4 py-3">
+                <input
+                  type="checkbox"
+                  checked={form.published !== false}
+                  onChange={(e) => setForm({ ...form, published: e.target.checked })}
+                  className="rounded border-white/20 bg-white/5 accent-[#4F9CEB]"
+                />
+                <div>
+                  <p className="text-sm text-white">Published</p>
+                  <p className="text-xs text-white/35">Uncheck to save as draft — hidden from public site.</p>
+                </div>
+              </label>
+
               {/* Image */}
               <Field label="Image *">
                 <ImageUploader
@@ -380,7 +389,12 @@ function EventList({
               />
 
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium text-white">{event.title}</p>
+                <div className="flex items-center gap-2">
+                  <p className="truncate text-sm font-medium text-white">{event.title}</p>
+                  {event.published === false && (
+                    <span className="shrink-0 rounded-full bg-amber-500/15 px-2 py-0.5 text-[10px] font-medium text-amber-400">Draft</span>
+                  )}
+                </div>
                 <p className="text-xs text-white/35">{event.dateLabel} · {event.format}</p>
               </div>
 

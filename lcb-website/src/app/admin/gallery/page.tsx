@@ -50,6 +50,12 @@ export default function GalleryAdminPage() {
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [bulkDeleting, setBulkDeleting] = useState(false);
 
+  // Drag-to-reorder
+  const [reorderedImages, setReorderedImages] = useState<GalleryImage[]>([]);
+  const [orderDirty, setOrderDirty] = useState(false);
+  const [savingOrder, setSavingOrder] = useState(false);
+  const [draggedId, setDraggedId] = useState<string | null>(null);
+
   // Category editor
   const [showCatEditor, setShowCatEditor] = useState(false);
   const [newCatLabel, setNewCatLabel] = useState("");
@@ -72,6 +78,8 @@ export default function GalleryAdminPage() {
     const res = await fetch("/api/admin/gallery");
     const data: Manifest = await res.json();
     setManifest(data);
+    setReorderedImages(data.images);
+    setOrderDirty(false);
     setBatchCategory(data.categories[0]?.id ?? "events");
     setLoading(false);
   }, []);
@@ -224,6 +232,40 @@ export default function GalleryAdminPage() {
     await load();
   }
 
+  // ── Drag-to-reorder helpers ─────────────────────────────────────────────────
+  function handleReorderDragStart(id: string) {
+    setDraggedId(id);
+  }
+
+  function handleReorderDragOver(e: DragEvent<HTMLDivElement>, targetId: string) {
+    e.preventDefault();
+    if (!draggedId || draggedId === targetId) return;
+    const from = reorderedImages.findIndex((i) => i.id === draggedId);
+    const to   = reorderedImages.findIndex((i) => i.id === targetId);
+    if (from === -1 || to === -1) return;
+    const arr = [...reorderedImages];
+    const [item] = arr.splice(from, 1);
+    arr.splice(to, 0, item);
+    setReorderedImages(arr);
+    setOrderDirty(true);
+  }
+
+  function handleReorderDragEnd() {
+    setDraggedId(null);
+  }
+
+  async function saveOrder() {
+    setSavingOrder(true);
+    await fetch("/api/admin/gallery", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ type: "reorder", images: reorderedImages }),
+    });
+    setOrderDirty(false);
+    await load();
+    setSavingOrder(false);
+  }
+
   // ── Bulk select helpers ─────────────────────────────────────────────────────
   function toggleSelect(id: string) {
     setSelected((prev) => {
@@ -265,10 +307,12 @@ export default function GalleryAdminPage() {
   }
 
   const allCats = [{ id: "all", label: "All" }, ...manifest.categories];
+  // Use reorderedImages (drag-aware) for display; fall back to manifest on initial load
+  const displayImages = reorderedImages.length ? reorderedImages : manifest.images;
   const filtered =
     filterCat === "all"
-      ? manifest.images
-      : manifest.images.filter((img) => img.category === filterCat);
+      ? displayImages
+      : displayImages.filter((img) => img.category === filterCat);
 
   const pendingCount = staged.filter((s) => s.status === "pending" || s.status === "error").length;
   const doneCount = staged.filter((s) => s.status === "done").length;
@@ -484,6 +528,17 @@ export default function GalleryAdminPage() {
           </button>
         ))}
 
+        {/* Save order button — appears when order changed */}
+        {orderDirty && selected.size === 0 && (
+          <button
+            onClick={saveOrder}
+            disabled={savingOrder}
+            className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs text-emerald-400 transition hover:bg-emerald-500/20 disabled:opacity-40"
+          >
+            {savingOrder ? "Saving…" : "Save order ↑"}
+          </button>
+        )}
+
         {/* Bulk controls — appear once any are selected */}
         <div className="ml-auto flex items-center gap-2">
           {selected.size > 0 ? (
@@ -528,8 +583,13 @@ export default function GalleryAdminPage() {
             return (
               <div
                 key={img.id}
-                className={`group relative overflow-hidden rounded-xl border bg-white/[0.02] transition ${
-                  isSelected ? "border-[#4F9CEB]/60 ring-1 ring-[#4F9CEB]/30" : "border-white/[0.07]"
+                draggable
+                onDragStart={() => handleReorderDragStart(img.id)}
+                onDragOver={(e) => handleReorderDragOver(e, img.id)}
+                onDragEnd={handleReorderDragEnd}
+                className={`group relative overflow-hidden rounded-xl border bg-white/[0.02] transition cursor-grab active:cursor-grabbing ${
+                  draggedId === img.id ? "opacity-40 scale-95" : ""
+                } ${isSelected ? "border-[#4F9CEB]/60 ring-1 ring-[#4F9CEB]/30" : "border-white/[0.07]"
                 }`}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}

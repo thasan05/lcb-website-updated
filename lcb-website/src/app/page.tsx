@@ -10,8 +10,10 @@ import { Gallery } from "@/components/sections/Gallery";
 import { News } from "@/components/sections/News";
 import { Testimonials } from "@/components/sections/Testimonials";
 import { CTA } from "@/components/sections/CTA";
+import { PageViewTracker } from "@/components/ui/PageViewTracker";
 import { getApplicationsConfig } from "@/lib/admin";
 import { kvGet } from "@/lib/kv";
+import { siteConfig } from "@/content/site";
 import type { TeamMember } from "@/data/team";
 import type { Event } from "@/content/events";
 import type { NewsItem } from "@/content/news";
@@ -51,8 +53,70 @@ export default async function HomePage() {
     kvGet<GalleryManifest>("data:gallery-manifest").catch(() => null),
   ]);
 
+  // JSON-LD structured data
+  const orgJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "LinkedIn Community Bangladesh",
+    alternateName: "LCB",
+    url: siteConfig.url,
+    logo: `${siteConfig.url}/logo.svg`,
+    description: siteConfig.description,
+    sameAs: [
+      siteConfig.socials.linkedin,
+      siteConfig.socials.facebookPage,
+      siteConfig.socials.instagram,
+    ],
+    contactPoint: {
+      "@type": "ContactPoint",
+      email: siteConfig.contact.email,
+      contactType: "customer support",
+      areaServed: "BD",
+      availableLanguage: ["English", "Bengali"],
+    },
+  };
+
+  const eventsJsonLd = (liveEvents ?? [])
+    .filter((e) => e.status === "upcoming")
+    .slice(0, 5)
+    .map((e) => ({
+      "@context": "https://schema.org",
+      "@type": "Event",
+      name: e.title,
+      startDate: e.date,
+      description: e.description,
+      location: {
+        "@type": "Place",
+        name: e.location,
+      },
+      eventStatus: "https://schema.org/EventScheduled",
+      eventAttendanceMode:
+        e.format === "Online"
+          ? "https://schema.org/OnlineEventAttendanceMode"
+          : e.format === "Hybrid"
+          ? "https://schema.org/MixedEventAttendanceMode"
+          : "https://schema.org/OfflineEventAttendanceMode",
+      organizer: {
+        "@type": "Organization",
+        name: "LinkedIn Community Bangladesh",
+        url: siteConfig.url,
+      },
+    }));
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
+      />
+      {eventsJsonLd.map((ev, i) => (
+        <script
+          key={i}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(ev) }}
+        />
+      ))}
+      <PageViewTracker />
       <Navbar />
       <main className="relative">
         <Hero applicationsConfig={appsConfig} />

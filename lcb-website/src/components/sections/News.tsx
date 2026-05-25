@@ -19,7 +19,7 @@ const NEWS_PER_PAGE = 4;
 export function News({ liveNews }: { liveNews?: NewsItem[] }) {
   const [page, setPage] = useState(1);
 
-  const source = liveNews ?? staticNews;
+  const source = (liveNews ?? staticNews).filter((n) => n.published !== false);
 
   // Always sort newest first — no need to maintain order in news.ts
   const sorted = [...source].sort(
