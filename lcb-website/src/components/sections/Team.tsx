@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, ChevronRight, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
@@ -12,7 +12,9 @@ import { FadeIn } from "@/components/motion/FadeIn";
 import { TeamCategoryNav } from "@/components/team/TeamCategoryNav";
 import { TeamCard } from "@/components/team/TeamCard";
 import { HallOfFameCard } from "@/components/team/HallOfFameCard";
-import { teamCategories, type TeamMember } from "@/data/team";
+import { teamCategories, type TeamMember, type TeamCategoryId } from "@/data/team";
+
+const INITIAL_VISIBLE = 4;
 
 type Props = {
   liveMembers?: Record<string, TeamMember[]>;
@@ -20,12 +22,25 @@ type Props = {
 
 export function Team({ liveMembers = {} }: Props) {
   const [activeCategoryId, setActiveCategoryId] = useState(teamCategories[0].id);
+  const [showAll, setShowAll] = useState(false);
+  const [showScrollHint, setShowScrollHint] = useState(true);
+
+  const handleCategoryChange = (id: TeamCategoryId) => {
+    setActiveCategoryId(id);
+    setShowAll(false);
+    setShowScrollHint(false);
+  };
 
   const staticCategory = teamCategories.find((c) => c.id === activeCategoryId)!;
   const activeCategory = {
     ...staticCategory,
     members: liveMembers[activeCategoryId] ?? staticCategory.members,
   };
+
+  const visibleMembers = showAll
+    ? activeCategory.members
+    : activeCategory.members.slice(0, INITIAL_VISIBLE);
+  const hiddenCount = Math.max(0, activeCategory.members.length - INITIAL_VISIBLE);
 
   return (
     <Section id="team">
@@ -46,17 +61,35 @@ export function Team({ liveMembers = {} }: Props) {
 
         {/* ── Category nav ─────────────────────────────────────────────── */}
         <FadeIn delay={0.15} className="relative mt-12 w-full">
-          {/* Fade masks — visible only when content overflows on mobile */}
+          {/* Fade masks */}
           <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-8 bg-gradient-to-r from-ink-100 to-transparent sm:hidden" />
-          <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-8 bg-gradient-to-l from-ink-100 to-transparent sm:hidden" />
+          <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-12 bg-gradient-to-l from-ink-100 to-transparent sm:hidden" />
+          {/* Bouncing swipe hint — mobile only, disappears after interaction */}
+          <AnimatePresence>
+            {showScrollHint && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0, transition: { duration: 0.2 } }}
+                className="pointer-events-none absolute inset-y-0 right-0 z-20 flex items-center pr-1 sm:hidden"
+              >
+                <motion.div
+                  animate={{ x: [0, 5, 0] }}
+                  transition={{ duration: 1.2, repeat: Infinity, ease: "easeInOut" }}
+                >
+                  <ChevronRight className="h-4 w-4 text-brand-400/80" />
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
           <div className="overflow-x-auto scrollbar-none pb-1">
-          <div className="flex justify-center min-w-max mx-auto px-4 sm:px-0">
-            <TeamCategoryNav
-              categories={teamCategories}
-              activeId={activeCategoryId}
-              onChange={setActiveCategoryId}
-            />
-          </div>
+            <div className="flex justify-center min-w-max mx-auto px-4 sm:px-0">
+              <TeamCategoryNav
+                categories={teamCategories}
+                activeId={activeCategoryId}
+                onChange={handleCategoryChange}
+              />
+            </div>
           </div>
         </FadeIn>
 
@@ -77,7 +110,6 @@ export function Team({ liveMembers = {} }: Props) {
         {/* ── Member grid ──────────────────────────────────────────────── */}
         <AnimatePresence mode="wait">
           {activeCategoryId === "star-awards" ? (
-            /* Hall of Fame — premium portrait grid */
             <motion.div
               key="star-awards"
               initial={{ opacity: 0, y: 20 }}
@@ -86,7 +118,7 @@ export function Team({ liveMembers = {} }: Props) {
               transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
               className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
             >
-              {activeCategory.members.map((member, i) => (
+              {visibleMembers.map((member, i) => (
                 <HallOfFameCard key={member.id} member={member} index={i} />
               ))}
             </motion.div>
@@ -99,7 +131,7 @@ export function Team({ liveMembers = {} }: Props) {
               transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
               className="mt-10 grid grid-cols-1 gap-4 min-[400px]:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
             >
-              {activeCategory.members.map((member, i) => (
+              {visibleMembers.map((member, i) => (
                 <motion.div
                   key={member.id}
                   initial={{ opacity: 0, y: 16 }}
@@ -116,6 +148,35 @@ export function Team({ liveMembers = {} }: Props) {
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* ── View more / collapse ─────────────────────────────────────── */}
+        {hiddenCount > 0 && !showAll && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="mt-6 flex justify-center"
+          >
+            <button
+              type="button"
+              onClick={() => setShowAll(true)}
+              className="group inline-flex items-center gap-2 rounded-full border border-white/[0.12] bg-white/[0.04] px-6 py-2.5 text-sm font-medium text-white/60 backdrop-blur transition-all duration-200 hover:border-brand-400/40 hover:bg-brand-500/10 hover:text-white"
+            >
+              <ChevronDown className="h-4 w-4 transition-transform duration-300 group-hover:translate-y-0.5" strokeWidth={2} />
+              View {hiddenCount} more
+            </button>
+          </motion.div>
+        )}
+        {showAll && activeCategory.members.length > INITIAL_VISIBLE && (
+          <div className="mt-6 flex justify-center">
+            <button
+              type="button"
+              onClick={() => setShowAll(false)}
+              className="inline-flex items-center gap-2 rounded-full border border-white/[0.08] px-6 py-2.5 text-sm text-white/35 transition-colors hover:text-white/60"
+            >
+              Show less
+            </button>
+          </div>
+        )}
 
         {/* ── Campus leads CTA (only on campus-leads tab) ──────────────── */}
         {activeCategoryId === "campus-leads" && (
