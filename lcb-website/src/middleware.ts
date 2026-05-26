@@ -2,8 +2,22 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { verifySessionToken } from "@/lib/token";
 
+const FORUM_HOST = "forum.linkedincommunitybangladesh.com";
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const host = request.headers.get("host") ?? "";
+
+  // ── Forum subdomain → serve /forum page ───────────────────────────────────
+  if (host === FORUM_HOST) {
+    // Only rewrite the root; let /forum itself and assets pass through
+    if (pathname === "/" || pathname === "") {
+      const url = request.nextUrl.clone();
+      url.pathname = "/forum";
+      return NextResponse.rewrite(url);
+    }
+    return NextResponse.next();
+  }
 
   // ── Public admin routes — never block ──────────────────────────────────────
   if (
@@ -33,5 +47,6 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/api/admin/:path*"],
+  // Run on all paths so the forum subdomain check fires at root too
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|logo.svg).*)"],
 };
