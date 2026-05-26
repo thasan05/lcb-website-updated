@@ -103,7 +103,8 @@ export function Footer() {
             </div>
 
             {/* JIVON initiative links */}
-            <div className="mt-5 flex items-center gap-3">
+            <div className="mt-5 flex flex-col gap-1.5">
+              <div className="flex items-center gap-3">
               {/* JIVON badge */}
               <div className="relative flex items-center gap-1.5 rounded-full border border-cyan-400/25 bg-cyan-400/[0.07] px-3 py-1.5">
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-cyan-400 shadow-[0_0_6px_rgba(34,211,238,0.8)]" />
@@ -125,7 +126,11 @@ export function Footer() {
                   <s.icon className="h-4 w-4" strokeWidth={1.75} />
                 </Link>
               ))}
-            </div>
+              </div>
+            <p className="text-[10px] font-medium uppercase tracking-[0.20em]"
+               style={{ color: "#c9a227" }}>
+              An initiative of LCB
+            </p>
           </div>
 
           {/* Middle: nav */}
