@@ -55,8 +55,7 @@ export const navigation = [
   { label: "Team",     href: "#team"    },
   { label: "Gallery",  href: "#gallery" },
   { label: "Newsroom", href: "#news"    },
-  // Change href to "https://forums.linkedincommunitybangladesh.com" once subdomain is live
-  { label: "Forum",    href: "#forum"   },
+  { label: "Forum",    href: "https://forum.linkedincommunitybangladesh.com" },
 ] as const;
 
 export type SiteConfig = typeof siteConfig;

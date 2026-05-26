@@ -115,17 +115,20 @@ export function Footer() {
             </h3>
 
             <ul className="space-y-3">
-              {navigation.map((item) => (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    className="group inline-flex items-center gap-2 text-[15px] text-white/70 transition-colors hover:text-white"
-                  >
-                    <span className="h-px w-3 bg-white/30 transition-all duration-300 group-hover:w-6 group-hover:bg-brand-400" />
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
+              {navigation.map((item) => {
+                const isExternal = item.href.startsWith("http");
+                const cls = "group inline-flex items-center gap-2 text-[15px] text-white/70 transition-colors hover:text-white";
+                const inner = <><span className="h-px w-3 bg-white/30 transition-all duration-300 group-hover:w-6 group-hover:bg-brand-400" />{item.label}</>;
+                return (
+                  <li key={item.href}>
+                    {isExternal ? (
+                      <a href={item.href} target="_blank" rel="noopener noreferrer" className={cls}>{inner}</a>
+                    ) : (
+                      <Link href={item.href} className={cls}>{inner}</Link>
+                    )}
+                  </li>
+                );
+              })}
             </ul>
           </div>
 

@@ -32,7 +32,9 @@ export function Navbar() {
 
   // Active-section indicator via IntersectionObserver
   useEffect(() => {
-    const ids = navigation.map((n) => n.href.replace("#", ""));
+    const ids = navigation
+      .filter((n) => n.href.startsWith("#"))
+      .map((n) => n.href.replace("#", ""));
     const elements = ids
       .map((id) => document.getElementById(id))
       .filter((el): el is HTMLElement => el !== null);
@@ -93,27 +95,37 @@ export function Navbar() {
 
           <ul className="hidden items-center gap-0.5 md:flex">
             {navigation.map((item) => {
-              const isActive = active === item.href;
+              const isExternal = item.href.startsWith("http");
+              const isActive = !isExternal && active === item.href;
+              const linkCls = cn(
+                "relative rounded-full px-3.5 py-1.5 text-sm transition-colors duration-300 focus-ring",
+                isActive
+                  ? "text-white"
+                  : "text-white/65 hover:bg-white/[0.05] hover:text-white"
+              );
               return (
                 <li key={item.href} className="relative">
-                  <Link
-                    href={item.href}
-                    className={cn(
-                      "relative rounded-full px-3.5 py-1.5 text-sm transition-colors duration-300 focus-ring",
-                      isActive
-                        ? "text-white"
-                        : "text-white/65 hover:bg-white/[0.05] hover:text-white"
-                    )}
-                  >
-                    {isActive && (
-                      <motion.span
-                        layoutId="nav-active"
-                        className="absolute inset-0 -z-10 rounded-full bg-white/[0.07]"
-                        transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                      />
-                    )}
-                    {item.label}
-                  </Link>
+                  {isExternal ? (
+                    <a
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={linkCls}
+                    >
+                      {item.label}
+                    </a>
+                  ) : (
+                    <Link href={item.href} className={linkCls}>
+                      {isActive && (
+                        <motion.span
+                          layoutId="nav-active"
+                          className="absolute inset-0 -z-10 rounded-full bg-white/[0.07]"
+                          transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                        />
+                      )}
+                      {item.label}
+                    </Link>
+                  )}
                 </li>
               );
             })}
@@ -182,22 +194,37 @@ export function Navbar() {
               transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
               className="flex h-full flex-col items-center justify-center gap-6 px-8"
             >
-              {navigation.map((item, i) => (
-                <motion.li
-                  key={item.href}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1 + i * 0.07, duration: 0.6 }}
-                >
-                  <Link
-                    href={item.href}
-                    onClick={() => setOpen(false)}
-                    className="font-display text-4xl font-medium text-gradient-editorial hover:text-white"
+              {navigation.map((item, i) => {
+                const isExternal = item.href.startsWith("http");
+                return (
+                  <motion.li
+                    key={item.href}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 + i * 0.07, duration: 0.6 }}
                   >
-                    {item.label}
-                  </Link>
-                </motion.li>
-              ))}
+                    {isExternal ? (
+                      <a
+                        href={item.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={() => setOpen(false)}
+                        className="font-display text-4xl font-medium text-gradient-editorial hover:text-white"
+                      >
+                        {item.label}
+                      </a>
+                    ) : (
+                      <Link
+                        href={item.href}
+                        onClick={() => setOpen(false)}
+                        className="font-display text-4xl font-medium text-gradient-editorial hover:text-white"
+                      >
+                        {item.label}
+                      </Link>
+                    )}
+                  </motion.li>
+                );
+              })}
               <motion.li
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
