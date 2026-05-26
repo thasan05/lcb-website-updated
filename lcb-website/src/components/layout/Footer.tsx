@@ -132,6 +132,7 @@ export function Footer() {
               An initiative of LCB
             </p>
           </div>
+          </div>
 
           {/* Middle: nav */}
           <div className="md:col-span-3">
