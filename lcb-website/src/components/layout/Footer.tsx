@@ -6,12 +6,15 @@ import { FooterWordmark } from "./FooterWordmark";
 import { FooterLive } from "./FooterLive";
 
 const socialLinks = [
-  { label: "LinkedIn",       href: siteConfig.socials.linkedin,         icon: Linkedin },
-  { label: "Facebook Page",  href: siteConfig.socials.facebookPage,     icon: Facebook },
-  { label: "Facebook Group", href: siteConfig.socials.facebookGroup,    icon: Users    },
-  { label: "Instagram",      href: siteConfig.socials.instagram,        icon: Instagram },
+  { label: "LinkedIn",      href: siteConfig.socials.linkedin,      icon: Linkedin  },
+  { label: "Facebook Page", href: siteConfig.socials.facebookPage,  icon: Facebook  },
+  { label: "LCB Group",     href: siteConfig.socials.facebookGroup, icon: Users     },
+  { label: "Instagram",     href: siteConfig.socials.instagram,     icon: Instagram },
+];
+
+const groupLinks = [
   { label: "LinkedIn Group", href: siteConfig.socials.linkedinGroup,    icon: Linkedin },
-  { label: "Facebook Group (Official)", href: siteConfig.socials.facebookGroupAlt, icon: Users },
+  { label: "Facebook Group", href: siteConfig.socials.facebookGroupAlt, icon: Facebook },
 ];
 
 const jivonLinks = [
@@ -59,8 +62,9 @@ export function Footer() {
               professional growth movement — one connection at a time.
             </p>
 
-            {/* Main social icons */}
-            <div className="mt-8 flex flex-wrap gap-3">
+            {/* Main social icons + LCB official groups */}
+            <div className="mt-8 flex flex-wrap items-end gap-3">
+              {/* Core 4 */}
               {socialLinks.map((s) => (
                 <Link
                   key={s.label}
@@ -73,6 +77,28 @@ export function Footer() {
                 >
                   <s.icon className="h-4 w-4" strokeWidth={1.75} />
                 </Link>
+              ))}
+
+              {/* Divider */}
+              <span className="h-6 w-px bg-white/[0.10]" aria-hidden />
+
+              {/* LCB Official Groups — amber tinted to distinguish from core socials */}
+              {groupLinks.map((s) => (
+                <div key={s.label} className="flex flex-col items-center gap-1">
+                  <Link
+                    href={s.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={s.label}
+                    title={s.label}
+                    className="flex h-11 w-11 items-center justify-center rounded-full border border-amber-400/25 bg-amber-400/[0.07] text-amber-300/80 transition-all duration-300 hover:-translate-y-0.5 hover:border-amber-400/45 hover:bg-amber-400/[0.14] hover:text-amber-200 hover:shadow-[0_0_18px_rgba(251,191,36,0.18)]"
+                  >
+                    <s.icon className="h-4 w-4" strokeWidth={1.75} />
+                  </Link>
+                  <span className="text-[8px] font-bold uppercase tracking-[0.18em] text-amber-400/60">
+                    Group
+                  </span>
+                </div>
               ))}
             </div>
 
