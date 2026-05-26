@@ -3,6 +3,7 @@ import { kvGet } from "@/lib/kv";
 import { getApplicationsConfig } from "@/lib/admin";
 import type { NewsItem } from "@/content/news";
 import type { Event } from "@/content/events";
+import type { Article } from "@/content/articles";
 
 export const dynamic = "force-dynamic";
 
@@ -22,12 +23,13 @@ async function getAnalytics(): Promise<{ date: string; label: string; views: num
 }
 
 export default async function AdminDashboardPage() {
-  const [news, events, apps, gallery, analytics] = await Promise.all([
+  const [news, events, apps, gallery, analytics, articles] = await Promise.all([
     kvGet<NewsItem[]>("data:news"),
     kvGet<Event[]>("data:events"),
     getApplicationsConfig(),
     kvGet<{ images: unknown[] }>("data:gallery-manifest"),
     getAnalytics(),
+    kvGet<Article[]>("data:articles").catch(() => [] as Article[]),
   ]);
 
   const upcomingCount = events.filter((e) => e.status === "upcoming").length;
@@ -38,17 +40,19 @@ export default async function AdminDashboardPage() {
   const todayViews = analytics[analytics.length - 1]?.views ?? 0;
   const maxViews   = Math.max(...analytics.map((d) => d.views), 1);
 
+  const liveArticles = (articles ?? []) as Article[];
+
   const statsCards = [
-    { label: "News Items",        value: news.length,           href: "/admin/newsroom" },
+    { label: "News Items",        value: news.length,            href: "/admin/newsroom" },
     { label: "Upcoming Events",   value: upcomingCount,          href: "/admin/events" },
-    { label: "Gallery Photos",    value: gallery.images.length,  href: "/admin/gallery" },
+    { label: "Forum Articles",    value: liveArticles.length,    href: "/admin/articles" },
     { label: "Applications Open", value: `${appsOpen}/2`,        href: "/admin/applications" },
   ];
 
   const quickActions = [
     { href: "/admin/newsroom",     label: "Add News Item",       icon: "📰" },
     { href: "/admin/events",       label: "Add Event",           icon: "📅" },
-    { href: "/admin/gallery",      label: "Add Photos",          icon: "🖼️" },
+    { href: "/admin/articles",     label: "Add Forum Article",   icon: "✍️" },
     { href: "/admin/applications", label: "Toggle Applications", icon: "📋" },
   ];
 

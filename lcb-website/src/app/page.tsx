@@ -8,6 +8,7 @@ import { Events } from "@/components/sections/Events";
 import { Team } from "@/components/sections/Team";
 import { Gallery } from "@/components/sections/Gallery";
 import { News } from "@/components/sections/News";
+import { Forum } from "@/components/sections/Forum";
 import { Testimonials } from "@/components/sections/Testimonials";
 import { CTA } from "@/components/sections/CTA";
 import { PageViewTracker } from "@/components/ui/PageViewTracker";
@@ -17,6 +18,7 @@ import { siteConfig } from "@/content/site";
 import type { TeamMember } from "@/data/team";
 import type { Event } from "@/content/events";
 import type { NewsItem } from "@/content/news";
+import type { Article } from "@/content/articles";
 
 type GalleryCategory = { id: string; label: string };
 type GalleryImage    = { id: string; src: string; category: string; alt: string; caption?: string };
@@ -45,12 +47,13 @@ async function getTeamData(): Promise<Record<string, TeamMember[]>> {
 }
 
 export default async function HomePage() {
-  const [appsConfig, teamData, liveEvents, liveNews, liveGallery] = await Promise.all([
+  const [appsConfig, teamData, liveEvents, liveNews, liveGallery, liveArticles] = await Promise.all([
     getApplicationsConfig(),
     getTeamData(),
     kvGet<Event[]>("data:events").catch(() => null),
     kvGet<NewsItem[]>("data:news").catch(() => null),
     kvGet<GalleryManifest>("data:gallery-manifest").catch(() => null),
+    kvGet<Article[]>("data:articles").catch(() => null),
   ]);
 
   // JSON-LD structured data
@@ -126,6 +129,7 @@ export default async function HomePage() {
         <Team liveMembers={teamData} />
         <Gallery liveManifest={liveGallery ?? undefined} />
         <News liveNews={liveNews ?? undefined} />
+        <Forum articles={liveArticles ?? []} />
         <Testimonials />
         <CTA />
       </main>
