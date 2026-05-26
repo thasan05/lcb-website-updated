@@ -56,6 +56,17 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   reactStrictMode: true,
 
+  async rewrites() {
+    return [
+      // Serve the /forum page at the root of the forum subdomain
+      {
+        source: "/",
+        destination: "/forum",
+        has: [{ type: "host", value: "forum.linkedincommunitybangladesh.com" }],
+      },
+    ];
+  },
+
   async headers() {
     return [
       {
