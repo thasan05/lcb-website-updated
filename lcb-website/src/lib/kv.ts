@@ -9,6 +9,7 @@ import path from "path";
 
 // File-system fallback mapping: KV key → relative path from cwd
 const FILE_MAP: Record<string, string> = {
+  "data:articles":         "src/content/data/articles.json",
   "data:news":             "src/content/data/news.json",
   "data:events":           "src/content/data/events.json",
   "data:applications":     "src/content/data/applications.json",
