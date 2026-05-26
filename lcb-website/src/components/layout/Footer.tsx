@@ -6,10 +6,17 @@ import { FooterWordmark } from "./FooterWordmark";
 import { FooterLive } from "./FooterLive";
 
 const socialLinks = [
-  { label: "LinkedIn", href: siteConfig.socials.linkedin, icon: Linkedin },
-  { label: "Facebook Page", href: siteConfig.socials.facebookPage, icon: Facebook },
-  { label: "Facebook Group", href: siteConfig.socials.facebookGroup, icon: Users },
-  { label: "Instagram", href: siteConfig.socials.instagram, icon: Instagram },
+  { label: "LinkedIn",       href: siteConfig.socials.linkedin,         icon: Linkedin },
+  { label: "Facebook Page",  href: siteConfig.socials.facebookPage,     icon: Facebook },
+  { label: "Facebook Group", href: siteConfig.socials.facebookGroup,    icon: Users    },
+  { label: "Instagram",      href: siteConfig.socials.instagram,        icon: Instagram },
+  { label: "LinkedIn Group", href: siteConfig.socials.linkedinGroup,    icon: Linkedin },
+  { label: "Facebook Group (Official)", href: siteConfig.socials.facebookGroupAlt, icon: Users },
+];
+
+const jivonLinks = [
+  { label: "JIVON on LinkedIn", href: siteConfig.socials.jivonLinkedin, icon: Linkedin },
+  { label: "JIVON on Facebook", href: siteConfig.socials.jivonFacebook, icon: Facebook },
 ];
 
 export function Footer() {
@@ -52,7 +59,8 @@ export function Footer() {
               professional growth movement — one connection at a time.
             </p>
 
-            <div className="mt-8 flex gap-3">
+            {/* Main social icons */}
+            <div className="mt-8 flex flex-wrap gap-3">
               {socialLinks.map((s) => (
                 <Link
                   key={s.label}
@@ -60,7 +68,33 @@ export function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={s.label}
+                  title={s.label}
                   className="flex h-11 w-11 items-center justify-center rounded-full glass text-white/70 transition-all duration-300 hover:-translate-y-0.5 hover:border-brand-400/30 hover:text-white hover:shadow-glow"
+                >
+                  <s.icon className="h-4 w-4" strokeWidth={1.75} />
+                </Link>
+              ))}
+            </div>
+
+            {/* JIVON initiative links */}
+            <div className="mt-5 flex items-center gap-3">
+              {/* JIVON badge */}
+              <div className="relative flex items-center gap-1.5 rounded-full border border-cyan-400/25 bg-cyan-400/[0.07] px-3 py-1.5">
+                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-cyan-400 shadow-[0_0_6px_rgba(34,211,238,0.8)]" />
+                <span className="font-display text-[10px] font-bold uppercase tracking-[0.22em] text-cyan-300">
+                  JIVON
+                </span>
+              </div>
+
+              {jivonLinks.map((s) => (
+                <Link
+                  key={s.label}
+                  href={s.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={s.label}
+                  title={s.label}
+                  className="relative flex h-11 w-11 items-center justify-center rounded-full border border-cyan-400/20 bg-cyan-400/[0.06] text-cyan-300/80 transition-all duration-300 hover:-translate-y-0.5 hover:border-cyan-400/40 hover:bg-cyan-400/[0.12] hover:text-cyan-200 hover:shadow-[0_0_20px_rgba(34,211,238,0.20)]"
                 >
                   <s.icon className="h-4 w-4" strokeWidth={1.75} />
                 </Link>

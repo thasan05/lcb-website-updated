@@ -9,10 +9,16 @@ export const siteConfig = {
 
   // Public-facing socials (from user-provided links)
   socials: {
-    facebookGroup: "https://www.facebook.com/groups/564603970411433",
-    facebookPage: "https://www.facebook.com/LCB.Linkedin",
-    linkedin: "https://www.linkedin.com/company/linkedin-community-bangladesh-lcb",
-    instagram: "https://www.instagram.com/linkedincommunitybangladesh",
+    facebookGroup:    "https://www.facebook.com/groups/564603970411433",
+    facebookPage:     "https://www.facebook.com/LCB.Linkedin",
+    linkedin:         "https://www.linkedin.com/company/linkedin-community-bangladesh-lcb",
+    instagram:        "https://www.instagram.com/linkedincommunitybangladesh",
+    // LCB Official Groups
+    linkedinGroup:    "https://www.linkedin.com/groups/14042318",
+    facebookGroupAlt: "https://www.facebook.com/share/g/17ZZUjsGrX/",
+    // JIVON — Jobs, Internships, Vacancies, Opportunities & Networking
+    jivonLinkedin:    "https://www.linkedin.com/groups/10364216",
+    jivonFacebook:    "https://www.facebook.com/share/g/1GNDFT124Q/",
   },
 
   contact: {
