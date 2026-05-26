@@ -5,7 +5,6 @@ import "./globals.css";
 import { siteConfig } from "@/content/site";
 import { ScrollProgress } from "@/components/ui/ScrollProgress";
 import { CustomCursor } from "@/components/ui/CustomCursor";
-import { StickyJoinCTA } from "@/components/ui/StickyJoinCTA";
 import { ToastProvider } from "@/components/ui/Toast";
 
 const geistSans = Geist({
@@ -92,8 +91,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ToastProvider>
           <ScrollProgress />
           <CustomCursor />
-          <StickyJoinCTA />
-          {children}
+{children}
         </ToastProvider>
         <Analytics />
       </body>
