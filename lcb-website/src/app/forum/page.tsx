@@ -4,6 +4,8 @@ import { kvGet } from "@/lib/kv";
 import { siteConfig } from "@/content/site";
 import type { Article } from "@/content/articles";
 import { Forum } from "@/components/sections/Forum";
+import { FooterLive } from "@/components/layout/FooterLive";
+import { BackToTop } from "@/components/ui/BackToTop";
 
 export const dynamic = "force-dynamic";
 
@@ -106,14 +108,14 @@ export default async function ForumPage() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-white/[0.06] py-8">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-4 text-xs text-white/30 sm:flex-row sm:px-6 lg:px-8">
+      <footer className="border-t border-white/[0.06]">
+        <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-4 px-4 py-8 text-xs text-white/40 sm:flex-row sm:items-center sm:px-6 lg:px-8">
           <p>© {new Date().getFullYear()} {siteConfig.shortName}. All rights reserved.</p>
-          <Link href="/" className="transition hover:text-white/60">
-            {siteConfig.url.replace("https://", "")}
-          </Link>
+          <FooterLive />
         </div>
       </footer>
+
+      <BackToTop />
     </div>
   );
 }
