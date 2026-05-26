@@ -23,7 +23,7 @@ async function getAnalytics(): Promise<{ date: string; label: string; views: num
 }
 
 export default async function AdminDashboardPage() {
-  const [news, events, apps, gallery, analytics, articles] = await Promise.all([
+  const [news, events, apps, , analytics, articles] = await Promise.all([
     kvGet<NewsItem[]>("data:news"),
     kvGet<Event[]>("data:events"),
     getApplicationsConfig(),
