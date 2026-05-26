@@ -9,7 +9,6 @@ import { cn } from "@/lib/utils";
 import { navigation, siteConfig } from "@/content/site";
 import { Button } from "@/components/ui/Button";
 import { SearchModal } from "@/components/ui/SearchModal";
-import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 const mobileSocials = [
   { label: "LinkedIn", href: siteConfig.socials.linkedin, Icon: Linkedin },
@@ -122,7 +121,6 @@ export function Navbar() {
 
           <div className="flex items-center gap-2">
             <SearchModal />
-            <ThemeToggle />
             <Button
               href={siteConfig.socials.linkedin}
               external
