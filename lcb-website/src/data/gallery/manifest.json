@@ -1,26 +1,236 @@
 {
   "version": 1,
   "categories": [
-    {
-      "id": "events",
-      "label": "Events"
-    },
-    {
-      "id": "sessions",
-      "label": "Sessions"
-    },
-    {
-      "id": "community",
-      "label": "Community"
-    },
-    {
-      "id": "behind-scenes",
-      "label": "Behind the Scenes"
-    },
-    {
-      "id": "achievements",
-      "label": "Achievements"
-    }
+    { "id": "events",       "label": "Events"           },
+    { "id": "sessions",     "label": "Sessions"         },
+    { "id": "community",    "label": "Community"        },
+    { "id": "behind-scenes","label": "Behind the Scenes"},
+    { "id": "achievements", "label": "Achievements"     }
   ],
-  "images": []
+  "images": [
+    {
+      "id": "evt-hamdard-may8-1",
+      "src": "/gallery/story/featured-11.jpg",
+      "category": "sessions",
+      "alt": "Personal Branding & LinkedIn Optimization — Hamdard University Bangladesh",
+      "caption": "Personal Branding & LinkedIn Optimization · Hamdard University Bangladesh · May 2026"
+    },
+    {
+      "id": "evt-hamdard-may8-2",
+      "src": "/gallery/story/featured-12.jpg",
+      "category": "sessions",
+      "alt": "Know Your Employer session at JUST",
+      "caption": "Know Your Employer · Jashore University of Science & Technology · Apr 2026"
+    },
+    {
+      "id": "evt-jnu-marketing-1",
+      "src": "/gallery/story/featured-13.jpg",
+      "category": "sessions",
+      "alt": "Personal Branding & LinkedIn session at Jagannath University",
+      "caption": "Personal Branding & LinkedIn Optimization · Jagannath University · Apr 2026"
+    },
+    {
+      "id": "evt-uiu-dream-job-1",
+      "src": "/gallery/story/featured-14.jpg",
+      "category": "sessions",
+      "alt": "LinkedIn: Connect to Your Dream Job at UIU",
+      "caption": "LinkedIn: Connect to Your Dream Job · United International University · Mar 2026"
+    },
+    {
+      "id": "evt-ducc-mnc-1",
+      "src": "/gallery/story/featured-16.jpg",
+      "category": "events",
+      "alt": "Road to MNC — Dhaka University Career Club",
+      "caption": "Road to MNC · Dhaka University Career Club · Mar 2026"
+    },
+    {
+      "id": "evt-psb-2022-1",
+      "src": "/gallery/story/featured-17.jpg",
+      "category": "sessions",
+      "alt": "LinkedIn for Networking & Career Development — PSB",
+      "caption": "LinkedIn for Networking & Career Development · Professional School of Business · Dec 2022"
+    },
+    {
+      "id": "evt-hamdard-may20-1",
+      "src": "/gallery/story/featured-10.jpg",
+      "category": "sessions",
+      "alt": "Personal Branding seminar at Hamdard University",
+      "caption": "Personal Branding & LinkedIn Optimisation · Hamdard University · May 2026"
+    },
+    {
+      "id": "comm-gathering-1",
+      "src": "/gallery/story/gathering.jpg",
+      "category": "community",
+      "alt": "LCB community gathering",
+      "caption": "LCB Community Gathering"
+    },
+    {
+      "id": "comm-gathering-2",
+      "src": "/gallery/story/gathering-2.jpg",
+      "category": "community",
+      "alt": "LCB members gathering",
+      "caption": "LCB Members Gathering"
+    },
+    {
+      "id": "comm-gathering-3",
+      "src": "/gallery/story/gathering-3.jpg",
+      "category": "community",
+      "alt": "LCB gathering moment",
+      "caption": "LCB Gathering Moment"
+    },
+    {
+      "id": "comm-gathering-4",
+      "src": "/gallery/story/gathering-4.jpg",
+      "category": "community",
+      "alt": "LCB community moment",
+      "caption": "LCB Community Moment"
+    },
+    {
+      "id": "comm-gathering-5",
+      "src": "/gallery/story/gathering-5.jpg",
+      "category": "community",
+      "alt": "LCB gathering",
+      "caption": "LCB Gathering"
+    },
+    {
+      "id": "comm-gathering-6",
+      "src": "/gallery/story/gathering-6.jpg",
+      "category": "community",
+      "alt": "LCB community event",
+      "caption": "LCB Community Event"
+    },
+    {
+      "id": "lead-leadership-1",
+      "src": "/gallery/story/leadership.jpg",
+      "category": "behind-scenes",
+      "alt": "LCB leadership",
+      "caption": "LCB Leadership"
+    },
+    {
+      "id": "lead-leadership-2",
+      "src": "/gallery/story/leadership-2.jpg",
+      "category": "behind-scenes",
+      "alt": "LCB leadership team",
+      "caption": "LCB Leadership Team"
+    },
+    {
+      "id": "lead-leadership-3",
+      "src": "/gallery/story/leadership-3.jpg",
+      "category": "behind-scenes",
+      "alt": "LCB leadership moment",
+      "caption": "LCB Leadership Moment"
+    },
+    {
+      "id": "learn-session-1",
+      "src": "/gallery/story/learning.jpg",
+      "category": "sessions",
+      "alt": "LCB learning session",
+      "caption": "LCB Learning Session"
+    },
+    {
+      "id": "learn-session-2",
+      "src": "/gallery/story/learning-4.jpg",
+      "category": "sessions",
+      "alt": "LCB session moment",
+      "caption": "LCB Session Moment"
+    },
+    {
+      "id": "learn-session-3",
+      "src": "/gallery/story/learning-5.jpg",
+      "category": "sessions",
+      "alt": "LCB learning moment",
+      "caption": "LCB Learning Moment"
+    },
+    {
+      "id": "learn-session-4",
+      "src": "/gallery/story/learning-6.jpg",
+      "category": "sessions",
+      "alt": "LCB session highlight",
+      "caption": "LCB Session Highlight"
+    },
+    {
+      "id": "learn-session-5",
+      "src": "/gallery/story/learning-7.jpg",
+      "category": "sessions",
+      "alt": "LCB learning highlight",
+      "caption": "LCB Learning Highlight"
+    },
+    {
+      "id": "learn-session-6",
+      "src": "/gallery/story/learning-8.jpg",
+      "category": "sessions",
+      "alt": "LCB knowledge session",
+      "caption": "LCB Knowledge Session"
+    },
+    {
+      "id": "voices-1",
+      "src": "/gallery/story/voices-2.jpg",
+      "category": "community",
+      "alt": "LCB voices",
+      "caption": "LCB Voices"
+    },
+    {
+      "id": "voices-2",
+      "src": "/gallery/story/voices-3.jpg",
+      "category": "community",
+      "alt": "LCB community voices",
+      "caption": "LCB Community Voices"
+    },
+    {
+      "id": "voices-3",
+      "src": "/gallery/story/voices-4.jpg",
+      "category": "community",
+      "alt": "LCB member voices",
+      "caption": "LCB Member Voices"
+    },
+    {
+      "id": "feat-18",
+      "src": "/gallery/story/featured-18.jpg",
+      "category": "events",
+      "alt": "LCB event highlight",
+      "caption": "LCB Event Highlight"
+    },
+    {
+      "id": "feat-19",
+      "src": "/gallery/story/featured-19.jpg",
+      "category": "events",
+      "alt": "LCB event moment",
+      "caption": "LCB Event Moment"
+    },
+    {
+      "id": "feat-20",
+      "src": "/gallery/story/featured-20.jpg",
+      "category": "events",
+      "alt": "LCB community highlight",
+      "caption": "LCB Community Highlight"
+    },
+    {
+      "id": "feat-21",
+      "src": "/gallery/story/featured-21.jpg",
+      "category": "community",
+      "alt": "LCB member moment",
+      "caption": "LCB Member Moment"
+    },
+    {
+      "id": "feat-22",
+      "src": "/gallery/story/featured-22.jpg",
+      "category": "achievements",
+      "alt": "LCB achievement",
+      "caption": "LCB Achievement"
+    },
+    {
+      "id": "feat-23",
+      "src": "/gallery/story/featured-23.jpg",
+      "category": "achievements",
+      "alt": "LCB milestone",
+      "caption": "LCB Milestone"
+    },
+    {
+      "id": "feat-24",
+      "src": "/gallery/story/featured-24.jpg",
+      "category": "achievements",
+      "alt": "LCB achievement highlight",
+      "caption": "LCB Achievement Highlight"
+    }
+  ]
 }
