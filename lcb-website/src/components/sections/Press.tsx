@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { ExternalLink, Newspaper } from "lucide-react";
 import type { PressItem } from "@/content/press";
 

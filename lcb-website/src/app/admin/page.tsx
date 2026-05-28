@@ -36,7 +36,6 @@ export default async function AdminDashboardPage() {
 
   const upcomingCount = events.filter((e) => e.status === "upcoming").length;
   const featuredNews  = news.find((n) => n.featured);
-  const appsOpen      = (apps.campusLeads.open ? 1 : 0) + (apps.centralTeam.open ? 1 : 0);
 
   const totalViews = analytics.reduce((s, d) => s + d.views, 0);
   const todayViews = analytics[analytics.length - 1]?.views ?? 0;
