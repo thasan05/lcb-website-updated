@@ -4,6 +4,7 @@ import { getApplicationsConfig } from "@/lib/admin";
 import type { NewsItem } from "@/content/news";
 import type { Event } from "@/content/events";
 import type { Article } from "@/content/articles";
+import type { PressItem } from "@/content/press";
 
 export const dynamic = "force-dynamic";
 
@@ -23,13 +24,14 @@ async function getAnalytics(): Promise<{ date: string; label: string; views: num
 }
 
 export default async function AdminDashboardPage() {
-  const [news, events, apps, , analytics, articles] = await Promise.all([
+  const [news, events, apps, , analytics, articles, pressItems] = await Promise.all([
     kvGet<NewsItem[]>("data:news"),
     kvGet<Event[]>("data:events"),
     getApplicationsConfig(),
     kvGet<{ images: unknown[] }>("data:gallery-manifest"),
     getAnalytics(),
     kvGet<Article[]>("data:articles").catch(() => [] as Article[]),
+    kvGet<PressItem[]>("data:press").catch(() => [] as PressItem[]),
   ]);
 
   const upcomingCount = events.filter((e) => e.status === "upcoming").length;
@@ -41,19 +43,20 @@ export default async function AdminDashboardPage() {
   const maxViews   = Math.max(...analytics.map((d) => d.views), 1);
 
   const liveArticles = (articles ?? []) as Article[];
+  const livePress    = (pressItems ?? []) as PressItem[];
 
   const statsCards = [
-    { label: "News Items",        value: news.length,            href: "/admin/newsroom" },
-    { label: "Upcoming Events",   value: upcomingCount,          href: "/admin/events" },
-    { label: "Forum Articles",    value: liveArticles.length,    href: "/admin/articles" },
-    { label: "Applications Open", value: `${appsOpen}/2`,        href: "/admin/applications" },
+    { label: "News Items",        value: news.length,         href: "/admin/newsroom"   },
+    { label: "Upcoming Events",   value: upcomingCount,       href: "/admin/events"     },
+    { label: "Forum Articles",    value: liveArticles.length, href: "/admin/articles"   },
+    { label: "Press Coverage",    value: livePress.length,    href: "/admin/press"      },
   ];
 
   const quickActions = [
-    { href: "/admin/newsroom",     label: "Add News Item",       icon: "📰" },
-    { href: "/admin/events",       label: "Add Event",           icon: "📅" },
-    { href: "/admin/articles",     label: "Add Forum Article",   icon: "✍️" },
-    { href: "/admin/applications", label: "Toggle Applications", icon: "📋" },
+    { href: "/admin/newsroom",  label: "Add News Item",      icon: "📰" },
+    { href: "/admin/events",    label: "Add Event",          icon: "📅" },
+    { href: "/admin/press",     label: "Add Press Coverage", icon: "🗞️" },
+    { href: "/admin/articles",  label: "Add Forum Article",  icon: "✍️" },
   ];
 
   return (
