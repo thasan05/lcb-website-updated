@@ -78,6 +78,15 @@ const navItems = [
     ),
   },
   {
+    href: "/admin/lor",
+    label: "LOR Applications",
+    icon: (
+      <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+      </svg>
+    ),
+  },
+  {
     href: "/admin/story-gallery",
     label: "Story Photos",
     icon: (

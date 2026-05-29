@@ -10,6 +10,7 @@ import { Gallery } from "@/components/sections/Gallery";
 import { News } from "@/components/sections/News";
 import { Forum } from "@/components/sections/Forum";
 import { Press } from "@/components/sections/Press";
+import { LorSection } from "@/components/sections/LorSection";
 import { Testimonials } from "@/components/sections/Testimonials";
 import { CTA } from "@/components/sections/CTA";
 import { PageViewTracker } from "@/components/ui/PageViewTracker";
@@ -21,6 +22,7 @@ import type { Event } from "@/content/events";
 import type { NewsItem } from "@/content/news";
 import type { Article } from "@/content/articles";
 import type { PressItem } from "@/content/press";
+import type { LorConfig } from "@/content/lor";
 
 type GalleryCategory = { id: string; label: string };
 type GalleryImage    = { id: string; src: string; category: string; alt: string; caption?: string };
@@ -49,7 +51,7 @@ async function getTeamData(): Promise<Record<string, TeamMember[]>> {
 }
 
 export default async function HomePage() {
-  const [appsConfig, teamData, liveEvents, liveNews, liveGallery, liveArticles, livePress] = await Promise.all([
+  const [appsConfig, teamData, liveEvents, liveNews, liveGallery, liveArticles, livePress, lorConfig] = await Promise.all([
     getApplicationsConfig(),
     getTeamData(),
     kvGet<Event[]>("data:events").catch(() => null),
@@ -57,6 +59,7 @@ export default async function HomePage() {
     kvGet<GalleryManifest>("data:gallery-manifest").catch(() => null),
     kvGet<Article[]>("data:articles").catch(() => null),
     kvGet<PressItem[]>("data:press").catch(() => null),
+    kvGet<LorConfig>("data:lor-config").catch(() => null),
   ]);
 
   // JSON-LD structured data
@@ -134,6 +137,9 @@ export default async function HomePage() {
         <News liveNews={liveNews ?? undefined} />
         <Press items={livePress ?? []} />
         <Forum articles={liveArticles ?? []} />
+        {lorConfig && (
+          <LorSection config={{ open: lorConfig.open, closedMessage: lorConfig.closedMessage, rules: lorConfig.rules }} />
+        )}
         <Testimonials />
         <CTA />
       </main>
