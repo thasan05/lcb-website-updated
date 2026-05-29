@@ -65,8 +65,7 @@ export function LorSection({ config }: Props) {
                     </span>
                   </div>
                   <p className="mt-2 max-w-lg text-sm leading-relaxed text-white/50">
-                    Letter of Recommendation from LinkedIn Community Bangladesh leadership.
-                    Available to outstanding active and former LCB members.
+                    Official Letter of Recommendation from the Founder of LinkedIn Community Bangladesh, reserved exclusively for exemplary active LCB members in recognition of their outstanding contribution and commitment.
                   </p>
                 </div>
               </div>
