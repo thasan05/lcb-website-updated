@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
 
-    const subs = (await kvGet<LorSubmission[]>(SUBS_KEY).catch(() => [])) ?? [];
+    const subs: LorSubmission[] = (await kvGet<LorSubmission[]>(SUBS_KEY).catch(() => [] as LorSubmission[])) ?? [];
     const submission: LorSubmission = {
       id: `lor-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
       answers,

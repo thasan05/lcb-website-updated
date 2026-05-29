@@ -160,6 +160,7 @@ export function LorSection({ config }: Props) {
                     <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-white/[0.08] bg-white/[0.025] p-4 transition hover:border-white/[0.12]">
                       <button
                         type="button"
+                        role="checkbox"
                         onClick={() => setAgreed((v) => !v)}
                         className={`relative mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md border-2 transition-colors ${
                           agreed
