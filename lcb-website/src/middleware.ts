@@ -3,6 +3,7 @@ import type { NextRequest } from "next/server";
 import { verifySessionToken } from "@/lib/token";
 
 const FORUM_HOST = "forum.linkedincommunitybangladesh.com";
+const SHOUT_HOST = "shout.linkedincommunitybangladesh.com";
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -11,8 +12,14 @@ export async function middleware(request: NextRequest) {
   // ── Forum subdomain → serve /forum page ───────────────────────────────────
   if (host === FORUM_HOST) {
     const url = request.nextUrl.clone();
-    // Rewrite /  → /forum  and  /[id]  → /forum/[id]
     url.pathname = pathname === "/" || pathname === "" ? "/forum" : `/forum${pathname}`;
+    return NextResponse.rewrite(url);
+  }
+
+  // ── Shout subdomain → serve /shout page ───────────────────────────────────
+  if (host === SHOUT_HOST) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/shout";
     return NextResponse.rewrite(url);
   }
 
