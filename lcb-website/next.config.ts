@@ -56,6 +56,16 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   reactStrictMode: true,
 
+  async rewrites() {
+    return [
+      {
+        source: "/",
+        destination: "/shout",
+        has: [{ type: "host", value: "shout.linkedincommunitybangladesh.com" }],
+      },
+    ];
+  },
+
   async headers() {
     return [
       {
