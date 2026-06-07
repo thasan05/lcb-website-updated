@@ -67,15 +67,15 @@ export default async function ForumPage() {
 
           {/* Back link + CTA */}
           <div className="flex items-center gap-3">
-            <Link
-              href="/"
+            <a
+              href="https://linkedincommunitybangladesh.com"
               className="hidden items-center gap-1.5 text-sm text-white/50 transition hover:text-white sm:flex"
             >
               <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
               </svg>
               Back to main site
-            </Link>
+            </a>
             <Link
               href={siteConfig.socials.linkedin}
               target="_blank"
