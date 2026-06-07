@@ -103,7 +103,7 @@ export default async function ForumPage() {
         {published.length === 0 ? (
           <ForumEmptyState />
         ) : (
-          <Forum articles={articles ?? []} />
+          <Forum articles={articles ?? []} asLinks />
         )}
       </main>
 

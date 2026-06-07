@@ -8,6 +8,8 @@ import { SafeHtml } from "@/components/ui/RichTextEditor";
 
 interface Props {
   articles: Article[];
+  /** When true, cards link to /{id} instead of opening a modal */
+  asLinks?: boolean;
 }
 
 function AuthorAvatar({
@@ -50,84 +52,59 @@ function ArticleCard({
   article,
   onClick,
   featured = false,
+  href,
 }: {
   article: Article;
   onClick: () => void;
   featured?: boolean;
+  href?: string;
 }) {
+  const sharedFeaturedCls = "group relative w-full overflow-hidden rounded-3xl border border-white/[0.08] bg-white/[0.02] text-left transition-all duration-300 hover:border-brand-400/25 hover:bg-white/[0.04] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400";
+  const sharedCardCls     = "group flex w-full flex-col overflow-hidden rounded-2xl border border-white/[0.07] bg-white/[0.02] text-left transition-all duration-300 hover:border-brand-400/20 hover:bg-white/[0.04] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400";
+
   if (featured) {
-    return (
-      <button
-        onClick={onClick}
-        className="group relative w-full overflow-hidden rounded-3xl border border-white/[0.08] bg-white/[0.02] text-left transition-all duration-300 hover:border-brand-400/25 hover:bg-white/[0.04] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400"
-      >
+    const inner = (
+      <>
         {article.coverImage && (
           <div className="relative h-64 w-full overflow-hidden">
-            <Image
-              src={article.coverImage}
-              alt={article.title}
-              fill
-              className="object-cover transition-transform duration-500 group-hover:scale-105"
-            />
+            <Image src={article.coverImage} alt={article.title} fill className="object-cover transition-transform duration-500 group-hover:scale-105" />
             <div className="absolute inset-0 bg-gradient-to-t from-[#040614] via-[#040614]/40 to-transparent" />
           </div>
         )}
         <div className="p-6 md:p-8">
-          {/* Tags */}
           {article.tags && article.tags.length > 0 && (
             <div className="mb-3 flex flex-wrap gap-1.5">
               {article.tags.slice(0, 3).map((tag) => (
-                <span
-                  key={tag}
-                  className="rounded-full bg-brand-500/10 px-2.5 py-0.5 text-[11px] font-medium text-brand-300"
-                >
-                  {tag}
-                </span>
+                <span key={tag} className="rounded-full bg-brand-500/10 px-2.5 py-0.5 text-[11px] font-medium text-brand-300">{tag}</span>
               ))}
             </div>
           )}
-
-          <h3 className="text-xl font-bold text-white md:text-2xl leading-snug group-hover:text-brand-200 transition-colors">
-            {article.title}
-          </h3>
-          <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-white/55">
-            {article.excerpt}
-          </p>
-
+          <h3 className="text-xl font-bold text-white md:text-2xl leading-snug group-hover:text-brand-200 transition-colors">{article.title}</h3>
+          <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-white/55">{article.excerpt}</p>
           <div className="mt-6 flex items-center gap-3">
             <AuthorAvatar photo={article.authorPhoto} name={article.authorName} size={40} />
             <div className="min-w-0">
               <p className="truncate text-sm font-medium text-white/90">{article.authorName}</p>
-              <p className="truncate text-xs text-white/45">
-                {article.authorDesignation}
-                {article.authorCompany && ` · ${article.authorCompany}`}
-              </p>
+              <p className="truncate text-xs text-white/45">{article.authorDesignation}{article.authorCompany && ` · ${article.authorCompany}`}</p>
             </div>
             <span className="ml-auto shrink-0 text-xs text-white/35">{article.dateLabel}</span>
           </div>
         </div>
-
-        {/* Featured badge */}
-        <span className="absolute left-4 top-4 rounded-full bg-brand-500 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-white shadow-glow">
-          Featured
-        </span>
-      </button>
+        <span className="absolute left-4 top-4 rounded-full bg-brand-500 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-white shadow-glow">Featured</span>
+      </>
+    );
+    return href ? (
+      <a href={href} className={sharedFeaturedCls}>{inner}</a>
+    ) : (
+      <button onClick={onClick} className={sharedFeaturedCls}>{inner}</button>
     );
   }
 
-  return (
-    <button
-      onClick={onClick}
-      className="group flex w-full flex-col overflow-hidden rounded-2xl border border-white/[0.07] bg-white/[0.02] text-left transition-all duration-300 hover:border-brand-400/20 hover:bg-white/[0.04] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400"
-    >
+  const cardInner = (
+    <>
       {article.coverImage && (
         <div className="relative h-40 w-full overflow-hidden">
-          <Image
-            src={article.coverImage}
-            alt={article.title}
-            fill
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
-          />
+          <Image src={article.coverImage} alt={article.title} fill className="object-cover transition-transform duration-500 group-hover:scale-105" />
           <div className="absolute inset-0 bg-gradient-to-t from-[#040614]/60 to-transparent" />
         </div>
       )}
@@ -135,21 +112,12 @@ function ArticleCard({
         {article.tags && article.tags.length > 0 && (
           <div className="mb-2.5 flex flex-wrap gap-1">
             {article.tags.slice(0, 2).map((tag) => (
-              <span
-                key={tag}
-                className="rounded-full bg-brand-500/10 px-2 py-0.5 text-[10px] font-medium text-brand-300"
-              >
-                {tag}
-              </span>
+              <span key={tag} className="rounded-full bg-brand-500/10 px-2 py-0.5 text-[10px] font-medium text-brand-300">{tag}</span>
             ))}
           </div>
         )}
-        <h3 className="line-clamp-2 text-base font-semibold leading-snug text-white/90 group-hover:text-white transition-colors">
-          {article.title}
-        </h3>
-        <p className="mt-2 line-clamp-3 flex-1 text-sm leading-relaxed text-white/45">
-          {article.excerpt}
-        </p>
+        <h3 className="line-clamp-2 text-base font-semibold leading-snug text-white/90 group-hover:text-white transition-colors">{article.title}</h3>
+        <p className="mt-2 line-clamp-3 flex-1 text-sm leading-relaxed text-white/45">{article.excerpt}</p>
         <div className="mt-4 flex items-center gap-2.5">
           <AuthorAvatar photo={article.authorPhoto} name={article.authorName} size={32} />
           <div className="min-w-0 flex-1">
@@ -159,7 +127,13 @@ function ArticleCard({
           <span className="shrink-0 text-[11px] text-white/30">{article.dateLabel}</span>
         </div>
       </div>
-    </button>
+    </>
+  );
+
+  return href ? (
+    <a href={href} className={sharedCardCls}>{cardInner}</a>
+  ) : (
+    <button onClick={onClick} className={sharedCardCls}>{cardInner}</button>
   );
 }
 
@@ -273,7 +247,7 @@ function ArticleModal({
   );
 }
 
-export function Forum({ articles }: Props) {
+export function Forum({ articles, asLinks = false }: Props) {
   const [selected, setSelected] = useState<Article | null>(null);
   const [search, setSearch] = useState("");
 
@@ -364,6 +338,7 @@ export function Forum({ articles }: Props) {
               <ArticleCard
                 article={featured}
                 onClick={() => setSelected(featured)}
+                href={asLinks ? `/${featured.id}` : undefined}
                 featured
               />
             </div>
@@ -377,6 +352,7 @@ export function Forum({ articles }: Props) {
                   key={article.id}
                   article={article}
                   onClick={() => setSelected(article)}
+                  href={asLinks ? `/${article.id}` : undefined}
                 />
               ))}
             </div>

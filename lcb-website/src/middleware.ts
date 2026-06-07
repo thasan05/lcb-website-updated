@@ -10,13 +10,10 @@ export async function middleware(request: NextRequest) {
 
   // ── Forum subdomain → serve /forum page ───────────────────────────────────
   if (host === FORUM_HOST) {
-    // Only rewrite the root; let /forum itself and assets pass through
-    if (pathname === "/" || pathname === "") {
-      const url = request.nextUrl.clone();
-      url.pathname = "/forum";
-      return NextResponse.rewrite(url);
-    }
-    return NextResponse.next();
+    const url = request.nextUrl.clone();
+    // Rewrite /  → /forum  and  /[id]  → /forum/[id]
+    url.pathname = pathname === "/" || pathname === "" ? "/forum" : `/forum${pathname}`;
+    return NextResponse.rewrite(url);
   }
 
   // ── Public admin routes — never block ──────────────────────────────────────
