@@ -137,7 +137,7 @@ function drawCard(canvas: HTMLCanvasElement, data: CardData, date: string) {
     ctx.textAlign = "center";
     ctx.textBaseline = "top";
     ctx.letterSpacing = "0.08em";
-    ctx.fillText("LinkedIn Community BD", startX + totalW/2, startY + bs + 5*s);
+    ctx.fillText("LinkedIn Community Bangladesh", startX + totalW/2, startY + bs + 5*s);
     ctx.letterSpacing = "0";
   }
 
@@ -253,7 +253,7 @@ function CardPreview({ data, date }: { data: CardData; date: string }) {
             <div key={letter} style={{ width:20, height:20, borderRadius:5, background:"linear-gradient(160deg, #0a66c2 0%, #0d5aa7 100%)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:11, fontWeight:900, color:"#fff", fontFamily:"Arial Black, Arial, sans-serif", boxShadow:"0 1px 4px rgba(10,102,194,0.5)" }}>{letter}</div>
           ))}
         </div>
-        <span style={{ fontSize:8, fontWeight:500, color:"rgba(255,255,255,0.40)", letterSpacing:"0.08em", textTransform:"uppercase", whiteSpace:"nowrap" }}>LinkedIn Community BD</span>
+        <span style={{ fontSize:8, fontWeight:500, color:"rgba(255,255,255,0.40)", letterSpacing:"0.08em", textTransform:"uppercase", whiteSpace:"nowrap" }}>LinkedIn Community Bangladesh</span>
       </div>
 
       {/* "a big shout out to" label */}
