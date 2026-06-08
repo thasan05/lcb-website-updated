@@ -170,7 +170,7 @@ function drawCard(canvas: HTMLCanvasElement, data: CardData, date: string) {
   ctx.fillText(msText, W / 2, H - 12*s);
 
   // ── Recognised by ───────────────────────────────────────────────────
-  const bottomY = H - 36*s;
+  const bottomY = H - 54*s;
   ctx.fillStyle = "rgba(255,255,255,0.30)";
   ctx.font = `700 ${10*s}px Inter, sans-serif`;
   ctx.textAlign = "left";
@@ -257,7 +257,7 @@ function CardPreview({ data, date }: { data: CardData; date: string }) {
       </div>
 
       {/* Bottom row */}
-      <div style={{ position:"absolute", bottom:36, left:44, right:44, display:"flex", alignItems:"flex-end", justifyContent:"space-between" }}>
+      <div style={{ position:"absolute", bottom:54, left:44, right:44, display:"flex", alignItems:"flex-end", justifyContent:"space-between" }}>
         <div>
           <div style={{ fontSize:10, fontWeight:700, letterSpacing:"0.18em", textTransform:"uppercase", color:"rgba(255,255,255,0.30)", marginBottom:4 }}>Recognised by</div>
           <div style={{ fontSize:15, fontWeight:700, color:"rgba(255,255,255,0.88)" }}>{data.fromName || "Sender Name"}</div>
