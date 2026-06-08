@@ -104,7 +104,7 @@ export default async function ArticlePage({
             </a>
             <a
               href={`${FORUM_BASE}/`}
-              className="hidden text-sm text-white/50 transition hover:text-white sm:block"
+              className="text-sm text-white/50 transition hover:text-white"
             >
               ← All articles
             </a>
@@ -203,7 +203,7 @@ export default async function ArticlePage({
           </div>
 
           {/* Bottom share */}
-          <div className="mt-12 flex items-center justify-between border-t border-white/[0.06] pt-8">
+          <div className="mt-12 flex flex-wrap items-center justify-between gap-4 border-t border-white/[0.06] pt-8">
             <a
               href={`${FORUM_BASE}/`}
               className="text-sm text-white/40 transition hover:text-white"

@@ -64,7 +64,7 @@ export function ShareButtons({ url, title }: Props) {
           target="_blank"
           rel="noopener noreferrer"
           aria-label={`Share on ${p.label}`}
-          className={`flex h-8 w-8 items-center justify-center rounded-lg border border-white/[0.08] text-white/40 transition-all duration-200 ${p.color}`}
+          className={`flex h-11 w-11 items-center justify-center rounded-lg border border-white/[0.08] text-white/40 transition-all duration-200 sm:h-8 sm:w-8 ${p.color}`}
         >
           {p.icon}
         </a>
@@ -72,7 +72,7 @@ export function ShareButtons({ url, title }: Props) {
       <button
         onClick={copyLink}
         aria-label="Copy link"
-        className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/[0.08] text-white/40 transition-all duration-200 hover:border-white/30 hover:bg-white/10 hover:text-white"
+        className="flex h-11 w-11 items-center justify-center rounded-lg border border-white/[0.08] text-white/40 transition-all duration-200 hover:border-white/30 hover:bg-white/10 hover:text-white sm:h-8 sm:w-8"
       >
         {copied ? <Check className="h-4 w-4 text-emerald-400" /> : <Link2 className="h-4 w-4" />}
       </button>

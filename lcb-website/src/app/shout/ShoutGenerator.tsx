@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Download, Sparkles, RefreshCw, Check } from "lucide-react";
+import { Download, Sparkles, RefreshCw, Check, Share2 } from "lucide-react";
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                               */
@@ -308,6 +308,19 @@ export function ShoutGenerator() {
   const [downloaded, setDownloaded] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const [date, setDate] = useState("");
+
+  // ── Responsive preview scaling ──────────────────────────────────────────
+  const previewRef  = useRef<HTMLDivElement>(null);
+  const [previewScale, setPreviewScale] = useState(1);
+  useEffect(() => {
+    const el = previewRef.current;
+    if (!el) return;
+    const obs = new ResizeObserver(([entry]) => {
+      setPreviewScale(Math.min(1, entry.contentRect.width / 840));
+    });
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
   useEffect(() => {
     setDate(new Date().toLocaleDateString("en-GB", { day:"numeric", month:"long", year:"numeric" }));
   }, []);
@@ -335,6 +348,33 @@ export function ShoutGenerator() {
   const handleReset = () => setData({ toName:"", toTitle:"", message:"", fromName:"", fromTitle:"" });
   const isReady = data.toName.trim() && data.message.trim() && data.fromName.trim();
 
+  // ── Mobile Web Share API ────────────────────────────────────────────────
+  const handleShare = async () => {
+    if (!isReady) return;
+    const canvas = document.createElement("canvas");
+    drawCard(canvas, data, date);
+    canvas.toBlob(async (blob) => {
+      if (!blob) return;
+      const fname = `lcb-shoutout-${(data.toName || "card").replace(/\s+/g,"-").toLowerCase()}.png`;
+      const file  = new File([blob], fname, { type: "image/png" });
+      if (navigator.canShare?.({ files: [file] })) {
+        try {
+          await navigator.share({
+            files: [file],
+            title: `LCB Shout Out — ${data.toName}`,
+            text:  `A shout out to ${data.toName} from ${data.fromName}! #LinkedInCommunityBangladesh`,
+          });
+          return;
+        } catch {}
+      }
+      // Fallback — same as download
+      const a = document.createElement("a");
+      a.download = fname;
+      a.href     = canvas.toDataURL("image/png");
+      a.click();
+    });
+  };
+
   return (
     <div className="min-h-screen bg-[rgb(4,6,20)] text-white">
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
@@ -353,7 +393,7 @@ export function ShoutGenerator() {
             </span>
             LinkedIn Community Bangladesh
           </div>
-          <h1 className="font-jakarta text-5xl font-extrabold tracking-tight text-white sm:text-6xl">
+          <h1 className="font-jakarta text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl">
             Shout{" "}
             <span className="bg-clip-text text-transparent" style={{ backgroundImage:"linear-gradient(90deg, #0a66c2 0%, #22d3ee 60%, #6366f1 100%)" }}>
               Someone Out
@@ -364,8 +404,9 @@ export function ShoutGenerator() {
           </p>
         </motion.div>
 
-        <div className="grid gap-10 lg:grid-cols-[400px_1fr]">
-          <motion.div initial={{ opacity:0, x:-20 }} animate={{ opacity:1, x:0 }} transition={{ duration:0.5, delay:0.1 }} className="flex flex-col gap-6">
+        <div className="grid gap-8 lg:grid-cols-[400px_1fr]">
+          {/* Form — below preview on mobile, left on desktop */}
+          <motion.div initial={{ opacity:0, x:-20 }} animate={{ opacity:1, x:0 }} transition={{ duration:0.5, delay:0.1 }} className="flex flex-col gap-6 order-2 lg:order-1">
             {/* Recipient */}
             <fieldset className="rounded-2xl border border-white/[0.08] bg-white/[0.03] p-5">
               <legend className="mb-4 px-1 text-xs font-semibold uppercase tracking-widest text-white/35">Recipient</legend>
@@ -410,10 +451,15 @@ export function ShoutGenerator() {
             </fieldset>
 
             {/* Actions */}
-            <div className="flex gap-3">
+            <div className="flex flex-wrap gap-3">
               <button type="button" onClick={handleReset}
                 className="flex h-11 items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-5 text-sm font-medium text-white/60 transition hover:bg-white/[0.08] hover:text-white">
                 <RefreshCw className="h-4 w-4" /> Reset
+              </button>
+              {/* Share — mobile primary action */}
+              <button type="button" onClick={handleShare} disabled={!isReady}
+                className="flex h-11 items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-5 text-sm font-medium text-white/60 transition hover:bg-white/[0.08] hover:text-white disabled:cursor-not-allowed disabled:opacity-30 sm:hidden">
+                <Share2 className="h-4 w-4" /> Share
               </button>
               <button type="button" onClick={handleDownload} disabled={!isReady || downloading}
                 className="group relative flex h-11 flex-1 items-center justify-center gap-2 overflow-hidden rounded-full text-sm font-semibold text-white transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-40"
@@ -439,14 +485,22 @@ export function ShoutGenerator() {
             {!isReady && <p className="text-center text-xs text-white/25">Fill in name, message, and sender to enable download.</p>}
           </motion.div>
 
-          {/* Card Preview */}
-          <motion.div initial={{ opacity:0, x:20 }} animate={{ opacity:1, x:0 }} transition={{ duration:0.5, delay:0.15 }} className="flex flex-col gap-4">
+          {/* Card Preview — shown first on mobile via order-1 */}
+          <motion.div initial={{ opacity:0, x:20 }} animate={{ opacity:1, x:0 }} transition={{ duration:0.5, delay:0.15 }} className="flex flex-col gap-4 order-1 lg:order-2">
             <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-white/30">
               <Sparkles className="h-3.5 w-3.5" /> Live Preview
             </div>
-            <div className="overflow-x-auto rounded-2xl">
-              <div style={{ minWidth: 840 }}>
-                <CardPreview data={data} date={date} />
+            {/* Responsive wrapper: scales the 840×472 card to fit any container */}
+            <div ref={previewRef} className="w-full overflow-hidden rounded-2xl">
+              <div style={{ position:"relative", height: Math.round(472 * previewScale) }}>
+                <div style={{
+                  position:"absolute", top:0, left:0,
+                  width:840,
+                  transformOrigin:"top left",
+                  transform:`scale(${previewScale})`,
+                }}>
+                  <CardPreview data={data} date={date} />
+                </div>
               </div>
             </div>
             <p className="text-xs text-white/25">Card exports at 1680 × 944 px — optimised for LinkedIn posts, emails, and banners.</p>
