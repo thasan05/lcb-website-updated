@@ -74,6 +74,20 @@ const nextConfig: NextConfig = {
         headers: securityHeaders,
       },
       {
+        // RFC 8288 Link headers for agent discovery on the homepage
+        source: "/",
+        headers: [
+          {
+            key: "Link",
+            value: [
+              '</.well-known/api-catalog>; rel="api-catalog"',
+              '</sitemap.xml>; rel="sitemap"',
+              '</.well-known/agent-skills/index.json>; rel="https://agentskills.io/rels/skills-index"',
+            ].join(", "),
+          },
+        ],
+      },
+      {
         // /card serves a standalone HTML page that loads fonts from Google CDN
         // Override CSP to permit fonts.googleapis.com + fonts.gstatic.com
         source: "/card",

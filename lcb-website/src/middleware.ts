@@ -12,7 +12,16 @@ export async function middleware(request: NextRequest) {
 
   // ── Forum subdomain → serve /forum page ───────────────────────────────────
   if (host === FORUM_HOST) {
-    const url = request.nextUrl.clone();
+    const accept = request.headers.get("accept") ?? "";
+    const url    = request.nextUrl.clone();
+
+    // Markdown-for-Agents: agents requesting text/markdown get the markdown API
+    if (accept.includes("text/markdown") && pathname !== "/" && pathname !== "") {
+      const articleId = pathname.replace(/^\//, "");
+      url.pathname = `/api/markdown/forum/${articleId}`;
+      return NextResponse.rewrite(url);
+    }
+
     url.pathname = pathname === "/" || pathname === "" ? "/forum" : `/forum${pathname}`;
     return NextResponse.rewrite(url);
   }
@@ -29,6 +38,17 @@ export async function middleware(request: NextRequest) {
     const url = request.nextUrl.clone();
     url.pathname = "/card";
     return NextResponse.rewrite(url);
+  }
+
+  // ── Markdown-for-Agents on main domain /forum/[id] ────────────────────────
+  const accept = request.headers.get("accept") ?? "";
+  if (accept.includes("text/markdown")) {
+    const m = pathname.match(/^\/forum\/([^/]+)$/);
+    if (m) {
+      const url = request.nextUrl.clone();
+      url.pathname = `/api/markdown/forum/${m[1]}`;
+      return NextResponse.rewrite(url);
+    }
   }
 
   // ── Public admin routes — never block ──────────────────────────────────────
