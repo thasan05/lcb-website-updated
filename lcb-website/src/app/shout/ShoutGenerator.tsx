@@ -161,29 +161,31 @@ function drawCard(canvas: HTMLCanvasElement, data: CardData, date: string) {
   const lineH = 16*s*1.65;
   lines.slice(0, 4).forEach((l, i) => ctx.fillText(l, 44*s, msgTop + i*lineH));
 
-  // ── Milestones strip ─────────────────────────────────────────────────
-  const msY = 345*s; // top of milestones section (logical 345)
-  // Thin separator line above milestones
-  ctx.strokeStyle = "rgba(255,255,255,0.08)";
+  // ── Milestones strip — just above accent line ─────────────────────────
+  // logical bottom: 8px above accent (3px), so top of strip = 472 - 8 - 28 = 436...
+  // place separator at logical y=430, values at 434, labels at 450
+  // Milestones below sender block, above accent line
+  // fromTitle ends at ~bottomY+4*s=880; accent at H-6=938
+  // separator at H-30*s=884 (logical 442), values at 892 (446), labels at 916 (458)
+  const msLineY = H - 30*s;
+  ctx.strokeStyle = "rgba(255,255,255,0.07)";
   ctx.lineWidth = 1;
-  ctx.beginPath(); ctx.moveTo(44*s, msY); ctx.lineTo((840-44)*s, msY); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(44*s, msLineY); ctx.lineTo((840-44)*s, msLineY); ctx.stroke();
 
-  const colW = (840 - 88) / 4; // 188 logical units per column
+  const colW = (840 - 88) / 4;
   MILESTONES.forEach((m, i) => {
     const cx = (44 + i * colW)*s;
-    // Value — gradient colour
-    const valGrad = ctx.createLinearGradient(cx, 0, cx + 80*s, 0);
+    const valGrad = ctx.createLinearGradient(cx, 0, cx + 60*s, 0);
     valGrad.addColorStop(0, "#22d3ee");
     valGrad.addColorStop(1, "#6366f1");
     ctx.fillStyle = valGrad;
-    ctx.font = `800 ${18*s}px Inter, sans-serif`;
+    ctx.font = `700 ${12*s}px Inter, sans-serif`;
     ctx.textAlign = "left";
     ctx.textBaseline = "top";
-    ctx.fillText(m.value, cx, (msY/s + 10)*s);
-    // Label
-    ctx.fillStyle = "rgba(255,255,255,0.35)";
-    ctx.font = `500 ${10*s}px Inter, sans-serif`;
-    ctx.fillText(m.label, cx, (msY/s + 32)*s);
+    ctx.fillText(m.value, cx, msLineY + 8*s);
+    ctx.fillStyle = "rgba(255,255,255,0.28)";
+    ctx.font = `500 ${9*s}px Inter, sans-serif`;
+    ctx.fillText(m.label, cx, msLineY + 24*s);
   });
 
   // ── Recognised by ───────────────────────────────────────────────────
@@ -266,12 +268,12 @@ function CardPreview({ data, date }: { data: CardData; date: string }) {
         {displayMsg}
       </div>
 
-      {/* Milestones strip */}
-      <div style={{ position:"absolute", top:345, left:44, right:44, borderTop:"1px solid rgba(255,255,255,0.08)", paddingTop:10, display:"flex", gap:0 }}>
+      {/* Milestones strip — just above accent line */}
+      <div style={{ position:"absolute", bottom:8, left:44, right:44, display:"flex", gap:0, borderTop:"1px solid rgba(255,255,255,0.07)", paddingTop:6 }}>
         {MILESTONES.map((m) => (
           <div key={m.value} style={{ flex:1 }}>
-            <div style={{ fontSize:18, fontWeight:800, background:"linear-gradient(90deg, #22d3ee, #6366f1)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", lineHeight:1.2 }}>{m.value}</div>
-            <div style={{ fontSize:10, fontWeight:500, color:"rgba(255,255,255,0.35)", marginTop:2, letterSpacing:"0.02em" }}>{m.label}</div>
+            <div style={{ fontSize:12, fontWeight:700, background:"linear-gradient(90deg, #22d3ee, #6366f1)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", lineHeight:1.2 }}>{m.value}</div>
+            <div style={{ fontSize:9, fontWeight:500, color:"rgba(255,255,255,0.28)", marginTop:1, letterSpacing:"0.02em" }}>{m.label}</div>
           </div>
         ))}
       </div>
