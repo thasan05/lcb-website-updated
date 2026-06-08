@@ -40,12 +40,18 @@ export async function middleware(request: NextRequest) {
     return NextResponse.rewrite(url);
   }
 
-  // ── Markdown-for-Agents on main domain /forum/[id] ────────────────────────
+  // ── Markdown-for-Agents on main domain ────────────────────────────────────
   const accept = request.headers.get("accept") ?? "";
   if (accept.includes("text/markdown")) {
+    const url = request.nextUrl.clone();
+    // Homepage → markdown overview
+    if (pathname === "/" || pathname === "") {
+      url.pathname = "/api/markdown/home";
+      return NextResponse.rewrite(url);
+    }
+    // Forum articles → article markdown
     const m = pathname.match(/^\/forum\/([^/]+)$/);
     if (m) {
-      const url = request.nextUrl.clone();
       url.pathname = `/api/markdown/forum/${m[1]}`;
       return NextResponse.rewrite(url);
     }

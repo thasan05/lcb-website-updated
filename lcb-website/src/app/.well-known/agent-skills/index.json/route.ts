@@ -28,8 +28,20 @@ export function GET() {
       {
         name: "markdown-negotiation",
         type: "markdown-negotiation",
-        description: "Forum articles support Accept: text/markdown — returns clean markdown suitable for agents",
-        url: `${base}/api/markdown/forum/{id}`,
+        description: "Accept: text/markdown on / or /forum/[id] returns clean Markdown",
+        url: `${base}/api/markdown/home`,
+      },
+      {
+        name: "oauth-protected-resource",
+        type: "oauth-protected-resource",
+        description: "RFC 9728 resource metadata — public endpoints require no auth",
+        url: `${base}/.well-known/oauth-protected-resource`,
+      },
+      {
+        name: "auth-md",
+        type: "auth-md",
+        description: "Authentication guide for AI agents — public endpoints, rate limits, contact",
+        url: `${base}/auth.md`,
       },
     ],
   };

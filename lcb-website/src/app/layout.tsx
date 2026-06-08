@@ -6,6 +6,7 @@ import { siteConfig } from "@/content/site";
 import { ScrollProgress } from "@/components/ui/ScrollProgress";
 import { CustomCursor } from "@/components/ui/CustomCursor";
 import { ToastProvider } from "@/components/ui/Toast";
+import { WebMCP } from "@/components/ui/WebMCP";
 
 const geistSans = Geist({
   subsets: ["latin"],
@@ -91,6 +92,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ToastProvider>
           <ScrollProgress />
           <CustomCursor />
+          <WebMCP />
 {children}
         </ToastProvider>
         <Analytics />
