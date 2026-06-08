@@ -52,6 +52,17 @@ function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: numbe
 }
 
 /* ------------------------------------------------------------------ */
+/*  Milestones data                                                     */
+/* ------------------------------------------------------------------ */
+
+const MILESTONES = [
+  { value: "24K+", label: "Lives Impacted" },
+  { value: "40+",  label: "Campus Leads" },
+  { value: "120+", label: "Sessions Hosted" },
+  { value: "1st",  label: "In Bangladesh" },
+];
+
+/* ------------------------------------------------------------------ */
 /*  Canvas card renderer                                                */
 /* ------------------------------------------------------------------ */
 
@@ -60,9 +71,9 @@ function drawCard(canvas: HTMLCanvasElement, data: CardData, date: string) {
   canvas.width = W;
   canvas.height = H;
   const ctx = canvas.getContext("2d")!;
-  const s = W / 840;
+  const s = W / 840; // = 2
 
-  // Background
+  // ── Background ──────────────────────────────────────────────────────
   const bgGrad = ctx.createLinearGradient(0, 0, W, H);
   bgGrad.addColorStop(0, "#04060e");
   bgGrad.addColorStop(0.5, "#080d20");
@@ -70,7 +81,7 @@ function drawCard(canvas: HTMLCanvasElement, data: CardData, date: string) {
   ctx.fillStyle = bgGrad;
   ctx.fillRect(0, 0, W, H);
 
-  // Ambient orbs
+  // ── Ambient orbs ────────────────────────────────────────────────────
   const orbs: { x: number; y: number; r: number; rgb: [number,number,number]; a: number }[] = [
     { x: -60*s,            y: -80*s,            r: 400*s, rgb: [10, 102, 194], a: 0.55 },
     { x: (840+60)*s,       y: H*0.30+(360*s)/2, r: 360*s, rgb: [34, 211, 238], a: 0.30 },
@@ -85,15 +96,22 @@ function drawCard(canvas: HTMLCanvasElement, data: CardData, date: string) {
     ctx.fillRect(0, 0, W, H);
   }
 
-  // Grid
+  // ── Grid ────────────────────────────────────────────────────────────
   const cell = 40*s;
   ctx.strokeStyle = "rgba(255,255,255,0.025)";
   ctx.lineWidth = 1;
   for (let x = 0; x <= W; x += cell) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
   for (let y = 0; y <= H; y += cell) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
 
-  // LCB logo box
-  const lx = 44*s, ly = 32*s, ls = 32*s;
+  // ── Top-left: "LCB Appreciation Corner" text (no icon) ──────────────
+  ctx.fillStyle = "rgba(255,255,255,0.9)";
+  ctx.font = `600 ${13*s}px Inter, sans-serif`;
+  ctx.textAlign = "left";
+  ctx.textBaseline = "middle";
+  ctx.fillText("LCB Appreciation Corner", 44*s, (32+16)*s);
+
+  // ── Top-right: LCB "in" logo box ────────────────────────────────────
+  const lx = (840 - 44 - 32)*s, ly = 32*s, ls = 32*s;
   roundRect(ctx, lx, ly, ls, ls, 8*s);
   const logoGrad = ctx.createLinearGradient(lx, ly, lx+ls, ly+ls);
   logoGrad.addColorStop(0, "#0a66c2");
@@ -106,21 +124,14 @@ function drawCard(canvas: HTMLCanvasElement, data: CardData, date: string) {
   ctx.textBaseline = "middle";
   ctx.fillText("in", lx+ls/2, ly+ls/2);
 
-  // LCB wordmark
-  ctx.fillStyle = "rgba(255,255,255,0.9)";
-  ctx.font = `600 ${13*s}px Inter, sans-serif`;
-  ctx.textAlign = "left";
-  ctx.textBaseline = "middle";
-  ctx.fillText("LinkedIn Community Bangladesh", (44+32+10)*s, (32+16)*s);
-
-  // SHOUT OUT label
-  ctx.fillStyle = "rgba(255,255,255,0.35)";
-  ctx.font = `700 ${11*s}px Inter, sans-serif`;
+  // ── "a big shout out to" label ───────────────────────────────────────
+  ctx.fillStyle = "rgba(255,255,255,0.40)";
+  ctx.font = `400 ${12*s}px Inter, sans-serif`;
   ctx.textAlign = "left";
   ctx.textBaseline = "top";
-  ctx.fillText("SHOUT OUT", 44*s, 92*s);
+  ctx.fillText("a big shout out to", 44*s, 92*s);
 
-  // Recipient name
+  // ── Recipient name ───────────────────────────────────────────────────
   const nameText = data.toName || "Name Here";
   ctx.font = `800 ${42*s}px Inter, sans-serif`;
   const nameGrad = ctx.createLinearGradient(44*s, 0, 500*s, 0);
@@ -130,7 +141,7 @@ function drawCard(canvas: HTMLCanvasElement, data: CardData, date: string) {
   ctx.textBaseline = "top";
   ctx.fillText(nameText, 44*s, 112*s);
 
-  // Recipient title
+  // ── Recipient title ─────────────────────────────────────────────────
   let msgTop = 182*s;
   if (data.toTitle) {
     ctx.fillStyle = "rgba(255,255,255,0.45)";
@@ -140,8 +151,9 @@ function drawCard(canvas: HTMLCanvasElement, data: CardData, date: string) {
     msgTop = 202*s;
   }
 
-  // Message
-  const msgText = data.message || "Your outstanding contribution to the community has inspired everyone around you.";
+  // ── Message (always in quotes) ───────────────────────────────────────
+  const rawMsg = data.message || "Your outstanding contribution to the community has inspired everyone around you.";
+  const msgText = `“${rawMsg}”`;
   ctx.fillStyle = "rgba(255,255,255,0.72)";
   ctx.font = `400 ${16*s}px Inter, sans-serif`;
   ctx.textBaseline = "top";
@@ -149,10 +161,36 @@ function drawCard(canvas: HTMLCanvasElement, data: CardData, date: string) {
   const lineH = 16*s*1.65;
   lines.slice(0, 4).forEach((l, i) => ctx.fillText(l, 44*s, msgTop + i*lineH));
 
-  // Recognised by
+  // ── Milestones strip ─────────────────────────────────────────────────
+  const msY = 345*s; // top of milestones section (logical 345)
+  // Thin separator line above milestones
+  ctx.strokeStyle = "rgba(255,255,255,0.08)";
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(44*s, msY); ctx.lineTo((840-44)*s, msY); ctx.stroke();
+
+  const colW = (840 - 88) / 4; // 188 logical units per column
+  MILESTONES.forEach((m, i) => {
+    const cx = (44 + i * colW)*s;
+    // Value — gradient colour
+    const valGrad = ctx.createLinearGradient(cx, 0, cx + 80*s, 0);
+    valGrad.addColorStop(0, "#22d3ee");
+    valGrad.addColorStop(1, "#6366f1");
+    ctx.fillStyle = valGrad;
+    ctx.font = `800 ${18*s}px Inter, sans-serif`;
+    ctx.textAlign = "left";
+    ctx.textBaseline = "top";
+    ctx.fillText(m.value, cx, (msY/s + 10)*s);
+    // Label
+    ctx.fillStyle = "rgba(255,255,255,0.35)";
+    ctx.font = `500 ${10*s}px Inter, sans-serif`;
+    ctx.fillText(m.label, cx, (msY/s + 32)*s);
+  });
+
+  // ── Recognised by ───────────────────────────────────────────────────
   const bottomY = H - 36*s;
   ctx.fillStyle = "rgba(255,255,255,0.30)";
   ctx.font = `700 ${10*s}px Inter, sans-serif`;
+  ctx.textAlign = "left";
   ctx.textBaseline = "bottom";
   ctx.fillText("RECOGNISED BY", 44*s, bottomY - 22*s);
 
@@ -168,7 +206,7 @@ function drawCard(canvas: HTMLCanvasElement, data: CardData, date: string) {
     ctx.fillText(data.fromTitle, 44*s, bottomY + 4*s);
   }
 
-  // Date + domain (bottom right)
+  // ── Date + domain (bottom right) ─────────────────────────────────────
   ctx.textAlign = "right";
   ctx.fillStyle = "rgba(255,255,255,0.30)";
   ctx.font = `400 ${11*s}px Inter, sans-serif`;
@@ -177,7 +215,7 @@ function drawCard(canvas: HTMLCanvasElement, data: CardData, date: string) {
   ctx.fillStyle = "rgba(255,255,255,0.20)";
   ctx.fillText("linkedincommunitybangladesh.com", W - 44*s, bottomY);
 
-  // Bottom accent line
+  // ── Bottom accent line ───────────────────────────────────────────────
   const lineGrad = ctx.createLinearGradient(0, 0, W, 0);
   lineGrad.addColorStop(0, "#0a66c2");
   lineGrad.addColorStop(0.5, "#22d3ee");
@@ -191,33 +229,54 @@ function drawCard(canvas: HTMLCanvasElement, data: CardData, date: string) {
 /* ------------------------------------------------------------------ */
 
 function CardPreview({ data, date }: { data: CardData; date: string }) {
+  const displayMsg = `“${data.message || "Your outstanding contribution to the community has inspired everyone around you."}”`;
+
   return (
     <div style={{ width:840, height:472, background:"linear-gradient(135deg, #04060e 0%, #080d20 50%, #04060e 100%)", borderRadius:24, position:"relative", overflow:"hidden", fontFamily:"var(--font-geist),'Geist','Inter',sans-serif", flexShrink:0 }}>
+      {/* Orbs */}
       <div style={{ position:"absolute", top:-80, left:-60, width:400, height:400, borderRadius:"50%", background:"radial-gradient(circle, rgba(10,102,194,0.55) 0%, rgba(10,102,194,0.08) 55%, transparent 75%)", filter:"blur(60px)" }} />
       <div style={{ position:"absolute", top:"30%", right:-60, width:360, height:360, borderRadius:"50%", background:"radial-gradient(circle, rgba(34,211,238,0.30) 0%, rgba(34,211,238,0.04) 55%, transparent 75%)", filter:"blur(55px)" }} />
       <div style={{ position:"absolute", bottom:-60, left:"35%", width:320, height:320, borderRadius:"50%", background:"radial-gradient(circle, rgba(99,102,241,0.28) 0%, rgba(99,102,241,0.04) 55%, transparent 75%)", filter:"blur(50px)" }} />
+      {/* Grid */}
       <div style={{ position:"absolute", inset:0, backgroundImage:"linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px)", backgroundSize:"40px 40px" }} />
 
-      {/* Top bar */}
-      <div style={{ position:"absolute", top:32, left:44, display:"flex", alignItems:"center", gap:10 }}>
-        <div style={{ width:32, height:32, borderRadius:8, background:"linear-gradient(135deg, #0a66c2 0%, #22d3ee 100%)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:14, fontWeight:800, color:"#fff", letterSpacing:"-0.5px" }}>in</div>
-        <span style={{ color:"rgba(255,255,255,0.9)", fontSize:13, fontWeight:600, letterSpacing:"0.04em" }}>LinkedIn Community Bangladesh</span>
+      {/* Top-left: "LCB Appreciation Corner" — no icon */}
+      <div style={{ position:"absolute", top:32, left:44, display:"flex", alignItems:"center" }}>
+        <span style={{ color:"rgba(255,255,255,0.9)", fontSize:13, fontWeight:600, letterSpacing:"0.04em" }}>LCB Appreciation Corner</span>
       </div>
 
-      <div style={{ position:"absolute", top:92, left:44, fontSize:11, fontWeight:700, letterSpacing:"0.22em", textTransform:"uppercase", color:"rgba(255,255,255,0.35)" }}>Shout Out</div>
+      {/* Top-right: LCB "in" logo */}
+      <div style={{ position:"absolute", top:32, right:44, width:32, height:32, borderRadius:8, background:"linear-gradient(135deg, #0a66c2 0%, #22d3ee 100%)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:14, fontWeight:800, color:"#fff", letterSpacing:"-0.5px" }}>in</div>
 
+      {/* "a big shout out to" label */}
+      <div style={{ position:"absolute", top:92, left:44, fontSize:12, fontWeight:400, letterSpacing:"0.04em", color:"rgba(255,255,255,0.40)" }}>a big shout out to</div>
+
+      {/* Recipient name */}
       <div style={{ position:"absolute", top:112, left:44, right:44, fontSize:42, fontWeight:800, color:"#ffffff", lineHeight:1.1, letterSpacing:"-1.5px", background:"linear-gradient(90deg, #ffffff 0%, rgba(255,255,255,0.80) 100%)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent" }}>
         {data.toName || "Name Here"}
       </div>
 
+      {/* Recipient title */}
       {data.toTitle && (
         <div style={{ position:"absolute", top:168, left:44, fontSize:14, color:"rgba(255,255,255,0.45)", fontWeight:400 }}>{data.toTitle}</div>
       )}
 
+      {/* Message in quotes */}
       <div style={{ position:"absolute", top:data.toTitle ? 202 : 182, left:44, right:44, fontSize:16, lineHeight:1.65, color:"rgba(255,255,255,0.72)", fontWeight:400, maxWidth:560 }}>
-        {data.message || "Your outstanding contribution to the community has inspired everyone around you."}
+        {displayMsg}
       </div>
 
+      {/* Milestones strip */}
+      <div style={{ position:"absolute", top:345, left:44, right:44, borderTop:"1px solid rgba(255,255,255,0.08)", paddingTop:10, display:"flex", gap:0 }}>
+        {MILESTONES.map((m) => (
+          <div key={m.value} style={{ flex:1 }}>
+            <div style={{ fontSize:18, fontWeight:800, background:"linear-gradient(90deg, #22d3ee, #6366f1)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", lineHeight:1.2 }}>{m.value}</div>
+            <div style={{ fontSize:10, fontWeight:500, color:"rgba(255,255,255,0.35)", marginTop:2, letterSpacing:"0.02em" }}>{m.label}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Bottom row */}
       <div style={{ position:"absolute", bottom:36, left:44, right:44, display:"flex", alignItems:"flex-end", justifyContent:"space-between" }}>
         <div>
           <div style={{ fontSize:10, fontWeight:700, letterSpacing:"0.18em", textTransform:"uppercase", color:"rgba(255,255,255,0.30)", marginBottom:4 }}>Recognised by</div>
@@ -230,6 +289,7 @@ function CardPreview({ data, date }: { data: CardData; date: string }) {
         </div>
       </div>
 
+      {/* Bottom accent line */}
       <div style={{ position:"absolute", bottom:0, left:0, right:0, height:3, background:"linear-gradient(90deg, #0a66c2 0%, #22d3ee 50%, #6366f1 100%)" }} />
     </div>
   );
