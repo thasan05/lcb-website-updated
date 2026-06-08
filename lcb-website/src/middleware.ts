@@ -4,6 +4,7 @@ import { verifySessionToken } from "@/lib/token";
 
 const FORUM_HOST = "forum.linkedincommunitybangladesh.com";
 const SHOUT_HOST = "shout.linkedincommunitybangladesh.com";
+const CARD_HOST  = "card.linkedincommunitybangladesh.com";
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -20,6 +21,13 @@ export async function middleware(request: NextRequest) {
   if (host === SHOUT_HOST) {
     const url = request.nextUrl.clone();
     url.pathname = "/shout";
+    return NextResponse.rewrite(url);
+  }
+
+  // ── Card subdomain → serve /card page ─────────────────────────────────────
+  if (host === CARD_HOST) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/card";
     return NextResponse.rewrite(url);
   }
 

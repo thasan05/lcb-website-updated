@@ -73,6 +73,34 @@ const nextConfig: NextConfig = {
         source: "/(.*)",
         headers: securityHeaders,
       },
+      {
+        // /card serves a standalone HTML page that loads fonts from Google CDN
+        // Override CSP to permit fonts.googleapis.com + fonts.gstatic.com
+        source: "/card",
+        headers: [
+          {
+            key: "Content-Security-Policy",
+            value: [
+              "default-src 'self'",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+              "img-src 'self' data: blob:",
+              "font-src 'self' data: https://fonts.gstatic.com",
+              [
+                "connect-src 'self'",
+                "https://fonts.googleapis.com",
+                "https://fonts.gstatic.com",
+              ].join(" "),
+              "frame-src 'none'",
+              "object-src 'none'",
+              "base-uri 'self'",
+              "form-action 'self'",
+              "frame-ancestors 'none'",
+              "upgrade-insecure-requests",
+            ].join("; "),
+          },
+        ],
+      },
     ];
   },
 
@@ -88,6 +116,7 @@ const nextConfig: NextConfig = {
   },
   outputFileTracingIncludes: {
     "/**": ["./src/content/data/**/*.json", "./src/data/**/*.json"],
+    "/card": ["./src/app/card/studio.html"],
   },
 };
 
