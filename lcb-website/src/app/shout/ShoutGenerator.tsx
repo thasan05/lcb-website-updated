@@ -146,7 +146,7 @@ function drawCard(canvas: HTMLCanvasElement, data: CardData, date: string) {
   ctx.font = `400 ${12*s}px Inter, sans-serif`;
   ctx.textAlign = "left";
   ctx.textBaseline = "top";
-  ctx.fillText("a big shout out to", 44*s, 92*s);
+  ctx.fillText("A big shout out to", 44*s, 92*s);
 
   // ── Recipient name ───────────────────────────────────────────────────
   const nameText = data.toName || "Name Here";
@@ -257,7 +257,7 @@ function CardPreview({ data, date }: { data: CardData; date: string }) {
       </div>
 
       {/* "a big shout out to" label */}
-      <div style={{ position:"absolute", top:92, left:44, fontSize:12, fontWeight:400, letterSpacing:"0.04em", color:"rgba(255,255,255,0.40)" }}>a big shout out to</div>
+      <div style={{ position:"absolute", top:92, left:44, fontSize:12, fontWeight:400, letterSpacing:"0.04em", color:"rgba(255,255,255,0.40)" }}>A big shout out to</div>
 
       {/* Recipient name */}
       <div style={{ position:"absolute", top:112, left:44, right:44, fontSize:42, fontWeight:800, color:"#ffffff", lineHeight:1.1, letterSpacing:"-1.5px", background:"linear-gradient(90deg, #ffffff 0%, rgba(255,255,255,0.80) 100%)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent" }}>
@@ -372,7 +372,7 @@ export function ShoutGenerator() {
               <div className="flex flex-col gap-3">
                 <div>
                   <label className="mb-1.5 block text-xs font-medium text-white/50">Full Name <span className="text-cyan-400">*</span></label>
-                  <input type="text" value={data.toName} onChange={(e) => set("toName", e.target.value)} placeholder="e.g. Md Moniruzzaman Bahar"
+                  <input type="text" value={data.toName} onChange={(e) => set("toName", e.target.value)} placeholder="e.g. Tanvir Hasan"
                     className="w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none transition focus:border-[#0a66c2]/60 focus:bg-white/[0.06] focus:ring-2 focus:ring-[#0a66c2]/20" />
                 </div>
                 <div>
@@ -398,7 +398,7 @@ export function ShoutGenerator() {
               <div className="flex flex-col gap-3">
                 <div>
                   <label className="mb-1.5 block text-xs font-medium text-white/50">Your Name <span className="text-cyan-400">*</span></label>
-                  <input type="text" value={data.fromName} onChange={(e) => set("fromName", e.target.value)} placeholder="e.g. Khandoker Md Sufi Alam"
+                  <input type="text" value={data.fromName} onChange={(e) => set("fromName", e.target.value)} placeholder="e.g. Altaf Hossain Raju"
                     className="w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none transition focus:border-[#0a66c2]/60 focus:bg-white/[0.06] focus:ring-2 focus:ring-[#0a66c2]/20" />
                 </div>
                 <div>
