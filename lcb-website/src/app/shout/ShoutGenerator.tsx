@@ -110,19 +110,36 @@ function drawCard(canvas: HTMLCanvasElement, data: CardData, date: string) {
   ctx.textBaseline = "middle";
   ctx.fillText("LCB Appreciation Corner", 44*s, (32+16)*s);
 
-  // ── Top-right: LCB "in" logo box ────────────────────────────────────
-  const lx = (840 - 44 - 32)*s, ly = 32*s, ls = 32*s;
-  roundRect(ctx, lx, ly, ls, ls, 8*s);
-  const logoGrad = ctx.createLinearGradient(lx, ly, lx+ls, ly+ls);
-  logoGrad.addColorStop(0, "#0a66c2");
-  logoGrad.addColorStop(1, "#22d3ee");
-  ctx.fillStyle = logoGrad;
-  ctx.fill();
-  ctx.fillStyle = "#ffffff";
-  ctx.font = `800 ${14*s}px Inter, sans-serif`;
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillText("in", lx+ls/2, ly+ls/2);
+  // ── Top-right: LCB three-block logo + subtitle ──────────────────────
+  {
+    const bs = 20*s;          // block size
+    const gap = 3*s;          // gap between blocks
+    const totalW = bs*3 + gap*2;
+    const startX = W - 44*s - totalW;
+    const startY = 28*s;
+    ["L","C","B"].forEach((letter, i) => {
+      const bx = startX + i*(bs+gap);
+      roundRect(ctx, bx, startY, bs, bs, 5*s);
+      const bg = ctx.createLinearGradient(bx, startY, bx, startY+bs);
+      bg.addColorStop(0, "#0a66c2");
+      bg.addColorStop(1, "#0d5aa7");
+      ctx.fillStyle = bg;
+      ctx.fill();
+      ctx.fillStyle = "#ffffff";
+      ctx.font = `900 ${11*s}px Arial Black, Arial, sans-serif`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(letter, bx+bs/2, startY+bs/2);
+    });
+    // Subtitle below logo
+    ctx.fillStyle = "rgba(255,255,255,0.38)";
+    ctx.font = `500 ${8*s}px Inter, sans-serif`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "top";
+    ctx.letterSpacing = "0.08em";
+    ctx.fillText("LinkedIn Community BD", startX + totalW/2, startY + bs + 5*s);
+    ctx.letterSpacing = "0";
+  }
 
   // ── "a big shout out to" label ───────────────────────────────────────
   ctx.fillStyle = "rgba(255,255,255,0.40)";
@@ -228,8 +245,16 @@ function CardPreview({ data, date }: { data: CardData; date: string }) {
         <span style={{ color:"rgba(255,255,255,0.9)", fontSize:13, fontWeight:600, letterSpacing:"0.04em" }}>LCB Appreciation Corner</span>
       </div>
 
-      {/* Top-right: LCB "in" logo */}
-      <div style={{ position:"absolute", top:32, right:44, width:32, height:32, borderRadius:8, background:"linear-gradient(135deg, #0a66c2 0%, #22d3ee 100%)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:14, fontWeight:800, color:"#fff", letterSpacing:"-0.5px" }}>in</div>
+      {/* Top-right: LCB logo + subtitle */}
+      <div style={{ position:"absolute", top:28, right:44, display:"flex", flexDirection:"column", alignItems:"center", gap:5 }}>
+        {/* LCB three-block logo */}
+        <div style={{ display:"flex", gap:3 }}>
+          {["L","C","B"].map((letter) => (
+            <div key={letter} style={{ width:20, height:20, borderRadius:5, background:"linear-gradient(160deg, #0a66c2 0%, #0d5aa7 100%)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:11, fontWeight:900, color:"#fff", fontFamily:"Arial Black, Arial, sans-serif", boxShadow:"0 1px 4px rgba(10,102,194,0.5)" }}>{letter}</div>
+          ))}
+        </div>
+        <span style={{ fontSize:8, fontWeight:500, color:"rgba(255,255,255,0.40)", letterSpacing:"0.08em", textTransform:"uppercase", whiteSpace:"nowrap" }}>LinkedIn Community BD</span>
+      </div>
 
       {/* "a big shout out to" label */}
       <div style={{ position:"absolute", top:92, left:44, fontSize:12, fontWeight:400, letterSpacing:"0.04em", color:"rgba(255,255,255,0.40)" }}>a big shout out to</div>
