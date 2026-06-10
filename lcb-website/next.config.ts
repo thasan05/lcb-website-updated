@@ -88,6 +88,15 @@ const nextConfig: NextConfig = {
         ],
       },
       {
+        // PDF proxy — must be embeddable in same-origin iframe on magazine reader.
+        // Override X-Frame-Options and frame-ancestors so the iframe can load it.
+        source: "/api/magazine/:id/pdf",
+        headers: [
+          { key: "X-Frame-Options",           value: "SAMEORIGIN" },
+          { key: "Content-Security-Policy",   value: "frame-ancestors 'self'" },
+        ],
+      },
+      {
         // /card serves a standalone HTML page that loads fonts from Google CDN
         // Override CSP to permit fonts.googleapis.com + fonts.gstatic.com
         source: "/card",
