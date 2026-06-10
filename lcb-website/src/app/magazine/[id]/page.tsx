@@ -140,7 +140,7 @@ export default async function MagazineReaderPage({
           {/* PDF viewer (desktop) */}
           <div className="overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0d1424] shadow-2xl">
             <iframe
-              src={mag.fileUrl}
+              src={`/api/magazine/${mag.id}/pdf`}
               title={mag.title}
               className="hidden h-[80vh] w-full sm:block"
               style={{ border: "none" }}
