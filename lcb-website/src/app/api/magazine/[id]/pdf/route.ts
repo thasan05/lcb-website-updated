@@ -7,21 +7,26 @@ import type { Magazine } from "@/content/magazines";
 export const dynamic = "force-dynamic";
 
 /**
- * Parse version and public_id from a Cloudinary raw delivery URL.
- * e.g. https://res.cloudinary.com/{cloud}/raw/upload/v1234567/lcb-website/file.pdf
+ * Extract public_id (without extension) and format from a Cloudinary raw URL.
+ * e.g. https://res.cloudinary.com/{cloud}/raw/upload/v1234/lcb-website/file.pdf
+ *   → { publicIdNoExt: "lcb-website/file", format: "pdf" }
  */
-function parseCloudinaryUrl(url: string): { publicId: string; version: number } | null {
-  const m = url.match(/\/raw\/upload\/v(\d+)\/(.+)$/);
+function parsePublicId(url: string): { publicIdNoExt: string; format: string } | null {
+  const m = url.match(/\/raw\/upload\/(?:v\d+\/)?(.+)$/);
   if (!m) return null;
-  return { version: parseInt(m[1], 10), publicId: m[2] };
+  const full = m[1]; // "lcb-website/hl12irqja0krgusyw8pr.pdf"
+  const extMatch = full.match(/^(.+?)\.([^./]+)$/);
+  if (!extMatch) return { publicIdNoExt: full, format: "" };
+  return { publicIdNoExt: extMatch[1], format: extMatch[2] };
 }
 
 /**
- * Streams the magazine PDF with Content-Disposition: inline so Chrome
- * renders it inside an <iframe> instead of triggering a download.
+ * Streams the magazine PDF inline.
  *
- * Cloudinary "Strict Delivery" blocks unsigned raw URLs (HTTP 401).
- * We generate a signed delivery URL server-side before fetching.
+ * Cloudinary Strict Delivery blocks unsigned CDN URLs (401).
+ * We use private_download_url() which authenticates via API key + HMAC
+ * in the query string — this goes through the Cloudinary API endpoint,
+ * not the CDN, so Strict Delivery settings are irrelevant.
  */
 export async function GET(
   _request: NextRequest,
@@ -39,17 +44,22 @@ export async function GET(
 
     let fetchUrl = mag.fileUrl;
 
-    // Generate signed URL to satisfy Cloudinary Strict Delivery
     if (cloudName && apiKey && apiSecret) {
-      const parts = parseCloudinaryUrl(mag.fileUrl);
+      const parts = parsePublicId(mag.fileUrl);
       if (parts) {
         cloudinary.config({ cloud_name: cloudName, api_key: apiKey, api_secret: apiSecret });
-        fetchUrl = cloudinary.url(parts.publicId, {
-          resource_type: "raw",
-          sign_url: true,
-          version: parts.version,
-          secure: true,
-        });
+        // private_download_url generates an authenticated API endpoint URL
+        // (api.cloudinary.com/v1_1/.../raw/download?api_key=...&signature=...)
+        // which bypasses Strict Delivery because it uses API credentials.
+        fetchUrl = cloudinary.utils.private_download_url(
+          parts.publicIdNoExt,
+          parts.format,
+          {
+            resource_type: "raw",
+            expires_at: Math.floor(Date.now() / 1000) + 7200,
+            attachment: false,
+          }
+        );
       }
     }
 
