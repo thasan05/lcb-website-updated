@@ -18,6 +18,7 @@ const FILE_MAP: Record<string, string> = {
   "data:gallery-manifest":  "src/data/gallery/manifest.json",
   "data:lor-config":        "src/content/data/lor-config.json",
   "data:lor-submissions":   "src/content/data/lor-submissions.json",
+  "data:magazines":         "src/content/data/magazines.json",
   "team:central":          "src/data/team/central-team.json",
   "team:campus-leads":     "src/data/team/campus-leads.json",
   "team:lcb-heads":        "src/data/team/lcb-heads.json",

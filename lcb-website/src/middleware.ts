@@ -2,9 +2,10 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { verifySessionToken } from "@/lib/token";
 
-const FORUM_HOST = "forum.linkedincommunitybangladesh.com";
-const SHOUT_HOST = "shout.linkedincommunitybangladesh.com";
-const CARD_HOST  = "card.linkedincommunitybangladesh.com";
+const FORUM_HOST    = "forum.linkedincommunitybangladesh.com";
+const SHOUT_HOST    = "shout.linkedincommunitybangladesh.com";
+const CARD_HOST     = "card.linkedincommunitybangladesh.com";
+const MAGAZINE_HOST = "magazine.linkedincommunitybangladesh.com";
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -37,6 +38,13 @@ export async function middleware(request: NextRequest) {
   if (host === CARD_HOST) {
     const url = request.nextUrl.clone();
     url.pathname = "/card";
+    return NextResponse.rewrite(url);
+  }
+
+  // ── Magazine subdomain → serve /magazine pages ─────────────────────────────
+  if (host === MAGAZINE_HOST) {
+    const url = request.nextUrl.clone();
+    url.pathname = pathname === "/" || pathname === "" ? "/magazine" : `/magazine${pathname}`;
     return NextResponse.rewrite(url);
   }
 
