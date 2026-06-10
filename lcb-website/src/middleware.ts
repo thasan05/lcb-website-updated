@@ -43,6 +43,8 @@ export async function middleware(request: NextRequest) {
 
   // ── Magazine subdomain → serve /magazine pages ─────────────────────────────
   if (host === MAGAZINE_HOST) {
+    // Let API routes pass through unmodified so iframe src="/api/..." works
+    if (pathname.startsWith("/api/")) return NextResponse.next();
     const url = request.nextUrl.clone();
     url.pathname = pathname === "/" || pathname === "" ? "/magazine" : `/magazine${pathname}`;
     return NextResponse.rewrite(url);
