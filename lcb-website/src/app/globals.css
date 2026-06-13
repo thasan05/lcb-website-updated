@@ -43,6 +43,7 @@ html {
   scroll-behavior: smooth;
   background: rgb(var(--bg-base));
   color-scheme: dark;
+  overflow-x: hidden;
 }
 
 body {
