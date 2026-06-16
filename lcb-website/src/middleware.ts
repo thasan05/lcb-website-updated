@@ -43,8 +43,9 @@ export async function middleware(request: NextRequest) {
 
   // ── Magazine subdomain → serve /magazine pages ─────────────────────────────
   if (host === MAGAZINE_HOST) {
-    // Let API routes pass through unmodified so iframe src="/api/..." works
-    if (pathname.startsWith("/api/")) return NextResponse.next();
+    // Only pass through the public PDF proxy so the iframe src resolves correctly.
+    // All other /api/ paths (including /api/admin/*) fall through to auth checks below.
+    if (pathname.startsWith("/api/magazine/")) return NextResponse.next();
     const url = request.nextUrl.clone();
     url.pathname = pathname === "/" || pathname === "" ? "/magazine" : `/magazine${pathname}`;
     return NextResponse.rewrite(url);
