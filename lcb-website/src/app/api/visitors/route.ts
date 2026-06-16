@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { rateLimit, getClientIp } from "@/lib/rate-limit";
 
 const KEY = "stats:pageviews";
 
@@ -25,9 +27,14 @@ export async function GET() {
   }
 }
 
-// POST — atomic increment, returns new count
-export async function POST() {
+// POST — atomic increment, returns new count. Rate-limited to prevent stat inflation.
+export async function POST(req: NextRequest) {
   try {
+    // 20 increments per IP per hour — covers normal browsing, blocks bulk scripting
+    const ip    = getClientIp(req);
+    const limit = await rateLimit(`ratelimit:pageview:${ip}`, 20, 60 * 60);
+    if (!limit.allowed) return NextResponse.json({ count: null });
+
     const redis = await getRedis();
     if (!redis) return NextResponse.json({ count: null });
     const count = await redis.incr(KEY);

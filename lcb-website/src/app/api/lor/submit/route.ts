@@ -1,35 +1,44 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { kvGet, kvSet } from "@/lib/kv";
+import { rateLimit, rateLimitResponse, getClientIp } from "@/lib/rate-limit";
 import type { LorConfig, LorSubmission } from "@/content/lor";
 
 const CONFIG_KEY = "data:lor-config";
 const SUBS_KEY   = "data:lor-submissions";
 const MAX_BYTES  = 32 * 1024;
 
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#x27;");
+}
+
 async function sendNotification(submission: LorSubmission, config: LorConfig) {
   const apiKey    = process.env.RESEND_API_KEY;
   const notifyTo  = process.env.LOR_NOTIFY_EMAIL;
-  if (!apiKey || !notifyTo) return; // env vars not set — skip silently
+  if (!apiKey || !notifyTo) return;
 
   const { Resend } = await import("resend");
   const resend = new Resend(apiKey);
 
   const a = submission.answers;
-  const name  = a["full-name"]   ?? "—";
-  const email = a["email"]       ?? "—";
-  const role  = a["role-in-lcb"] ?? "—";
-  const univ  = a["university"]  ?? "—";
+  const name  = escapeHtml(a["full-name"]   ?? "—");
+  const email = escapeHtml(a["email"]       ?? "—");
+  const role  = escapeHtml(a["role-in-lcb"] ?? "—");
+  const univ  = escapeHtml(a["university"]  ?? "—");
 
-  // Build a full answers table for the email body
   const answersHtml = config.questions
     .sort((x, y) => x.order - y.order)
     .filter((q) => a[q.id])
     .map(
       (q) =>
         `<tr>
-          <td style="padding:6px 12px;font-weight:600;color:#94a3b8;white-space:nowrap;vertical-align:top">${q.label}</td>
-          <td style="padding:6px 12px;color:#e2e8f0">${String(a[q.id]).replace(/\n/g, "<br>")}</td>
+          <td style="padding:6px 12px;font-weight:600;color:#94a3b8;white-space:nowrap;vertical-align:top">${escapeHtml(q.label)}</td>
+          <td style="padding:6px 12px;color:#e2e8f0">${escapeHtml(String(a[q.id])).replace(/\n/g, "<br>")}</td>
         </tr>`
     )
     .join("");
@@ -50,7 +59,7 @@ async function sendNotification(submission: LorSubmission, config: LorConfig) {
         </table>
         <p style="margin:24px 0 0;font-size:12px;color:#334155">
           Submitted ${new Date(submission.submittedAt).toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short" })}
-          &nbsp;·&nbsp; ID: ${submission.id}
+          &nbsp;·&nbsp; ID: ${escapeHtml(submission.id)}
         </p>
         <p style="margin:8px 0 0;font-size:12px;color:#334155">
           Review at <a href="https://linkedincommunitybangladesh.com/admin/lor" style="color:#4F9CEB">admin/lor</a>
@@ -62,6 +71,11 @@ async function sendNotification(submission: LorSubmission, config: LorConfig) {
 
 export async function POST(req: NextRequest) {
   try {
+    // Rate limit: 3 submissions per IP per hour
+    const ip    = getClientIp(req);
+    const limit = await rateLimit(`ratelimit:lor:${ip}`, 3, 60 * 60);
+    if (!limit.allowed) return rateLimitResponse(limit);
+
     const cl = Number(req.headers.get("content-length") ?? 0);
     if (cl > MAX_BYTES) return NextResponse.json({ error: "Body too large" }, { status: 413 });
     const text = await req.text();
@@ -97,7 +111,6 @@ export async function POST(req: NextRequest) {
     subs.unshift(submission);
     await kvSet(SUBS_KEY, subs);
 
-    // Fire-and-forget — never block the response on email failure
     sendNotification(submission, config).catch(() => {});
 
     return NextResponse.json({ ok: true, id: submission.id });

@@ -1,17 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { createSessionToken } from "@/lib/token";
-import { rateLimit, rateLimitResponse } from "@/lib/rate-limit";
-
-// ── Helpers ───────────────────────────────────────────────────────────────────
-
-function getClientIp(req: NextRequest): string {
-  return (
-    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-    req.headers.get("x-real-ip") ||
-    "unknown"
-  );
-}
+import { rateLimit, rateLimitResponse, getClientIp } from "@/lib/rate-limit";
 
 const COOKIE_NAME    = "lcb_admin_session";
 const COOKIE_OPTIONS = {

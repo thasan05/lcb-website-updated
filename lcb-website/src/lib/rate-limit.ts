@@ -3,6 +3,22 @@
  * Falls back to "always allow" in dev (no Redis configured).
  */
 
+import type { NextRequest } from "next/server";
+
+/**
+ * Extract the real client IP.
+ * Prefers CF-Connecting-IP (set by Cloudflare, not spoofable by clients)
+ * over x-forwarded-for (which can be injected if Cloudflare is bypassed).
+ */
+export function getClientIp(req: NextRequest): string {
+  return (
+    req.headers.get("cf-connecting-ip") ||
+    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    req.headers.get("x-real-ip") ||
+    "unknown"
+  );
+}
+
 export interface RateLimitResult {
   allowed: boolean;
   limit: number;
