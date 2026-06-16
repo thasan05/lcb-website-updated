@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { kvGet, kvSet } from "@/lib/kv";
+import { sanitizeHtml } from "@/lib/sanitize";
 import type { Article } from "@/content/articles";
 
 const KEY            = "data:articles";
@@ -84,6 +85,7 @@ export async function POST(request: NextRequest) {
     if (articles.some((a) => a.id === body.id)) {
       return NextResponse.json({ error: "Article ID already exists" }, { status: 409 });
     }
+    body.content = sanitizeHtml(body.content);
     articles.unshift(body);
     await kvSet(KEY, articles);
     return NextResponse.json({ ok: true });
@@ -118,6 +120,7 @@ export async function PUT(request: NextRequest) {
     if (!isValidArticle(body)) {
       return NextResponse.json({ error: "Invalid article data" }, { status: 400 });
     }
+    body.content = sanitizeHtml(body.content);
     const articles = (await kvGet<Article[]>(KEY)) ?? [];
     const idx = articles.findIndex((a) => a.id === body.id);
     if (idx === -1) {

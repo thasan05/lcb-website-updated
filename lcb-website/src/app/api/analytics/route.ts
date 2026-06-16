@@ -1,15 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { kvGet, kvSet } from "@/lib/kv";
-import { rateLimit, rateLimitResponse } from "@/lib/rate-limit";
-
-function getClientIp(req: NextRequest): string {
-  return (
-    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-    req.headers.get("x-real-ip") ||
-    "unknown"
-  );
-}
+import { rateLimit, rateLimitResponse, getClientIp } from "@/lib/rate-limit";
 
 // Public endpoint — increments today's page-view counter.
 // Rate-limited: 5 calls per IP per hour (prevents inflation).

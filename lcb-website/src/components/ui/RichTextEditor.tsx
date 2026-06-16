@@ -2,6 +2,7 @@
 
 import { useRef, useEffect, useCallback } from "react";
 import { Bold, Italic, List, Link2, Heading2 } from "lucide-react";
+import { sanitizeHtml } from "@/lib/sanitize";
 
 interface RichTextEditorProps {
   value: string;
@@ -56,8 +57,18 @@ export function RichTextEditor({
   }
 
   function insertLink() {
-    const url = prompt("Enter URL:");
-    if (url) execCmd("createLink", url);
+    const url = prompt("Enter URL (https:// only):");
+    if (!url) return;
+    const lower = url.trim().toLowerCase();
+    if (
+      lower.startsWith("javascript:") ||
+      lower.startsWith("vbscript:") ||
+      lower.startsWith("data:")
+    ) {
+      alert("Invalid URL. Only https://, http://, or relative URLs are allowed.");
+      return;
+    }
+    execCmd("createLink", url);
   }
 
   function insertHeading() {
@@ -135,7 +146,7 @@ export function SafeHtml({
   return (
     <div
       className={`prose prose-invert prose-sm max-w-none ${className ?? ""}`}
-      dangerouslySetInnerHTML={{ __html: html }}
+      dangerouslySetInnerHTML={{ __html: sanitizeHtml(html) }}
     />
   );
 }

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { kvGet, kvSet } from "@/lib/kv";
+import { sanitizeHtml } from "@/lib/sanitize";
 import type { Event } from "@/content/events";
 
 const KEY            = "data:events";
@@ -75,6 +76,7 @@ export async function POST(request: NextRequest) {
     if (!isValidEvent(body)) {
       return NextResponse.json({ error: "Invalid event data" }, { status: 400 });
     }
+    body.description = sanitizeHtml(body.description);
     const events = await kvGet<Event[]>(KEY);
     events.unshift(body);
     await kvSet(KEY, events);
@@ -91,6 +93,7 @@ export async function PUT(request: NextRequest) {
     if (!isValidEvent(body)) {
       return NextResponse.json({ error: "Invalid event data" }, { status: 400 });
     }
+    body.description = sanitizeHtml(body.description);
     const events = (await kvGet<Event[]>(KEY)).map((e) =>
       e.id === body.id ? body : e
     );

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { kvGet, kvSet } from "@/lib/kv";
+import { sanitizeHtml } from "@/lib/sanitize";
 import type { NewsItem } from "@/content/news";
 
 const KEY            = "data:news";
@@ -79,6 +80,7 @@ export async function POST(request: NextRequest) {
     if (!isValidNewsItem(body)) {
       return NextResponse.json({ error: "Invalid news item" }, { status: 400 });
     }
+    body.summary = sanitizeHtml(body.summary);
     const news = await kvGet<NewsItem[]>(KEY);
     if (body.featured) news.forEach((n) => { n.featured = false; });
     news.unshift(body);
@@ -96,6 +98,7 @@ export async function PUT(request: NextRequest) {
     if (!isValidNewsItem(body)) {
       return NextResponse.json({ error: "Invalid news item" }, { status: 400 });
     }
+    body.summary = sanitizeHtml(body.summary);
     let news = await kvGet<NewsItem[]>(KEY);
     if (body.featured) {
       news = news.map((n) => ({ ...n, featured: n.id === body.id }));
