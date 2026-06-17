@@ -377,6 +377,21 @@ export function ShoutGenerator() {
 
   return (
     <div className="min-h-screen bg-[rgb(4,6,20)] text-white">
+      {/* Mobile sticky back-nav */}
+      <header className="sticky top-0 z-50 border-b border-white/[0.06] bg-[rgb(4,6,20)]/90 backdrop-blur-xl sm:hidden">
+        <div className="flex items-center justify-between px-4 py-3">
+          <a
+            href="https://linkedincommunitybangladesh.com"
+            className="flex items-center gap-2 text-sm text-white/50 transition hover:text-white"
+          >
+            <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+            </svg>
+            Back to LCB
+          </a>
+          <span className="text-xs font-bold uppercase tracking-widest text-white/30">Shout Out</span>
+        </div>
+      </header>
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className="absolute -left-32 -top-32 h-[600px] w-[600px] rounded-full blur-[120px]" style={{ background:"radial-gradient(circle, rgba(10,102,194,0.35) 0%, transparent 70%)" }} />
         <div className="absolute -right-24 top-1/3 h-[500px] w-[500px] rounded-full blur-[110px]" style={{ background:"radial-gradient(circle, rgba(34,211,238,0.18) 0%, transparent 70%)" }} />
@@ -384,7 +399,7 @@ export function ShoutGenerator() {
         <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage:"linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)", backgroundSize:"48px 48px" }} />
       </div>
 
-      <div className="relative z-10 mx-auto max-w-[1320px] px-6 py-12">
+      <div className="relative z-10 mx-auto max-w-[1320px] px-4 py-10 sm:px-6 sm:py-12">
         <motion.div initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.5 }} className="mb-12 flex flex-col items-center text-center">
           <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-white/50">
             <span className="relative flex h-1.5 w-1.5">
@@ -414,12 +429,12 @@ export function ShoutGenerator() {
                 <div>
                   <label className="mb-1.5 block text-xs font-medium text-white/50">Full Name <span className="text-cyan-400">*</span></label>
                   <input type="text" value={data.toName} onChange={(e) => set("toName", e.target.value)} placeholder="e.g. Tanvir Hasan"
-                    className="w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none transition focus:border-[#0a66c2]/60 focus:bg-white/[0.06] focus:ring-2 focus:ring-[#0a66c2]/20" />
+                    className="w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-2.5 text-base text-white placeholder-white/20 outline-none transition focus:border-[#0a66c2]/60 focus:bg-white/[0.06] focus:ring-2 focus:ring-[#0a66c2]/20" />
                 </div>
                 <div>
                   <label className="mb-1.5 block text-xs font-medium text-white/50">Role / Title <span className="text-white/20">(optional)</span></label>
                   <input type="text" value={data.toTitle} onChange={(e) => set("toTitle", e.target.value)} placeholder="e.g. Campus Lead, AIUB"
-                    className="w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none transition focus:border-[#0a66c2]/60 focus:bg-white/[0.06] focus:ring-2 focus:ring-[#0a66c2]/20" />
+                    className="w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-2.5 text-base text-white placeholder-white/20 outline-none transition focus:border-[#0a66c2]/60 focus:bg-white/[0.06] focus:ring-2 focus:ring-[#0a66c2]/20" />
                 </div>
               </div>
             </fieldset>
@@ -429,7 +444,7 @@ export function ShoutGenerator() {
               <legend className="mb-4 px-1 text-xs font-semibold uppercase tracking-widest text-white/35">Message</legend>
               <textarea value={data.message} onChange={(e) => set("message", e.target.value)} rows={4} maxLength={240}
                 placeholder="Your outstanding effort for ensuring business in critical time..."
-                className="w-full resize-none rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm text-white placeholder-white/20 outline-none transition focus:border-[#0a66c2]/60 focus:bg-white/[0.06] focus:ring-2 focus:ring-[#0a66c2]/20" />
+                className="w-full resize-none rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-base text-white placeholder-white/20 outline-none transition focus:border-[#0a66c2]/60 focus:bg-white/[0.06] focus:ring-2 focus:ring-[#0a66c2]/20" />
               <div className="mt-1.5 text-right text-[11px] text-white/20">{data.message.length}/240</div>
             </fieldset>
 
@@ -440,12 +455,12 @@ export function ShoutGenerator() {
                 <div>
                   <label className="mb-1.5 block text-xs font-medium text-white/50">Your Name <span className="text-cyan-400">*</span></label>
                   <input type="text" value={data.fromName} onChange={(e) => set("fromName", e.target.value)} placeholder="e.g. Altaf Hossain Raju"
-                    className="w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none transition focus:border-[#0a66c2]/60 focus:bg-white/[0.06] focus:ring-2 focus:ring-[#0a66c2]/20" />
+                    className="w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-2.5 text-base text-white placeholder-white/20 outline-none transition focus:border-[#0a66c2]/60 focus:bg-white/[0.06] focus:ring-2 focus:ring-[#0a66c2]/20" />
                 </div>
                 <div>
                   <label className="mb-1.5 block text-xs font-medium text-white/50">Your Role / Title <span className="text-white/20">(optional)</span></label>
                   <input type="text" value={data.fromTitle} onChange={(e) => set("fromTitle", e.target.value)} placeholder="e.g. President, LCB"
-                    className="w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none transition focus:border-[#0a66c2]/60 focus:bg-white/[0.06] focus:ring-2 focus:ring-[#0a66c2]/20" />
+                    className="w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-2.5 text-base text-white placeholder-white/20 outline-none transition focus:border-[#0a66c2]/60 focus:bg-white/[0.06] focus:ring-2 focus:ring-[#0a66c2]/20" />
                 </div>
               </div>
             </fieldset>

@@ -279,7 +279,7 @@ export function Forum({ articles, asLinks = false }: Props) {
 
   return (
     <>
-      <section id="forum" className="relative py-24">
+      <section id="forum" className="relative py-12 sm:py-24">
         {/* Section connector */}
         <span className="section-thread" aria-hidden />
 
@@ -295,7 +295,7 @@ export function Forum({ articles, asLinks = false }: Props) {
 
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           {/* Header */}
-          <div className="mb-12 flex flex-col items-start gap-6 sm:flex-row sm:items-end sm:justify-between">
+          <div className="mb-8 flex flex-col items-start gap-6 sm:mb-12 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-brand-400/20 bg-brand-500/10 px-3 py-1.5">
                 <span className="h-1.5 w-1.5 rounded-full bg-brand-400" />
@@ -320,7 +320,7 @@ export function Forum({ articles, asLinks = false }: Props) {
                 placeholder="Search articles…"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full rounded-full border border-white/[0.08] bg-white/[0.04] py-2.5 pl-9 pr-4 text-sm text-white placeholder-white/30 outline-none transition focus:border-brand-400/40 focus:bg-white/[0.06]"
+                className="w-full rounded-full border border-white/[0.08] bg-white/[0.04] py-2.5 pl-9 pr-4 text-base text-white placeholder-white/30 outline-none transition focus:border-brand-400/40 focus:bg-white/[0.06]"
               />
             </div>
           </div>

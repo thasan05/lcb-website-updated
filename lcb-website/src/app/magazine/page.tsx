@@ -68,16 +68,16 @@ function MagazineCard({ mag }: { mag: Magazine }) {
       </div>
 
       {/* Meta */}
-      <div className="flex flex-1 flex-col justify-between p-4">
+      <div className="flex flex-1 flex-col justify-between p-3 sm:p-4">
         <div>
-          <p className="text-[11px] font-medium uppercase tracking-widest text-[#4F9CEB]/60">
+          <p className="text-[10px] font-medium uppercase tracking-widest text-[#4F9CEB]/60 sm:text-[11px]">
             {formatDate(mag.uploadedAt)}
           </p>
-          <h3 className="mt-1 text-base font-semibold text-white group-hover:text-[#7BB8F0] transition-colors leading-snug">
+          <h3 className="mt-1 text-sm font-semibold text-white group-hover:text-[#7BB8F0] transition-colors leading-snug sm:text-base">
             {mag.title}
           </h3>
         </div>
-        <div className="mt-4 flex items-center gap-1.5 text-xs text-[#4F9CEB]">
+        <div className="mt-3 flex items-center gap-1.5 text-xs text-[#4F9CEB] sm:mt-4">
           <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.641 0-8.573-3.007-9.964-7.178z" />
             <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -121,12 +121,12 @@ export default async function MagazinePage() {
             background: "radial-gradient(ellipse 70% 60% at 50% -10%, rgba(10,102,194,0.4), transparent 70%)",
           }}
         />
-        <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+        <div className="relative mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-20 lg:px-8">
           <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-[#4F9CEB]/20 bg-[#4F9CEB]/10 px-3 py-1.5">
             <span className="h-1.5 w-1.5 rounded-full bg-[#4F9CEB]" />
             <span className="text-[11px] font-bold uppercase tracking-[0.20em] text-[#7BB8F0]">Monthly Publication</span>
           </div>
-          <h1 className="text-4xl font-bold text-white sm:text-5xl">LCB Magazine</h1>
+          <h1 className="text-3xl font-bold text-white sm:text-5xl">LCB Magazine</h1>
           <p className="mt-3 max-w-xl text-base text-white/50">
             Monthly insights, stories, and professional wisdom from Bangladesh&apos;s LinkedIn community.
           </p>
@@ -135,7 +135,7 @@ export default async function MagazinePage() {
 
       {/* Grid */}
       <main className="flex-1">
-        <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl px-4 py-8 sm:py-12 sm:px-6 lg:px-8">
           {magazines.length === 0 ? (
             <div className="py-24 text-center">
               <svg
@@ -150,7 +150,7 @@ export default async function MagazinePage() {
               <p className="text-white/30">First issue coming soon.</p>
             </div>
           ) : (
-            <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+            <div className="grid grid-cols-2 gap-3 sm:gap-6 md:grid-cols-3 lg:grid-cols-4">
               {magazines.map((mag) => (
                 <MagazineCard key={mag.id} mag={mag} />
               ))}
