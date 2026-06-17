@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Download, Sparkles, RefreshCw, Check, Share2 } from "lucide-react";
+import { FooterLive } from "@/components/layout/FooterLive";
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                               */
@@ -521,6 +522,14 @@ export function ShoutGenerator() {
             <p className="text-xs text-white/25">Card exports at 1680 × 944 px — optimised for LinkedIn posts, emails, and banners.</p>
           </motion.div>
         </div>
+
+        {/* Footer */}
+        <footer className="mt-12 border-t border-white/[0.06] pt-6">
+          <div className="flex flex-col items-start justify-between gap-4 text-xs text-white/40 sm:flex-row sm:items-center">
+            <p>© {new Date().getFullYear()} LinkedIn Community Bangladesh. All rights reserved.</p>
+            <FooterLive />
+          </div>
+        </footer>
       </div>
     </div>
   );
