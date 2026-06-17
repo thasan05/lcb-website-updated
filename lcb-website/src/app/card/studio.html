@@ -70,17 +70,14 @@
   .stage{background:linear-gradient(160deg,rgba(255,255,255,.08),rgba(255,255,255,.02));border:1px solid var(--line);border-radius:24px;padding:16px;box-shadow:0 30px 70px -34px rgba(0,0,0,.8);}
   .canvas-frame{position:relative;border-radius:14px;overflow:hidden;aspect-ratio:1;background:#0a1424;box-shadow:0 18px 40px -18px rgba(0,0,0,.7), 0 0 0 1px rgba(140,172,216,.1);}
   #card{width:100%;height:100%;display:block;}
-  .actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;}
-  .actions .full{grid-column:1/-1;}
+  .actions{display:flex;flex-direction:column;gap:8px;margin-top:14px;}
   button{font-family:inherit;cursor:pointer;border:none;border-radius:12px;font-weight:700;font-size:14px;padding:13px 16px;transition:transform .12s,box-shadow .2s,background .2s,border-color .2s;display:inline-flex;align-items:center;justify-content:center;gap:8px;}
   button:active{transform:translateY(1px) scale(.99);}
   .btn-primary{background:linear-gradient(180deg,#3b82f6,#1d4ed8);color:#fff;box-shadow:0 12px 26px -10px rgba(37,99,235,.9);}
   .btn-primary:hover{filter:brightness(1.08);}
   .btn-ghost{background:rgba(255,255,255,.05);color:var(--text);border:1px solid var(--line);}
   .btn-ghost:hover{background:rgba(255,255,255,.1);border-color:var(--line-strong);}
-  .social-row{display:flex;gap:8px;margin-top:10px;}
-  .social-row button{flex:1;background:transparent;border:1px solid var(--line);color:var(--muted);font-size:12.5px;padding:10px 8px;}
-  .social-row button:hover{color:var(--text);border-color:var(--line-strong);}
+
   .hint{font-size:12px;color:var(--muted);margin-top:12px;text-align:center;line-height:1.45;}
 
   /* ---- controls ---- */
@@ -139,22 +136,13 @@
 
     /* Buttons: min 44px tap target */
     button{min-height:44px;font-size:14px;}
-    /* Download full-width, Share + Copy side-by-side */
-    .actions{grid-template-columns:1fr 1fr;gap:8px;}
-    .btn-primary.full{padding:14px 16px;font-size:15px;}
-
-    /* Social row: wrap evenly */
-    .social-row{flex-wrap:wrap;gap:6px;margin-top:8px;}
-    .social-row button{flex:1 1 calc(33% - 6px);font-size:12px;padding:10px 6px;min-height:40px;}
+    .btn-primary{padding:14px 16px;font-size:15px;}
 
     .hint{font-size:11.5px;}
     footer{font-size:11.5px;margin-top:28px;}
   }
   @media(max-width:360px){
     .occasions{grid-template-columns:1fr;}
-    /* Stack all action buttons on very small screens */
-    .actions{grid-template-columns:1fr;}
-    .social-row button{font-size:11px;}
   }
 </style>
 </head>
@@ -201,14 +189,8 @@
       <div class="stage">
         <div class="canvas-frame"><canvas id="card" width="1200" height="1200"></canvas></div>
         <div class="actions">
-          <button class="btn-primary full" id="download">⬇ Download card (PNG)</button>
+          <button class="btn-primary" id="download">⬇ Download card (PNG)</button>
           <button class="btn-ghost" id="share">↗ Share</button>
-          <button class="btn-ghost" id="copy">⧉ Copy image</button>
-        </div>
-        <div class="social-row">
-          <button data-net="linkedin">LinkedIn</button>
-          <button data-net="facebook">Facebook</button>
-          <button data-net="whatsapp">WhatsApp</button>
         </div>
         <p class="hint">On mobile, <b>Share</b> posts the image directly. On desktop, download first, then attach it to your post.</p>
       </div>
@@ -587,14 +569,9 @@ function fileName(){const o=getO();const n=(state.name||"card").replace(/[^a-z0-
 function toast(t){const el=document.getElementById("toast");el.textContent=t;el.classList.add("show");clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove("show"),2200);}
 
 document.getElementById("download").onclick=()=>{const a=document.createElement("a");a.download=fileName();a.href=canvas.toDataURL("image/png");a.click();toast("Card downloaded ✓");};
-document.getElementById("copy").onclick=()=>{canvas.toBlob(async b=>{try{await navigator.clipboard.write([new ClipboardItem({"image/png":b})]);toast("Image copied ✓");}catch(err){toast("Copy not supported — use Download");}});};
 document.getElementById("share").onclick=()=>{canvas.toBlob(async b=>{const file=new File([b],fileName(),{type:"image/png"});const o=getO();
   if(navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file],title:o.title,text:`${o.title} from ${state.name} · LinkedIn Community Bangladesh`});}catch(e){}}
   else{const a=document.createElement("a");a.download=fileName();a.href=canvas.toDataURL("image/png");a.click();toast("Saved — attach it to your post");}});};
-document.querySelectorAll(".social-row button").forEach(b=>{b.onclick=()=>{const o=getO();
-  const text=encodeURIComponent(`${o.title} from ${state.name}! 🌟 #LinkedInCommunityBangladesh #LCBDigitalHorizon`);const url=encodeURIComponent(location.href);
-  const map={linkedin:`https://www.linkedin.com/feed/?shareActive=true&text=${text}`,facebook:`https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${text}`,whatsapp:`https://wa.me/?text=${text}`};
-  window.open(map[b.dataset.net],"_blank");toast("Download your card first, then attach it");};});
 
 /* ---------- boot ---------- */
 buildOccasions();
