@@ -17,6 +17,13 @@ const mobileSocials = [
   { label: "Instagram",href: siteConfig.socials.instagram, Icon: Instagram },
 ];
 
+function scrollToHash(e: React.MouseEvent<HTMLAnchorElement>, href: string) {
+  e.preventDefault();
+  const id = href.replace("#", "");
+  document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+  history.pushState(null, "", href);
+}
+
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
@@ -115,7 +122,7 @@ export function Navbar() {
                       {item.label}
                     </a>
                   ) : (
-                    <Link href={item.href} className={linkCls}>
+                    <a href={item.href} onClick={(e) => scrollToHash(e, item.href)} className={linkCls}>
                       {isActive && (
                         <motion.span
                           layoutId="nav-active"
@@ -124,7 +131,7 @@ export function Navbar() {
                         />
                       )}
                       {item.label}
-                    </Link>
+                    </a>
                   )}
                 </li>
               );
@@ -214,13 +221,13 @@ export function Navbar() {
                         {item.label}
                       </a>
                     ) : (
-                      <Link
+                      <a
                         href={item.href}
-                        onClick={() => setOpen(false)}
+                        onClick={(e) => { scrollToHash(e, item.href); setOpen(false); }}
                         className="font-display text-4xl font-medium text-gradient-editorial hover:text-white"
                       >
                         {item.label}
-                      </Link>
+                      </a>
                     )}
                   </motion.li>
                 );
