@@ -12,10 +12,13 @@ export function ShareButtons({ url, title }: Props) {
   const [copied, setCopied] = useState(false);
 
   function copyLink() {
-    navigator.clipboard.writeText(url).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    });
+    navigator.clipboard
+      .writeText(url)
+      .then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      })
+      .catch(() => {});
   }
 
   const encoded  = encodeURIComponent(url);

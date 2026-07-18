@@ -11,15 +11,22 @@ export function MagazineShareButtons({ url, title }: Props) {
   const [copied, setCopied] = useState(false);
 
   function copyLink() {
-    navigator.clipboard.writeText(url).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    });
+    navigator.clipboard
+      .writeText(url)
+      .then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      })
+      .catch(() => {});
   }
 
   async function nativeShare() {
     if (navigator.share) {
-      await navigator.share({ title, url });
+      try {
+        await navigator.share({ title, url });
+      } catch {
+        // user cancelled the share sheet — not an error
+      }
     }
   }
 

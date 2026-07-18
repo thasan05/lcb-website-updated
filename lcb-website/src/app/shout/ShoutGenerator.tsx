@@ -157,7 +157,7 @@ function drawCard(canvas: HTMLCanvasElement, data: CardData, date: string) {
   nameGrad.addColorStop(1, "rgba(255,255,255,0.8)");
   ctx.fillStyle = nameGrad;
   ctx.textBaseline = "top";
-  ctx.fillText(nameText, 44*s, 112*s);
+  ctx.fillText(nameText, 44*s, 112*s, 752*s);
 
   // ── Recipient title ─────────────────────────────────────────────────
   let msgTop = 182*s;
@@ -165,7 +165,7 @@ function drawCard(canvas: HTMLCanvasElement, data: CardData, date: string) {
     ctx.fillStyle = "rgba(255,255,255,0.45)";
     ctx.font = `400 ${14*s}px Inter, sans-serif`;
     ctx.textBaseline = "top";
-    ctx.fillText(data.toTitle, 44*s, 168*s);
+    ctx.fillText(data.toTitle, 44*s, 168*s, 752*s);
     msgTop = 202*s;
   }
 
@@ -198,13 +198,13 @@ function drawCard(canvas: HTMLCanvasElement, data: CardData, date: string) {
   ctx.fillStyle = "rgba(255,255,255,0.88)";
   ctx.font = `700 ${15*s}px Inter, sans-serif`;
   ctx.textBaseline = "bottom";
-  ctx.fillText(data.fromName || "Sender Name", 44*s, bottomY - 2*s);
+  ctx.fillText(data.fromName || "Sender Name", 44*s, bottomY - 2*s, 400*s);
 
   if (data.fromTitle) {
     ctx.fillStyle = "rgba(255,255,255,0.40)";
     ctx.font = `400 ${12*s}px Inter, sans-serif`;
     ctx.textBaseline = "top";
-    ctx.fillText(data.fromTitle, 44*s, bottomY + 4*s);
+    ctx.fillText(data.fromTitle, 44*s, bottomY + 4*s, 400*s);
   }
 
   // ── Date + domain (bottom right) ─────────────────────────────────────
@@ -261,13 +261,13 @@ function CardPreview({ data, date }: { data: CardData; date: string }) {
       <div style={{ position:"absolute", top:92, left:44, fontSize:12, fontWeight:400, letterSpacing:"0.04em", color:"rgba(255,255,255,0.40)" }}>A big shout out to</div>
 
       {/* Recipient name */}
-      <div style={{ position:"absolute", top:112, left:44, right:44, fontSize:42, fontWeight:800, color:"#ffffff", lineHeight:1.1, letterSpacing:"-1.5px", background:"linear-gradient(90deg, #ffffff 0%, rgba(255,255,255,0.80) 100%)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent" }}>
+      <div style={{ position:"absolute", top:112, left:44, right:44, fontSize:42, fontWeight:800, color:"#ffffff", lineHeight:1.1, letterSpacing:"-1.5px", whiteSpace:"nowrap", overflow:"hidden", background:"linear-gradient(90deg, #ffffff 0%, rgba(255,255,255,0.80) 100%)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent" }}>
         {data.toName || "Name Here"}
       </div>
 
       {/* Recipient title */}
       {data.toTitle && (
-        <div style={{ position:"absolute", top:168, left:44, fontSize:14, color:"rgba(255,255,255,0.45)", fontWeight:400 }}>{data.toTitle}</div>
+        <div style={{ position:"absolute", top:168, left:44, right:44, fontSize:14, color:"rgba(255,255,255,0.45)", fontWeight:400, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{data.toTitle}</div>
       )}
 
       {/* Message in quotes */}
@@ -429,12 +429,12 @@ export function ShoutGenerator() {
               <div className="flex flex-col gap-3">
                 <div>
                   <label className="mb-1.5 block text-xs font-medium text-white/50">Full Name <span className="text-cyan-400">*</span></label>
-                  <input type="text" value={data.toName} onChange={(e) => set("toName", e.target.value)} placeholder="e.g. Tanvir Hasan"
+                  <input type="text" value={data.toName} onChange={(e) => set("toName", e.target.value)} maxLength={40} placeholder="e.g. Tanvir Hasan"
                     className="w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-2.5 text-base text-white placeholder-white/20 outline-none transition focus:border-[#0a66c2]/60 focus:bg-white/[0.06] focus:ring-2 focus:ring-[#0a66c2]/20" />
                 </div>
                 <div>
                   <label className="mb-1.5 block text-xs font-medium text-white/50">Role / Title <span className="text-white/20">(optional)</span></label>
-                  <input type="text" value={data.toTitle} onChange={(e) => set("toTitle", e.target.value)} placeholder="e.g. Campus Lead, AIUB"
+                  <input type="text" value={data.toTitle} onChange={(e) => set("toTitle", e.target.value)} maxLength={60} placeholder="e.g. Campus Lead, AIUB"
                     className="w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-2.5 text-base text-white placeholder-white/20 outline-none transition focus:border-[#0a66c2]/60 focus:bg-white/[0.06] focus:ring-2 focus:ring-[#0a66c2]/20" />
                 </div>
               </div>
@@ -455,12 +455,12 @@ export function ShoutGenerator() {
               <div className="flex flex-col gap-3">
                 <div>
                   <label className="mb-1.5 block text-xs font-medium text-white/50">Your Name <span className="text-cyan-400">*</span></label>
-                  <input type="text" value={data.fromName} onChange={(e) => set("fromName", e.target.value)} placeholder="e.g. Altaf Hossain Raju"
+                  <input type="text" value={data.fromName} onChange={(e) => set("fromName", e.target.value)} maxLength={40} placeholder="e.g. Altaf Hossain Raju"
                     className="w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-2.5 text-base text-white placeholder-white/20 outline-none transition focus:border-[#0a66c2]/60 focus:bg-white/[0.06] focus:ring-2 focus:ring-[#0a66c2]/20" />
                 </div>
                 <div>
                   <label className="mb-1.5 block text-xs font-medium text-white/50">Your Role / Title <span className="text-white/20">(optional)</span></label>
-                  <input type="text" value={data.fromTitle} onChange={(e) => set("fromTitle", e.target.value)} placeholder="e.g. President, LCB"
+                  <input type="text" value={data.fromTitle} onChange={(e) => set("fromTitle", e.target.value)} maxLength={60} placeholder="e.g. President, LCB"
                     className="w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-2.5 text-base text-white placeholder-white/20 outline-none transition focus:border-[#0a66c2]/60 focus:bg-white/[0.06] focus:ring-2 focus:ring-[#0a66c2]/20" />
                 </div>
               </div>

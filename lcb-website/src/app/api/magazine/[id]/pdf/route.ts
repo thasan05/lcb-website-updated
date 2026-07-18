@@ -36,7 +36,7 @@ export async function GET(
         "Cache-Control": "public, max-age=3600",
       },
     });
-  } catch (e) {
-    return NextResponse.json({ error: String(e) }, { status: 500 });
+  } catch {
+    return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
 }

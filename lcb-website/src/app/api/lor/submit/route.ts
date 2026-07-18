@@ -7,6 +7,7 @@ import type { LorConfig, LorSubmission } from "@/content/lor";
 const CONFIG_KEY = "data:lor-config";
 const SUBS_KEY   = "data:lor-submissions";
 const MAX_BYTES  = 32 * 1024;
+const MAX_FIELD_CHARS = 2000;
 
 function escapeHtml(str: string): string {
   return str
@@ -81,8 +82,8 @@ export async function POST(req: NextRequest) {
     const text = await req.text();
     if (text.length > MAX_BYTES) return NextResponse.json({ error: "Body too large" }, { status: 413 });
 
-    const { answers } = JSON.parse(text) as { answers: Record<string, string> };
-    if (typeof answers !== "object" || answers === null)
+    const { answers: rawAnswers } = JSON.parse(text) as { answers: Record<string, unknown> };
+    if (typeof rawAnswers !== "object" || rawAnswers === null)
       return NextResponse.json({ error: "Invalid answers" }, { status: 400 });
 
     const config = await kvGet<LorConfig>(CONFIG_KEY);
@@ -92,9 +93,22 @@ export async function POST(req: NextRequest) {
         { status: 403 }
       );
 
+    // Only accept string answers for known question IDs, capped per field
+    const answers: Record<string, string> = {};
+    for (const q of config.questions) {
+      const v = rawAnswers[q.id];
+      if (typeof v !== "string") continue;
+      if (v.length > MAX_FIELD_CHARS)
+        return NextResponse.json(
+          { error: `"${q.label}" exceeds ${MAX_FIELD_CHARS} characters` },
+          { status: 400 }
+        );
+      answers[q.id] = v;
+    }
+
     const missing = config.questions
       .filter((q) => q.required)
-      .filter((q) => !answers[q.id] || String(answers[q.id]).trim() === "");
+      .filter((q) => !answers[q.id] || answers[q.id].trim() === "");
     if (missing.length > 0)
       return NextResponse.json(
         { error: `Required fields missing: ${missing.map((q) => q.label).join(", ")}` },
@@ -114,7 +128,7 @@ export async function POST(req: NextRequest) {
     sendNotification(submission, config).catch(() => {});
 
     return NextResponse.json({ ok: true, id: submission.id });
-  } catch (e) {
-    return NextResponse.json({ error: String(e) }, { status: 400 });
+  } catch {
+    return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   }
 }
