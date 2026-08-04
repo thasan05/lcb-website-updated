@@ -463,7 +463,7 @@ export default function ArticlesAdminPage() {
               {item.coverImage && (
                 <div className="relative h-14 w-20 shrink-0 overflow-hidden rounded-lg">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={item.coverImage} alt="" className="h-full w-full object-cover" />
+                  <img src={item.coverImage} alt={item.title} className="h-full w-full object-cover" />
                 </div>
               )}
 

@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { kvGet, kvSet } from "@/lib/kv";
+import { revalidateContent } from "@/lib/revalidate";
+import { isValidId, parseBody, errorResponse } from "@/lib/api-validation";
 
 const MAX_BODY_BYTES = 32 * 1024; // 32 KB
 
@@ -17,10 +19,6 @@ const CATEGORY_KEYS: Record<string, string> = {
 
 function isValidCategoryId(id: unknown): id is string {
   return typeof id === "string" && id in CATEGORY_KEYS;
-}
-
-function isValidId(v: unknown): v is string {
-  return typeof v === "string" && v.length > 0 && v.length < 200;
 }
 
 function isValidMember(m: unknown): m is Record<string, unknown> {
@@ -40,14 +38,6 @@ function kvKeyFor(categoryId: string): string {
   const key = CATEGORY_KEYS[categoryId];
   if (!key) throw new Error(`Unknown category: ${categoryId}`);
   return key;
-}
-
-async function parseBody(request: NextRequest) {
-  const cl = Number(request.headers.get("content-length") ?? 0);
-  if (cl > MAX_BODY_BYTES) throw new Error("Request body too large");
-  const text = await request.text();
-  if (text.length > MAX_BODY_BYTES) throw new Error("Request body too large");
-  return JSON.parse(text) as unknown;
 }
 
 // ── Handlers ──────────────────────────────────────────────────────────────────
@@ -70,13 +60,13 @@ export async function GET(request: NextRequest) {
     }
     return NextResponse.json(all);
   } catch (e) {
-    return NextResponse.json({ error: (e as Error).message }, { status: 500 });
+    return errorResponse(e, "Failed to read team data");
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await parseBody(request);
+    const body = await parseBody(request, MAX_BODY_BYTES);
     if (typeof body !== "object" || body === null) {
       return NextResponse.json({ error: "Invalid body" }, { status: 400 });
     }
@@ -91,16 +81,16 @@ export async function POST(request: NextRequest) {
     const members = await kvGet<unknown[]>(key);
     members.unshift(member);
     await kvSet(key, members);
+    revalidateContent("team");
     return NextResponse.json({ success: true });
   } catch (e) {
-    const msg = e instanceof Error ? e.message : "Failed to add member";
-    return NextResponse.json({ error: msg }, { status: 500 });
+    return errorResponse(e, "Failed to add member");
   }
 }
 
 export async function PUT(request: NextRequest) {
   try {
-    const body = await parseBody(request);
+    const body = await parseBody(request, MAX_BODY_BYTES);
     if (typeof body !== "object" || body === null) {
       return NextResponse.json({ error: "Invalid body" }, { status: 400 });
     }
@@ -117,16 +107,16 @@ export async function PUT(request: NextRequest) {
       m.id === memberId ? member : m
     );
     await kvSet(key, members);
+    revalidateContent("team");
     return NextResponse.json({ success: true });
   } catch (e) {
-    const msg = e instanceof Error ? e.message : "Failed to update member";
-    return NextResponse.json({ error: msg }, { status: 500 });
+    return errorResponse(e, "Failed to update member");
   }
 }
 
 export async function DELETE(request: NextRequest) {
   try {
-    const body = await parseBody(request);
+    const body = await parseBody(request, MAX_BODY_BYTES);
     if (typeof body !== "object" || body === null) {
       return NextResponse.json({ error: "Invalid body" }, { status: 400 });
     }
@@ -142,9 +132,9 @@ export async function DELETE(request: NextRequest) {
       (m) => m.id !== memberId
     );
     await kvSet(key, members);
+    revalidateContent("team");
     return NextResponse.json({ success: true });
   } catch (e) {
-    const msg = e instanceof Error ? e.message : "Failed to delete member";
-    return NextResponse.json({ error: msg }, { status: 500 });
+    return errorResponse(e, "Failed to delete member");
   }
 }

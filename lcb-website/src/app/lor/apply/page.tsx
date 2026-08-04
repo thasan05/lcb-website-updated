@@ -5,7 +5,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { FooterLive } from "@/components/layout/FooterLive";
 import { BackToTop } from "@/components/ui/BackToTop";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 
 export default async function LorApplyPage() {
   let config: LorConfig | null = null;

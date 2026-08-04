@@ -147,7 +147,7 @@ export default function StoryGalleryAdminPage() {
               <div className="flex shrink-0 gap-1">
                 {(item.srcs ?? [item.src]).slice(0, 4).map((src, i) => (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img key={i} src={src} alt="" className="h-12 w-16 rounded-lg object-cover opacity-80" />
+                  <img key={i} src={src} alt={item.caption ?? meta.label} className="h-12 w-16 rounded-lg object-cover opacity-80" />
                 ))}
                 {photoCount > 4 && (
                   <div className="flex h-12 w-16 items-center justify-center rounded-lg border border-white/[0.08] bg-white/[0.04] text-xs text-white/40">
@@ -222,7 +222,7 @@ export default function StoryGalleryAdminPage() {
                   {(form.srcs ?? []).map((src, i) => (
                     <div key={i} className="flex items-center gap-2 rounded-xl border border-white/[0.07] bg-white/[0.02] p-2">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={src} alt="" className="h-10 w-16 shrink-0 rounded-lg object-cover opacity-80" />
+                      <img src={src} alt={form.alt || `Slideshow photo ${i + 1}`} className="h-10 w-16 shrink-0 rounded-lg object-cover opacity-80" />
                       <p className="min-w-0 flex-1 truncate text-xs text-white/40">{src}</p>
                       {i === 0 && (
                         <span className="shrink-0 rounded-full bg-[#4F9CEB]/15 px-1.5 py-0.5 text-[10px] text-[#4F9CEB]">default</span>

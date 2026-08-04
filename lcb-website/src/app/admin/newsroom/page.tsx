@@ -206,7 +206,7 @@ export default function NewsroomAdminPage() {
                 </svg>
               </button>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={item.image} alt="" className="h-10 w-10 shrink-0 rounded-lg object-cover opacity-70" />
+              <img src={item.image} alt={item.title} className="h-10 w-10 shrink-0 rounded-lg object-cover opacity-70" />
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
                   <p className="truncate text-sm font-medium text-white">{item.title}</p>

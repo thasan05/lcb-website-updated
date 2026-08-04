@@ -27,17 +27,21 @@ const FILE_MAP: Record<string, string> = {
   "team:star-awards":      "src/data/team/star-awards.json",
 };
 
+// This fs fallback only runs in local dev (no Upstash env vars set) — never in
+// production, where kvGet/kvSet always go through Redis. The key → path lookup
+// is dynamic, so it's opted out of Next's build-time file tracing (turbopackIgnore)
+// to avoid bundling the whole project into the serverless output.
 function fileRead<T>(kvKey: string): T {
   const rel = FILE_MAP[kvKey];
   if (!rel) throw new Error(`No file mapping for KV key: ${kvKey}`);
-  return JSON.parse(fs.readFileSync(path.join(process.cwd(), rel), "utf-8")) as T;
+  return JSON.parse(fs.readFileSync(path.join(/*turbopackIgnore: true*/ process.cwd(), rel), "utf-8")) as T;
 }
 
 function fileWrite<T>(kvKey: string, data: T): void {
   const rel = FILE_MAP[kvKey];
   if (!rel) throw new Error(`No file mapping for KV key: ${kvKey}`);
   fs.writeFileSync(
-    path.join(process.cwd(), rel),
+    path.join(/*turbopackIgnore: true*/ process.cwd(), rel),
     JSON.stringify(data, null, 2) + "\n",
     "utf-8"
   );

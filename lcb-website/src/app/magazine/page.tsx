@@ -6,7 +6,7 @@ import { siteConfig } from "@/content/site";
 import type { Magazine } from "@/content/magazines";
 import { FooterLive } from "@/components/layout/FooterLive";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 
 export const metadata: Metadata = {
   title: "Magazine · LinkedIn Community Bangladesh",

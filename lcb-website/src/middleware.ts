@@ -44,7 +44,9 @@ export async function middleware(request: NextRequest) {
   // ── Magazine subdomain → serve /magazine pages ─────────────────────────────
   if (host === MAGAZINE_HOST) {
     // Only pass through the public PDF proxy so the iframe src resolves correctly.
-    // All other /api/ paths (including /api/admin/*) fall through to auth checks below.
+    // Everything else is rewritten under /magazine, so /api/admin/* on this host
+    // resolves to /magazine/api/admin/* and 404s — it can never reach the real
+    // admin API. Do not broaden this passthrough (see SECURITY_REPORT.md C1).
     if (pathname.startsWith("/api/magazine/")) return NextResponse.next();
     const url = request.nextUrl.clone();
     url.pathname = pathname === "/" || pathname === "" ? "/magazine" : `/magazine${pathname}`;

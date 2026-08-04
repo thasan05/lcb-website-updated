@@ -1,37 +1,15 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { kvGet, kvSet } from "@/lib/kv";
+import { revalidateContent } from "@/lib/revalidate";
 import { sanitizeHtml } from "@/lib/sanitize";
+import { isValidId, isValidStr, isValidOptionalStr, isValidOptionalUrl, parseBody, errorResponse } from "@/lib/api-validation";
 import type { Article } from "@/content/articles";
 
 const KEY            = "data:articles";
 const MAX_BODY_BYTES = 64 * 1024; // 64 KB — content can be long
 
 // ── Validation ────────────────────────────────────────────────────────────────
-
-function isValidId(v: unknown): v is string {
-  return typeof v === "string" && v.length > 0 && v.length < 200;
-}
-
-function isValidStr(v: unknown, max = 2000): v is string {
-  return typeof v === "string" && v.length > 0 && v.length <= max;
-}
-
-function isValidOptionalStr(v: unknown, max = 2000): boolean {
-  return v === undefined || (typeof v === "string" && v.length <= max);
-}
-
-function isValidUrl(v: unknown): v is string {
-  if (typeof v !== "string") return false;
-  try {
-    const u = new URL(v);
-    return u.protocol === "https:" || v.startsWith("/");
-  } catch { return false; }
-}
-
-function isValidOptionalUrl(v: unknown): boolean {
-  return v === undefined || v === "" || isValidUrl(v);
-}
 
 function isValidArticle(a: unknown): a is Article {
   if (typeof a !== "object" || a === null) return false;
@@ -56,14 +34,6 @@ function isValidArticle(a: unknown): a is Article {
   return true;
 }
 
-async function parseBody(request: NextRequest) {
-  const cl = Number(request.headers.get("content-length") ?? 0);
-  if (cl > MAX_BODY_BYTES) throw new Error("Request body too large");
-  const text = await request.text();
-  if (text.length > MAX_BODY_BYTES) throw new Error("Request body too large");
-  return JSON.parse(text);
-}
-
 // ── Handlers ─────────────────────────────────────────────────────────────────
 
 export async function GET() {
@@ -77,42 +47,45 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await parseBody(request);
-    const articles = (await kvGet<Article[]>(KEY)) ?? [];
+    const body = await parseBody(request, MAX_BODY_BYTES);
     if (!isValidArticle(body)) {
       return NextResponse.json({ error: "Invalid article data" }, { status: 400 });
     }
+    const articles = (await kvGet<Article[]>(KEY)) ?? [];
     if (articles.some((a) => a.id === body.id)) {
       return NextResponse.json({ error: "Article ID already exists" }, { status: 409 });
     }
     body.content = sanitizeHtml(body.content);
     articles.unshift(body);
     await kvSet(KEY, articles);
+    revalidateContent("articles");
     return NextResponse.json({ ok: true });
   } catch (e) {
-    return NextResponse.json({ error: String(e) }, { status: 400 });
+    return errorResponse(e, "Failed to create article", 400);
   }
 }
 
 export async function PUT(request: NextRequest) {
   try {
-    const body = await parseBody(request);
+    const body = await parseBody(request, MAX_BODY_BYTES);
 
     // Bulk action
-    if (body.action && Array.isArray(body.ids)) {
+    if (typeof body === "object" && body !== null && "action" in body && Array.isArray((body as { ids?: unknown }).ids)) {
+      const { action, ids } = body as { action: unknown; ids: unknown[] };
       const articles = (await kvGet<Article[]>(KEY)) ?? [];
-      const idSet = new Set<string>(body.ids as string[]);
+      const idSet = new Set<string>(ids as string[]);
       let updated: Article[];
-      if (body.action === "publish") {
+      if (action === "publish") {
         updated = articles.map((a) => (idSet.has(a.id) ? { ...a, published: true } : a));
-      } else if (body.action === "unpublish") {
+      } else if (action === "unpublish") {
         updated = articles.map((a) => (idSet.has(a.id) ? { ...a, published: false } : a));
-      } else if (body.action === "delete") {
+      } else if (action === "delete") {
         updated = articles.filter((a) => !idSet.has(a.id));
       } else {
         return NextResponse.json({ error: "Unknown action" }, { status: 400 });
       }
       await kvSet(KEY, updated);
+      revalidateContent("articles");
       return NextResponse.json({ ok: true });
     }
 
@@ -128,22 +101,25 @@ export async function PUT(request: NextRequest) {
     }
     articles[idx] = body;
     await kvSet(KEY, articles);
+    revalidateContent("articles");
     return NextResponse.json({ ok: true });
   } catch (e) {
-    return NextResponse.json({ error: String(e) }, { status: 400 });
+    return errorResponse(e, "Failed to update article", 400);
   }
 }
 
 export async function DELETE(request: NextRequest) {
   try {
-    const { id } = await parseBody(request);
+    const body = await parseBody(request, MAX_BODY_BYTES);
+    const { id } = (typeof body === "object" && body !== null ? body : {}) as { id?: unknown };
     if (!isValidId(id)) {
       return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
     }
     const articles = (await kvGet<Article[]>(KEY)) ?? [];
     await kvSet(KEY, articles.filter((a) => a.id !== id));
+    revalidateContent("articles");
     return NextResponse.json({ ok: true });
   } catch (e) {
-    return NextResponse.json({ error: String(e) }, { status: 400 });
+    return errorResponse(e, "Failed to delete article", 400);
   }
 }

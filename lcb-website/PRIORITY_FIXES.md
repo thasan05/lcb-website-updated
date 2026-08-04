@@ -36,7 +36,23 @@ Ranked by exploitability × impact. All items marked ✅ are implemented.
 | 12 | No CAPTCHA on LOR form | Distributed bot spam | ⚠️ Accepted |
 | 13 | Session tokens non-revocable | Password change doesn't log out sessions | ⚠️ Accepted |
 | 14 | Cloudinary signature not domain-validated | Admin session leak → Cloudinary abuse | ⚠️ Documented |
-| 15 | Existing stored content not retroactively sanitized | Pre-audit articles may have XSS payloads | ⚠️ Needs migration |
+| 15 | Existing stored content not retroactively sanitized | Pre-audit articles may have XSS payloads | ✅ Script ready — run `npm run sanitize-content` |
+
+---
+
+## Follow-up Audit — 2026-08-05
+
+Issues found after the June audit (drift + new findings), all fixed:
+
+| # | Issue | Risk | Status |
+|---|-------|------|--------|
+| 20 | `/api/admin/press` accepted any URL scheme incl. `javascript:` — contradicted the hardening checklist claim | Stored XSS on click for all public visitors via Press section | ✅ Fixed |
+| 21 | `/api/admin/applications` had zero input validation; `formUrl` rendered as raw `href` in Hero | Stored XSS + arbitrary config corruption | ✅ Fixed |
+| 22 | Next.js 16.2.9 — 9 new high-severity CVEs (middleware bypass, SSRF, cache confusion, DoS) + vulnerable `postcss`/`sharp` | Multiple attack surfaces | ✅ Upgraded to 16.3.0, `npm audit` now clean (0 vulns) |
+| 23 | Admin API routes echoed raw exception text to clients | Internal detail leakage | ✅ Generic messages; details logged server-side only |
+| 24 | `isValidUrl` threw on relative URLs before the `/` check, so relative URLs were rejected everywhere despite comments claiming support | Latent validation bug | ✅ Fixed in shared `src/lib/api-validation.ts` |
+| 25 | `npm run lint` was broken (`next lint` removed in Next 16) — lint had not run since the upgrade | Regressions shipping unchecked | ✅ Migrated to flat config `eslint.config.mjs` |
+| 26 | `kv.ts` dynamic fs path caused Next to trace the entire project into the serverless bundle | Vercel deploy size limits / slow deploys | ✅ Scoped with `turbopackIgnore` |
 
 ---
 

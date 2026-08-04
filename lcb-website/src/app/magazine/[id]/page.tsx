@@ -8,7 +8,7 @@ import type { Magazine } from "@/content/magazines";
 import { FooterLive } from "@/components/layout/FooterLive";
 import { MagazineShareButtons } from "./MagazineShareButtons";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 
 const MAGAZINE_BASE = "https://magazine.linkedincommunitybangladesh.com";
 

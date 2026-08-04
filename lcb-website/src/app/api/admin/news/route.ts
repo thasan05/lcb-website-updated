@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { kvGet, kvSet } from "@/lib/kv";
+import { revalidateContent } from "@/lib/revalidate";
 import { sanitizeHtml } from "@/lib/sanitize";
+import { isValidId, isValidStr, isValidUrl, parseBody, errorResponse } from "@/lib/api-validation";
 import type { NewsItem } from "@/content/news";
 
 const KEY            = "data:news";
@@ -13,22 +15,8 @@ const VALID_CATEGORIES = new Set([
   "Announcement", "Event", "Milestone", "Partnership", "Spotlight",
 ]);
 
-function isValidId(v: unknown): v is string {
-  return typeof v === "string" && v.length > 0 && v.length < 200;
-}
-
-function isValidStr(v: unknown, max = 2000): v is string {
-  return typeof v === "string" && v.length > 0 && v.length <= max;
-}
-
-function isValidUrl(v: unknown): v is string {
-  if (typeof v !== "string") return false;
-  try {
-    const u = new URL(v);
-    return u.protocol === "https:" || v.startsWith("/");
-  } catch { return false; }
-}
-
+// Unlike isValidOptionalUrl in api-validation, this route never accepted an
+// empty-string href — preserved as-is to avoid loosening existing validation.
 function isValidOptionalUrl(v: unknown): boolean {
   return v === undefined || isValidUrl(v);
 }
@@ -56,27 +44,19 @@ function isValidNewsItem(n: unknown): n is NewsItem {
   return true;
 }
 
-async function parseBody(request: NextRequest) {
-  const cl = Number(request.headers.get("content-length") ?? 0);
-  if (cl > MAX_BODY_BYTES) throw new Error("Request body too large");
-  const text = await request.text();
-  if (text.length > MAX_BODY_BYTES) throw new Error("Request body too large");
-  return JSON.parse(text) as unknown;
-}
-
 // ── Handlers ──────────────────────────────────────────────────────────────────
 
 export async function GET() {
   try {
     return NextResponse.json(await kvGet<NewsItem[]>(KEY));
-  } catch {
-    return NextResponse.json({ error: "Failed to read news" }, { status: 500 });
+  } catch (err) {
+    return errorResponse(err, "Failed to read news");
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await parseBody(request);
+    const body = await parseBody(request, MAX_BODY_BYTES);
     if (!isValidNewsItem(body)) {
       return NextResponse.json({ error: "Invalid news item" }, { status: 400 });
     }
@@ -85,16 +65,16 @@ export async function POST(request: NextRequest) {
     if (body.featured) news.forEach((n) => { n.featured = false; });
     news.unshift(body);
     await kvSet(KEY, news);
+    revalidateContent("news");
     return NextResponse.json({ success: true });
   } catch (err) {
-    const msg = err instanceof Error ? err.message : "Failed to create news item";
-    return NextResponse.json({ error: msg }, { status: 500 });
+    return errorResponse(err, "Failed to create news item");
   }
 }
 
 export async function PUT(request: NextRequest) {
   try {
-    const body = await parseBody(request);
+    const body = await parseBody(request, MAX_BODY_BYTES);
     if (!isValidNewsItem(body)) {
       return NextResponse.json({ error: "Invalid news item" }, { status: 400 });
     }
@@ -105,16 +85,16 @@ export async function PUT(request: NextRequest) {
     }
     news = news.map((n) => (n.id === body.id ? body : n));
     await kvSet(KEY, news);
+    revalidateContent("news");
     return NextResponse.json({ success: true });
   } catch (err) {
-    const msg = err instanceof Error ? err.message : "Failed to update news item";
-    return NextResponse.json({ error: msg }, { status: 500 });
+    return errorResponse(err, "Failed to update news item");
   }
 }
 
 export async function DELETE(request: NextRequest) {
   try {
-    const body = await parseBody(request);
+    const body = await parseBody(request, MAX_BODY_BYTES);
     if (typeof body !== "object" || body === null) {
       return NextResponse.json({ error: "Invalid body" }, { status: 400 });
     }
@@ -124,9 +104,9 @@ export async function DELETE(request: NextRequest) {
     }
     const news = (await kvGet<NewsItem[]>(KEY)).filter((n) => n.id !== id);
     await kvSet(KEY, news);
+    revalidateContent("news");
     return NextResponse.json({ success: true });
   } catch (err) {
-    const msg = err instanceof Error ? err.message : "Failed to delete news item";
-    return NextResponse.json({ error: msg }, { status: 500 });
+    return errorResponse(err, "Failed to delete news item");
   }
 }

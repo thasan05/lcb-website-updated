@@ -160,7 +160,7 @@ export function SearchModal() {
                   className="flex-1 bg-transparent text-sm text-white placeholder:text-white/30 outline-none"
                 />
                 {q && (
-                  <button type="button" onClick={() => setQ("")} className="text-white/30 hover:text-white/70">
+                  <button type="button" onClick={() => setQ("")} aria-label="Clear search" className="text-white/30 hover:text-white/70">
                     <X className="h-3.5 w-3.5" />
                   </button>
                 )}
