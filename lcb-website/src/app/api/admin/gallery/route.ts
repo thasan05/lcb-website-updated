@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { kvGet, kvSet } from "@/lib/kv";
+import { kvGet, kvUpdate } from "@/lib/kv";
 import { revalidateContent } from "@/lib/revalidate";
-import { isValidId, isValidUrl, parseBody, errorResponse } from "@/lib/api-validation";
+import { isValidId, isValidUrl, parseBody, errorResponse, ValidationError } from "@/lib/api-validation";
 
 const KEY = "data:gallery-manifest";
 const MAX_BODY_BYTES = 64 * 1024; // 64 KB — manifests should never be larger
@@ -51,9 +51,10 @@ export async function POST(request: NextRequest) {
     if (!isValidImage(body)) {
       return NextResponse.json({ error: "Invalid image data" }, { status: 400 });
     }
-    const manifest = await kvGet<Manifest>(KEY);
-    manifest.images.unshift(body);
-    await kvSet(KEY, manifest);
+    await kvUpdate<Manifest>(KEY, (manifest) => ({
+      ...manifest,
+      images: [body, ...manifest.images],
+    }));
     revalidateContent("gallery");
     return NextResponse.json({ success: true });
   } catch (err) {
@@ -68,7 +69,6 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: "Invalid body" }, { status: 400 });
     }
     const payload = body as Record<string, unknown>;
-    const manifest = await kvGet<Manifest>(KEY);
 
     if (payload.type === "categories") {
       // Validate categories array
@@ -81,35 +81,39 @@ export async function PUT(request: NextRequest) {
         typeof (c as Record<string, unknown>).label === "string")) {
         return NextResponse.json({ error: "Invalid category shape" }, { status: 400 });
       }
-      manifest.categories = cats as GalleryCategory[];
+      await kvUpdate<Manifest>(KEY, (m) => ({ ...m, categories: cats as GalleryCategory[] }));
 
     } else if (payload.type === "reorder") {
-      // Validate: must be an array of valid images, IDs must match existing manifest
       if (!Array.isArray(payload.images)) {
         return NextResponse.json({ error: "Invalid images array" }, { status: 400 });
       }
       const incoming = payload.images as unknown[];
-      const existingIds = new Set(manifest.images.map((i) => i.id));
-
-      if (!incoming.every((img) => isValidImage(img) && existingIds.has((img as GalleryImage).id))) {
-        return NextResponse.json({ error: "Reorder contains unknown image IDs" }, { status: 400 });
+      if (!incoming.every((img) => isValidImage(img))) {
+        return NextResponse.json({ error: "Invalid image data" }, { status: 400 });
       }
-      if (incoming.length !== manifest.images.length) {
-        return NextResponse.json({ error: "Reorder length mismatch" }, { status: 400 });
-      }
-      manifest.images = incoming as GalleryImage[];
+      // The id-set and length checks compare against stored data, so they run
+      // inside the mutator — against the same value the write commits against.
+      await kvUpdate<Manifest>(KEY, (m) => {
+        const existingIds = new Set(m.images.map((i) => i.id));
+        if (!incoming.every((img) => existingIds.has((img as GalleryImage).id))) {
+          throw new ValidationError("Reorder contains unknown image IDs");
+        }
+        if (incoming.length !== m.images.length) {
+          throw new ValidationError("Reorder length mismatch");
+        }
+        return { ...m, images: incoming as GalleryImage[] };
+      });
 
     } else {
       // Single image update
       if (!isValidImage(payload)) {
         return NextResponse.json({ error: "Invalid image data" }, { status: 400 });
       }
-      manifest.images = manifest.images.map((img) =>
-        img.id === payload.id ? payload : img
-      );
+      await kvUpdate<Manifest>(KEY, (m) => ({
+        ...m,
+        images: m.images.map((img) => (img.id === payload.id ? payload : img)),
+      }));
     }
-
-    await kvSet(KEY, manifest);
 
     revalidateContent("gallery");
     return NextResponse.json({ success: true });
@@ -133,10 +137,11 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: "No valid id(s) provided" }, { status: 400 });
     }
 
-    const manifest = await kvGet<Manifest>(KEY);
     const deleteSet = new Set(toDelete);
-    manifest.images = manifest.images.filter((img) => !deleteSet.has(img.id));
-    await kvSet(KEY, manifest);
+    await kvUpdate<Manifest>(KEY, (manifest) => ({
+      ...manifest,
+      images: manifest.images.filter((img) => !deleteSet.has(img.id)),
+    }));
     revalidateContent("gallery");
     return NextResponse.json({ success: true });
   } catch (err) {

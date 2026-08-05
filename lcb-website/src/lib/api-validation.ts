@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { KvContentionError } from "@/lib/kv";
 
 // Shared primitives for admin API route validation + request parsing.
 // Domain-specific shape validators (isValidArticle, isValidEvent, etc.) stay
@@ -45,7 +46,50 @@ export async function parseBody(request: NextRequest, maxBytes: number): Promise
 // is logged server-side only and replaced with a generic message.
 const SAFE_ERROR_MESSAGES = new Set(["Request body too large"]);
 
+// Thrown from inside a kvUpdate mutator to reject the write and map to an HTTP
+// status. Checking inside the mutator (rather than before it) means the check
+// runs against the same data the write commits against, so a concurrent write
+// can't slip a duplicate id past it.
+export class ConflictError extends Error {
+  constructor(message = "Already exists") {
+    super(message);
+    this.name = "ConflictError";
+  }
+}
+
+export class NotFoundError extends Error {
+  constructor(message = "Not found") {
+    super(message);
+    this.name = "NotFoundError";
+  }
+}
+
+// For validation that depends on the stored data (and so must run inside the
+// mutator, against the value the write actually commits against).
+export class ValidationError extends Error {
+  constructor(message = "Invalid data") {
+    super(message);
+    this.name = "ValidationError";
+  }
+}
+
 export function errorResponse(err: unknown, fallback: string, status = 500) {
+  if (err instanceof ConflictError) {
+    return NextResponse.json({ error: err.message }, { status: 409 });
+  }
+  if (err instanceof NotFoundError) {
+    return NextResponse.json({ error: err.message }, { status: 404 });
+  }
+  if (err instanceof ValidationError) {
+    return NextResponse.json({ error: err.message }, { status: 400 });
+  }
+  if (err instanceof KvContentionError) {
+    console.error(fallback, err);
+    return NextResponse.json(
+      { error: "Busy — another change landed first. Please retry." },
+      { status: 503 }
+    );
+  }
   console.error(fallback, err);
   const msg = err instanceof Error && SAFE_ERROR_MESSAGES.has(err.message) ? err.message : fallback;
   return NextResponse.json({ error: msg }, { status });

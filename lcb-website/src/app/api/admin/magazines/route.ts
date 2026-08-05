@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { kvGet, kvSet } from "@/lib/kv";
+import { kvGet, kvUpdate } from "@/lib/kv";
 import { revalidateContent } from "@/lib/revalidate";
-import { isValidId, isValidStr, parseBody, errorResponse } from "@/lib/api-validation";
+import { isValidId, isValidStr, parseBody, errorResponse, ConflictError, NotFoundError } from "@/lib/api-validation";
 import type { Magazine } from "@/content/magazines";
 
 const KEY            = "data:magazines";
@@ -43,12 +43,13 @@ export async function POST(request: NextRequest) {
     if (!isValidMagazine(body)) {
       return NextResponse.json({ error: "Invalid magazine data" }, { status: 400 });
     }
-    const magazines = (await kvGet<Magazine[]>(KEY)) ?? [];
-    if (magazines.some((m) => m.id === body.id)) {
-      return NextResponse.json({ error: "ID already exists — use a different title" }, { status: 409 });
-    }
-    magazines.unshift(body);
-    await kvSet(KEY, magazines);
+    await kvUpdate<Magazine[]>(KEY, (current) => {
+      const magazines = current ?? [];
+      if (magazines.some((m) => m.id === body.id)) {
+        throw new ConflictError("ID already exists — use a different title");
+      }
+      return [body, ...magazines];
+    });
     revalidateContent("magazines");
     return NextResponse.json({ ok: true });
   } catch (e) {
@@ -62,13 +63,11 @@ export async function PUT(request: NextRequest) {
     if (!isValidMagazine(body)) {
       return NextResponse.json({ error: "Invalid magazine data" }, { status: 400 });
     }
-    const magazines = (await kvGet<Magazine[]>(KEY)) ?? [];
-    const idx = magazines.findIndex((m) => m.id === body.id);
-    if (idx === -1) {
-      return NextResponse.json({ error: "Magazine not found" }, { status: 404 });
-    }
-    magazines[idx] = body;
-    await kvSet(KEY, magazines);
+    await kvUpdate<Magazine[]>(KEY, (current) => {
+      const magazines = current ?? [];
+      if (!magazines.some((m) => m.id === body.id)) throw new NotFoundError("Magazine not found");
+      return magazines.map((m) => (m.id === body.id ? body : m));
+    });
     revalidateContent("magazines");
     return NextResponse.json({ ok: true });
   } catch (e) {
@@ -83,8 +82,7 @@ export async function DELETE(request: NextRequest) {
     if (!isValidId(id)) {
       return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
     }
-    const magazines = (await kvGet<Magazine[]>(KEY)) ?? [];
-    await kvSet(KEY, magazines.filter((m) => m.id !== id));
+    await kvUpdate<Magazine[]>(KEY, (current) => (current ?? []).filter((m) => m.id !== id));
     revalidateContent("magazines");
     return NextResponse.json({ ok: true });
   } catch (e) {

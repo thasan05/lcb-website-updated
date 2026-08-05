@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { kvGet, kvSet } from "@/lib/kv";
+import { kvGet, kvUpdate, KvContentionError } from "@/lib/kv";
 import { rateLimit, rateLimitResponse, getClientIp } from "@/lib/rate-limit";
 import type { LorConfig, LorSubmission } from "@/content/lor";
 
@@ -115,20 +115,28 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
 
-    const subs: LorSubmission[] = (await kvGet<LorSubmission[]>(SUBS_KEY).catch(() => [] as LorSubmission[])) ?? [];
     const submission: LorSubmission = {
       id: `lor-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
       answers,
       submittedAt: new Date().toISOString(),
       status: "pending",
     };
-    subs.unshift(submission);
-    await kvSet(SUBS_KEY, subs);
+
+    // Atomic append — two applicants submitting at the same moment must not
+    // overwrite each other. A dropped submission is unrecoverable.
+    await kvUpdate<LorSubmission[]>(SUBS_KEY, (current) => [submission, ...(current ?? [])]);
 
     sendNotification(submission, config).catch(() => {});
 
     return NextResponse.json({ ok: true, id: submission.id });
-  } catch {
+  } catch (err) {
+    if (err instanceof KvContentionError) {
+      console.error("LOR submit contention", err);
+      return NextResponse.json(
+        { error: "Could not save your application right now. Please try again." },
+        { status: 503 }
+      );
+    }
     return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   }
 }

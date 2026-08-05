@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { kvGet, kvSet } from "@/lib/kv";
+import { kvGet, kvUpdate } from "@/lib/kv";
 import { revalidateContent } from "@/lib/revalidate";
 import { isValidId, parseBody, errorResponse } from "@/lib/api-validation";
 
@@ -78,9 +78,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid member data" }, { status: 400 });
     }
     const key = kvKeyFor(categoryId);
-    const members = await kvGet<unknown[]>(key);
-    members.unshift(member);
-    await kvSet(key, members);
+    await kvUpdate<unknown[]>(key, (current) => [member, ...(current ?? [])]);
     revalidateContent("team");
     return NextResponse.json({ success: true });
   } catch (e) {
@@ -103,10 +101,9 @@ export async function PUT(request: NextRequest) {
     }
     const key = kvKeyFor(categoryId);
     const memberId = (member as Record<string, unknown>).id as string;
-    const members = (await kvGet<Array<{ id: string }>>(key)).map((m) =>
-      m.id === memberId ? member : m
+    await kvUpdate<Array<{ id: string }>>(key, (current) =>
+      (current ?? []).map((m) => (m.id === memberId ? (member as { id: string }) : m))
     );
-    await kvSet(key, members);
     revalidateContent("team");
     return NextResponse.json({ success: true });
   } catch (e) {
@@ -128,10 +125,9 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: "Invalid memberId" }, { status: 400 });
     }
     const key = kvKeyFor(categoryId);
-    const members = (await kvGet<Array<{ id: string }>>(key)).filter(
-      (m) => m.id !== memberId
+    await kvUpdate<Array<{ id: string }>>(key, (current) =>
+      (current ?? []).filter((m) => m.id !== memberId)
     );
-    await kvSet(key, members);
     revalidateContent("team");
     return NextResponse.json({ success: true });
   } catch (e) {

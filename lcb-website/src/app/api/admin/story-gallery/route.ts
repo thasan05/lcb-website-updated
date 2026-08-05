@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { kvGet, kvSet } from "@/lib/kv";
+import { kvGet, kvUpdate } from "@/lib/kv";
 import { revalidateContent } from "@/lib/revalidate";
 import { isValidId, isValidUrl, parseBody, errorResponse } from "@/lib/api-validation";
 
@@ -49,10 +49,9 @@ export async function PUT(request: NextRequest) {
     if (!isValidItem(body)) {
       return NextResponse.json({ error: "Invalid item data" }, { status: 400 });
     }
-    const items = (await kvGet<GalleryItem[]>(KEY)).map((item) =>
-      item.id === body.id ? body : item
+    await kvUpdate<GalleryItem[]>(KEY, (current) =>
+      (current ?? []).map((item) => (item.id === body.id ? body : item))
     );
-    await kvSet(KEY, items);
     revalidateContent("story-gallery");
     return NextResponse.json({ success: true });
   } catch (err) {

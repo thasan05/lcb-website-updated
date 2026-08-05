@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { kvGet, kvSet } from "@/lib/kv";
+import { kvGet, kvUpdate } from "@/lib/kv";
 import { revalidateContent } from "@/lib/revalidate";
 import { sanitizeHtml } from "@/lib/sanitize";
-import { isValidId, isValidStr, isValidOptionalStr, isValidOptionalUrl, parseBody, errorResponse } from "@/lib/api-validation";
+import { isValidId, isValidStr, isValidOptionalStr, isValidOptionalUrl, parseBody, errorResponse, ConflictError, NotFoundError } from "@/lib/api-validation";
 import type { Article } from "@/content/articles";
 
 const KEY            = "data:articles";
@@ -51,13 +51,14 @@ export async function POST(request: NextRequest) {
     if (!isValidArticle(body)) {
       return NextResponse.json({ error: "Invalid article data" }, { status: 400 });
     }
-    const articles = (await kvGet<Article[]>(KEY)) ?? [];
-    if (articles.some((a) => a.id === body.id)) {
-      return NextResponse.json({ error: "Article ID already exists" }, { status: 409 });
-    }
     body.content = sanitizeHtml(body.content);
-    articles.unshift(body);
-    await kvSet(KEY, articles);
+    await kvUpdate<Article[]>(KEY, (current) => {
+      const articles = current ?? [];
+      if (articles.some((a) => a.id === body.id)) {
+        throw new ConflictError("Article ID already exists");
+      }
+      return [body, ...articles];
+    });
     revalidateContent("articles");
     return NextResponse.json({ ok: true });
   } catch (e) {
@@ -72,19 +73,16 @@ export async function PUT(request: NextRequest) {
     // Bulk action
     if (typeof body === "object" && body !== null && "action" in body && Array.isArray((body as { ids?: unknown }).ids)) {
       const { action, ids } = body as { action: unknown; ids: unknown[] };
-      const articles = (await kvGet<Article[]>(KEY)) ?? [];
-      const idSet = new Set<string>(ids as string[]);
-      let updated: Article[];
-      if (action === "publish") {
-        updated = articles.map((a) => (idSet.has(a.id) ? { ...a, published: true } : a));
-      } else if (action === "unpublish") {
-        updated = articles.map((a) => (idSet.has(a.id) ? { ...a, published: false } : a));
-      } else if (action === "delete") {
-        updated = articles.filter((a) => !idSet.has(a.id));
-      } else {
+      if (action !== "publish" && action !== "unpublish" && action !== "delete") {
         return NextResponse.json({ error: "Unknown action" }, { status: 400 });
       }
-      await kvSet(KEY, updated);
+      const idSet = new Set<string>(ids as string[]);
+      await kvUpdate<Article[]>(KEY, (current) => {
+        const articles = current ?? [];
+        if (action === "publish")   return articles.map((a) => (idSet.has(a.id) ? { ...a, published: true } : a));
+        if (action === "unpublish") return articles.map((a) => (idSet.has(a.id) ? { ...a, published: false } : a));
+        return articles.filter((a) => !idSet.has(a.id));
+      });
       revalidateContent("articles");
       return NextResponse.json({ ok: true });
     }
@@ -94,13 +92,11 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: "Invalid article data" }, { status: 400 });
     }
     body.content = sanitizeHtml(body.content);
-    const articles = (await kvGet<Article[]>(KEY)) ?? [];
-    const idx = articles.findIndex((a) => a.id === body.id);
-    if (idx === -1) {
-      return NextResponse.json({ error: "Article not found" }, { status: 404 });
-    }
-    articles[idx] = body;
-    await kvSet(KEY, articles);
+    await kvUpdate<Article[]>(KEY, (current) => {
+      const articles = current ?? [];
+      if (!articles.some((a) => a.id === body.id)) throw new NotFoundError("Article not found");
+      return articles.map((a) => (a.id === body.id ? body : a));
+    });
     revalidateContent("articles");
     return NextResponse.json({ ok: true });
   } catch (e) {
@@ -115,8 +111,7 @@ export async function DELETE(request: NextRequest) {
     if (!isValidId(id)) {
       return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
     }
-    const articles = (await kvGet<Article[]>(KEY)) ?? [];
-    await kvSet(KEY, articles.filter((a) => a.id !== id));
+    await kvUpdate<Article[]>(KEY, (current) => (current ?? []).filter((a) => a.id !== id));
     revalidateContent("articles");
     return NextResponse.json({ ok: true });
   } catch (e) {

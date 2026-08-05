@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { kvGet, kvSet } from "@/lib/kv";
+import { kvGet, kvSet, kvUpdate } from "@/lib/kv";
 import { revalidateContent } from "@/lib/revalidate";
-import { isValidId, parseBody, errorResponse } from "@/lib/api-validation";
+import { isValidId, parseBody, errorResponse, NotFoundError } from "@/lib/api-validation";
 import type { LorConfig, LorSubmission } from "@/content/lor";
 
 const CONFIG_KEY = "data:lor-config";
@@ -48,15 +48,17 @@ export async function PUT(req: NextRequest) {
         return NextResponse.json({ error: "Invalid data" }, { status: 400 });
       if (notes !== undefined && typeof notes !== "string")
         return NextResponse.json({ error: "Invalid notes" }, { status: 400 });
-      const subs = (await kvGet<LorSubmission[]>(SUBS_KEY).catch(() => [])) ?? [];
-      const idx = subs.findIndex((s) => s.id === id);
-      if (idx === -1) return NextResponse.json({ error: "Not found" }, { status: 404 });
-      subs[idx] = {
-        ...subs[idx],
-        status: status as LorSubmission["status"],
-        ...(notes !== undefined ? { notes } : {}),
-      };
-      await kvSet(SUBS_KEY, subs);
+      // Atomic: a status change must not clobber a submission that arrives
+      // between the read and the write.
+      await kvUpdate<LorSubmission[]>(SUBS_KEY, (current) => {
+        const subs = current ?? [];
+        if (!subs.some((s) => s.id === id)) throw new NotFoundError();
+        return subs.map((s) =>
+          s.id === id
+            ? { ...s, status: status as LorSubmission["status"], ...(notes !== undefined ? { notes } : {}) }
+            : s
+        );
+      });
       return NextResponse.json({ ok: true });
     }
 
@@ -72,8 +74,9 @@ export async function DELETE(req: NextRequest) {
     const { id } = (typeof body === "object" && body !== null ? body : {}) as { id?: unknown };
     if (!isValidId(id))
       return NextResponse.json({ error: "Missing id" }, { status: 400 });
-    const subs = (await kvGet<LorSubmission[]>(SUBS_KEY).catch(() => [])) ?? [];
-    await kvSet(SUBS_KEY, subs.filter((s) => s.id !== id));
+    await kvUpdate<LorSubmission[]>(SUBS_KEY, (current) =>
+      (current ?? []).filter((s) => s.id !== id)
+    );
     return NextResponse.json({ ok: true });
   } catch (e) {
     return errorResponse(e, "Failed to delete LOR submission", 400);

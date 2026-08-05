@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { kvGet, kvSet } from "@/lib/kv";
+import { kvGet, kvUpdate } from "@/lib/kv";
 import { revalidateContent } from "@/lib/revalidate";
 import { sanitizeHtml } from "@/lib/sanitize";
 import { isValidId, isValidStr, isValidUrl, parseBody, errorResponse } from "@/lib/api-validation";
@@ -61,10 +61,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid news item" }, { status: 400 });
     }
     body.summary = sanitizeHtml(body.summary);
-    const news = await kvGet<NewsItem[]>(KEY);
-    if (body.featured) news.forEach((n) => { n.featured = false; });
-    news.unshift(body);
-    await kvSet(KEY, news);
+    await kvUpdate<NewsItem[]>(KEY, (current) => {
+      // Only one item may be featured, so adding a featured item clears the rest.
+      const news = body.featured
+        ? (current ?? []).map((n) => ({ ...n, featured: false }))
+        : (current ?? []);
+      return [body, ...news];
+    });
     revalidateContent("news");
     return NextResponse.json({ success: true });
   } catch (err) {
@@ -79,12 +82,13 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: "Invalid news item" }, { status: 400 });
     }
     body.summary = sanitizeHtml(body.summary);
-    let news = await kvGet<NewsItem[]>(KEY);
-    if (body.featured) {
-      news = news.map((n) => ({ ...n, featured: n.id === body.id }));
-    }
-    news = news.map((n) => (n.id === body.id ? body : n));
-    await kvSet(KEY, news);
+    await kvUpdate<NewsItem[]>(KEY, (current) => {
+      let news = current ?? [];
+      if (body.featured) {
+        news = news.map((n) => ({ ...n, featured: n.id === body.id }));
+      }
+      return news.map((n) => (n.id === body.id ? body : n));
+    });
     revalidateContent("news");
     return NextResponse.json({ success: true });
   } catch (err) {
@@ -102,8 +106,7 @@ export async function DELETE(request: NextRequest) {
     if (!isValidId(id)) {
       return NextResponse.json({ error: "Invalid id" }, { status: 400 });
     }
-    const news = (await kvGet<NewsItem[]>(KEY)).filter((n) => n.id !== id);
-    await kvSet(KEY, news);
+    await kvUpdate<NewsItem[]>(KEY, (current) => (current ?? []).filter((n) => n.id !== id));
     revalidateContent("news");
     return NextResponse.json({ success: true });
   } catch (err) {

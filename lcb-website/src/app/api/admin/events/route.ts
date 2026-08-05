@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { kvGet, kvSet } from "@/lib/kv";
+import { kvGet, kvUpdate } from "@/lib/kv";
 import { revalidateContent } from "@/lib/revalidate";
 import { sanitizeHtml } from "@/lib/sanitize";
 import { isValidId, isValidStr, isValidUrl, parseBody, errorResponse } from "@/lib/api-validation";
@@ -55,9 +55,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid event data" }, { status: 400 });
     }
     body.description = sanitizeHtml(body.description);
-    const events = await kvGet<Event[]>(KEY);
-    events.unshift(body);
-    await kvSet(KEY, events);
+    await kvUpdate<Event[]>(KEY, (current) => [body, ...(current ?? [])]);
     revalidateContent("events");
     return NextResponse.json({ success: true });
   } catch (err) {
@@ -72,10 +70,9 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: "Invalid event data" }, { status: 400 });
     }
     body.description = sanitizeHtml(body.description);
-    const events = (await kvGet<Event[]>(KEY)).map((e) =>
-      e.id === body.id ? body : e
+    await kvUpdate<Event[]>(KEY, (current) =>
+      (current ?? []).map((e) => (e.id === body.id ? body : e))
     );
-    await kvSet(KEY, events);
     revalidateContent("events");
     return NextResponse.json({ success: true });
   } catch (err) {
@@ -93,8 +90,7 @@ export async function DELETE(request: NextRequest) {
     if (!isValidId(id)) {
       return NextResponse.json({ error: "Invalid id" }, { status: 400 });
     }
-    const events = (await kvGet<Event[]>(KEY)).filter((e) => e.id !== id);
-    await kvSet(KEY, events);
+    await kvUpdate<Event[]>(KEY, (current) => (current ?? []).filter((e) => e.id !== id));
     revalidateContent("events");
     return NextResponse.json({ success: true });
   } catch (err) {
