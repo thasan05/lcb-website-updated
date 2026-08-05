@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { kvGet, kvUpdate } from "@/lib/kv";
 import { revalidateContent } from "@/lib/revalidate";
-import { isValidId, isValidUrl, parseBody, errorResponse } from "@/lib/api-validation";
+import { isValidId, isValidUrl, parseBody, errorResponse, firstIssue, URL_RULE } from "@/lib/api-validation";
 
 const KEY            = "data:story-gallery";
 const MAX_BODY_BYTES = 32 * 1024; // 32 KB
@@ -18,19 +18,31 @@ type GalleryItem = {
 
 // ── Validation ────────────────────────────────────────────────────────────────
 
-function isValidItem(item: unknown): item is GalleryItem {
-  if (typeof item !== "object" || item === null) return false;
+function validateItem(item: unknown): string | null {
+  if (typeof item !== "object" || item === null) return "Request body must be an object";
   const m = item as Record<string, unknown>;
-  if (!isValidId(m.id))                             return false;
-  if (!isValidUrl(m.src))                           return false;
-  if (typeof m.alt !== "string")                    return false;
-  if (m.caption !== undefined && typeof m.caption !== "string") return false;
-  if (m.span    !== undefined && typeof m.span    !== "string") return false;
-  if (m.srcs !== undefined) {
-    if (!Array.isArray(m.srcs)) return false;
-    if (!(m.srcs as unknown[]).every((s) => isValidUrl(s))) return false;
-  }
-  return true;
+
+  const srcsIssue = ((): string | null => {
+    if (m.srcs === undefined) return null;
+    if (!Array.isArray(m.srcs)) return "Slideshow photos must be a list";
+    if (!(m.srcs as unknown[]).every((s) => isValidUrl(s))) {
+      return `Every slideshow photo ${URL_RULE}`;
+    }
+    return null;
+  })();
+
+  return firstIssue([
+    [isValidId(m.id), "An id is required"],
+    [isValidUrl(m.src), `Photo ${URL_RULE}`],
+    [typeof m.alt === "string", "Alt text must be text (it may be empty)"],
+    [m.caption === undefined || typeof m.caption === "string", "Caption must be text"],
+    [m.span === undefined || typeof m.span === "string", "Span must be text"],
+    [srcsIssue === null, srcsIssue ?? ""],
+  ]);
+}
+
+function isValidItem(item: unknown): item is GalleryItem {
+  return validateItem(item) === null;
 }
 
 // ── Handlers ──────────────────────────────────────────────────────────────────
@@ -47,7 +59,7 @@ export async function PUT(request: NextRequest) {
   try {
     const body = await parseBody(request, MAX_BODY_BYTES);
     if (!isValidItem(body)) {
-      return NextResponse.json({ error: "Invalid item data" }, { status: 400 });
+      return NextResponse.json({ error: validateItem(body)! }, { status: 400 });
     }
     await kvUpdate<GalleryItem[]>(KEY, (current) =>
       (current ?? []).map((item) => (item.id === body.id ? body : item))

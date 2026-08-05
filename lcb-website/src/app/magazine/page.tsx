@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { kvGet } from "@/lib/kv";
+import { kvGetCached } from "@/lib/kv-cached";
 import { siteConfig } from "@/content/site";
 import type { Magazine } from "@/content/magazines";
 import { FooterLive } from "@/components/layout/FooterLive";
@@ -28,7 +28,7 @@ function formatDate(iso: string) {
 
 async function getMagazines(): Promise<Magazine[]> {
   try {
-    const all = await kvGet<Magazine[]>("data:magazines");
+    const all = await kvGetCached<Magazine[]>("data:magazines");
     return (all ?? []).filter((m) => m.published);
   } catch {
     return [];
@@ -48,6 +48,7 @@ function MagazineCard({ mag }: { mag: Magazine }) {
             src={mag.coverUrl}
             alt={mag.title}
             fill
+            sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 25vw"
             className="object-cover transition-transform duration-500 group-hover:scale-105"
           />
         ) : (

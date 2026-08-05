@@ -7,6 +7,7 @@ import { ScrollProgress } from "@/components/ui/ScrollProgress";
 import { CustomCursor } from "@/components/ui/CustomCursor";
 import { ToastProvider } from "@/components/ui/Toast";
 import { WebMCP } from "@/components/ui/WebMCP";
+import { MotionProvider } from "@/components/motion/MotionProvider";
 
 const geistSans = Geist({
   subsets: ["latin"],
@@ -89,12 +90,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       suppressHydrationWarning
     >
       <body className="font-sans antialiased">
-        <ToastProvider>
-          <ScrollProgress />
-          <CustomCursor />
-          <WebMCP />
-{children}
-        </ToastProvider>
+        <MotionProvider>
+          <ToastProvider>
+            <ScrollProgress />
+            <CustomCursor />
+            <WebMCP />
+            {children}
+          </ToastProvider>
+        </MotionProvider>
         <Analytics />
       </body>
     </html>

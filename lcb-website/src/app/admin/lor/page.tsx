@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import type { LorConfig, LorQuestion, LorQuestionType, LorSubmission } from "@/content/lor";
+import { errorFromResponse } from "@/lib/admin-error";
 
 type Tab = "settings" | "questions" | "submissions";
 
@@ -68,7 +69,7 @@ export default function AdminLorPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ type: "config", data: updated }),
       });
-      if (!res.ok) throw new Error((await res.json()).error ?? "Save failed");
+      if (!res.ok) throw new Error(await errorFromResponse(res));
       setConfig(updated);
       setSuccess("Saved.");
       setTimeout(() => setSuccess(""), 2500);

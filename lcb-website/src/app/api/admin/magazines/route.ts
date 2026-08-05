@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { kvGet, kvUpdate } from "@/lib/kv";
 import { revalidateContent } from "@/lib/revalidate";
-import { isValidId, isValidStr, parseBody, errorResponse, ConflictError, NotFoundError } from "@/lib/api-validation";
+import { isValidId, isValidStr, parseBody, errorResponse, ConflictError, NotFoundError, firstIssue } from "@/lib/api-validation";
 import type { Magazine } from "@/content/magazines";
 
 const KEY            = "data:magazines";
@@ -15,17 +15,25 @@ function isValidUrl(v: unknown): v is string {
   try { return new URL(v).protocol === "https:"; } catch { return false; }
 }
 
-function isValidMagazine(m: unknown): m is Magazine {
-  if (typeof m !== "object" || m === null) return false;
+function validateMagazine(m: unknown): string | null {
+  if (typeof m !== "object" || m === null) return "Request body must be an object";
   const r = m as Record<string, unknown>;
-  if (!isValidId(r.id))              return false;
-  if (!isValidStr(r.title, 300))     return false;
-  if (!isValidUrl(r.fileUrl))        return false;
-  if (r.coverUrl !== undefined && r.coverUrl !== "" && !isValidUrl(r.coverUrl)) return false;
-  if (r.fileSize !== undefined && typeof r.fileSize !== "number") return false;
-  if (!isValidStr(r.uploadedAt, 100)) return false;
-  if (typeof r.published !== "boolean") return false;
-  return true;
+  return firstIssue([
+    [isValidId(r.id), "An id is required"],
+    [isValidStr(r.title, 300), "Title is required (max 300 characters)"],
+    [isValidUrl(r.fileUrl), "PDF file URL must be an https:// URL"],
+    [
+      r.coverUrl === undefined || r.coverUrl === "" || isValidUrl(r.coverUrl),
+      "Cover image must be an https:// URL — leave it empty if unused",
+    ],
+    [r.fileSize === undefined || typeof r.fileSize === "number", "File size must be a number"],
+    [isValidStr(r.uploadedAt, 100), "Upload timestamp is required"],
+    [typeof r.published === "boolean", "published must be true or false"],
+  ]);
+}
+
+function isValidMagazine(m: unknown): m is Magazine {
+  return validateMagazine(m) === null;
 }
 
 export async function GET() {
@@ -41,7 +49,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await parseBody(request, MAX_BODY_BYTES);
     if (!isValidMagazine(body)) {
-      return NextResponse.json({ error: "Invalid magazine data" }, { status: 400 });
+      return NextResponse.json({ error: validateMagazine(body)! }, { status: 400 });
     }
     await kvUpdate<Magazine[]>(KEY, (current) => {
       const magazines = current ?? [];
@@ -61,7 +69,7 @@ export async function PUT(request: NextRequest) {
   try {
     const body = await parseBody(request, MAX_BODY_BYTES);
     if (!isValidMagazine(body)) {
-      return NextResponse.json({ error: "Invalid magazine data" }, { status: 400 });
+      return NextResponse.json({ error: validateMagazine(body)! }, { status: 400 });
     }
     await kvUpdate<Magazine[]>(KEY, (current) => {
       const magazines = current ?? [];

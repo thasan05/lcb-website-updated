@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { kvGet } from "@/lib/kv";
+import { kvGetCached } from "@/lib/kv-cached";
 import { siteConfig } from "@/content/site";
 import type { Article } from "@/content/articles";
 import { SafeHtml } from "@/components/ui/RichTextEditor";
@@ -16,7 +16,7 @@ const FORUM_BASE = "https://forum.linkedincommunitybangladesh.com";
 
 async function getArticle(id: string): Promise<Article | null> {
   try {
-    const articles = await kvGet<Article[]>("data:articles");
+    const articles = await kvGetCached<Article[]>("data:articles");
     return articles.find((a) => a.id === id && a.published) ?? null;
   } catch {
     return null;
@@ -141,6 +141,7 @@ export default async function ArticlePage({
                   src={article.coverImage}
                   alt={article.title}
                   fill
+                  sizes="(max-width: 768px) 100vw, 768px"
                   className="object-cover"
                   priority
                 />
@@ -173,7 +174,7 @@ export default async function ArticlePage({
             <div className="flex items-center gap-3 rounded-2xl border border-white/[0.06] bg-white/[0.03] px-4 py-3">
               {article.authorPhoto ? (
                 <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-full border border-white/10">
-                  <Image src={article.authorPhoto} alt={article.authorName} fill className="object-cover" />
+                  <Image src={article.authorPhoto} alt={article.authorName} fill sizes="44px" className="object-cover" />
                 </div>
               ) : (
                 <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[#4F9CEB]/20 bg-[#4F9CEB]/10 text-sm font-bold text-[#7BB8F0]">

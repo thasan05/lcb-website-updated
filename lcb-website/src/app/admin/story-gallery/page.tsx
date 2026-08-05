@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { uploadToCloudinary } from "@/lib/cloudinary-upload";
+import { errorFromResponse } from "@/lib/admin-error";
 
 type GalleryItem = {
   id: string;
@@ -107,12 +108,12 @@ export default function StoryGalleryAdminPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      if (!res.ok) throw new Error("Save failed");
+      if (!res.ok) throw new Error(await errorFromResponse(res));
       await load();
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
       closeEdit();
-    } catch { setError("Save failed. Try again."); }
+    } catch (e) { setError((e as Error).message); }
     finally { setSaving(false); }
   }
 

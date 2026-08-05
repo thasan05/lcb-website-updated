@@ -2,23 +2,28 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { kvGet, kvUpdate } from "@/lib/kv";
 import { revalidateContent } from "@/lib/revalidate";
-import { isValidId, isValidStr, isValidOptionalStr, isValidUrl, parseBody, errorResponse, ConflictError, NotFoundError } from "@/lib/api-validation";
+import { isValidId, isValidStr, isValidOptionalStr, isValidUrl, parseBody, errorResponse, ConflictError, NotFoundError, firstIssue, URL_RULE } from "@/lib/api-validation";
 import type { PressItem } from "@/content/press";
 
 const KEY            = "data:press";
 const MAX_BODY_BYTES = 16 * 1024;
 
-function isValidPressItem(p: unknown): p is PressItem {
-  if (typeof p !== "object" || p === null) return false;
+function validatePressItem(p: unknown): string | null {
+  if (typeof p !== "object" || p === null) return "Request body must be an object";
   const m = p as Record<string, unknown>;
-  if (!isValidId(m.id))                      return false;
-  if (!isValidStr(m.headline, 500))          return false;
-  if (!isValidStr(m.outlet, 200))            return false;
-  if (!isValidUrl(m.url))                    return false;
-  if (!isValidOptionalStr(m.date, 50))       return false;
-  if (!isValidOptionalStr(m.dateLabel, 100)) return false;
-  if (typeof m.published !== "boolean")      return false;
-  return true;
+  return firstIssue([
+    [isValidId(m.id), "An id is required"],
+    [isValidStr(m.headline, 500), "Headline is required (max 500 characters)"],
+    [isValidStr(m.outlet, 200), "Outlet is required (max 200 characters)"],
+    [isValidUrl(m.url), `Article URL ${URL_RULE}`],
+    [isValidOptionalStr(m.date, 50), "Date must be text (max 50 characters)"],
+    [isValidOptionalStr(m.dateLabel, 100), "Date label must be text (max 100 characters)"],
+    [typeof m.published === "boolean", "published must be true or false"],
+  ]);
+}
+
+function isValidPressItem(p: unknown): p is PressItem {
+  return validatePressItem(p) === null;
 }
 
 export async function GET() {
@@ -30,7 +35,7 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const body = await parseBody(req, MAX_BODY_BYTES);
-    if (!isValidPressItem(body)) return NextResponse.json({ error: "Invalid data" }, { status: 400 });
+    if (!isValidPressItem(body)) return NextResponse.json({ error: validatePressItem(body)! }, { status: 400 });
     await kvUpdate<PressItem[]>(KEY, (current) => {
       const items = current ?? [];
       if (items.some((i) => i.id === body.id)) throw new ConflictError("ID exists");
@@ -62,7 +67,7 @@ export async function PUT(req: NextRequest) {
       revalidateContent("press");
       return NextResponse.json({ ok: true });
     }
-    if (!isValidPressItem(body)) return NextResponse.json({ error: "Invalid data" }, { status: 400 });
+    if (!isValidPressItem(body)) return NextResponse.json({ error: validatePressItem(body)! }, { status: 400 });
     await kvUpdate<PressItem[]>(KEY, (current) => {
       const items = current ?? [];
       if (!items.some((i) => i.id === body.id)) throw new NotFoundError();

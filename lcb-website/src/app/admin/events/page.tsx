@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import type { Event, EventStatus } from "@/content/events";
 import { uploadToCloudinary } from "@/lib/cloudinary-upload";
 import { RichTextEditor } from "@/components/ui/RichTextEditor";
+import { errorFromResponse } from "@/lib/admin-error";
 
 const EMPTY_EVENT: Omit<Event, "id"> = {
   title: "",
@@ -99,9 +100,9 @@ export default function EventsAdminPage() {
         headers: { "Content-Type": "application/json" },
         body:    JSON.stringify(payload),
       });
-      if (!res.ok) throw new Error("Save failed");
+      if (!res.ok) throw new Error(await errorFromResponse(res));
       await load(); closeForm();
-    } catch { setError("Save failed. Try again."); }
+    } catch (e) { setError((e as Error).message); }
     finally { setSaving(false); }
   }
 

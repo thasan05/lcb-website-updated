@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { kvGet } from "@/lib/kv";
+import { kvGetCached } from "@/lib/kv-cached";
 import { siteConfig } from "@/content/site";
 import type { Magazine } from "@/content/magazines";
 import { FooterLive } from "@/components/layout/FooterLive";
@@ -18,7 +18,7 @@ function formatDate(iso: string) {
 
 async function getMagazine(id: string): Promise<Magazine | null> {
   try {
-    const all = await kvGet<Magazine[]>("data:magazines");
+    const all = await kvGetCached<Magazine[]>("data:magazines");
     return all?.find((m) => m.id === id && m.published) ?? null;
   } catch {
     return null;
@@ -150,7 +150,7 @@ export default async function MagazineReaderPage({
             <div className="flex flex-col items-center justify-center gap-6 py-14 sm:hidden">
               {mag.coverUrl ? (
                 <div className="relative h-64 w-48 overflow-hidden rounded-xl border border-white/10 shadow-xl">
-                  <Image src={mag.coverUrl} alt={mag.title} fill className="object-cover" />
+                  <Image src={mag.coverUrl} alt={mag.title} fill sizes="192px" className="object-cover" />
                 </div>
               ) : (
                 <svg className="h-16 w-16 text-white/10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={0.75}>
