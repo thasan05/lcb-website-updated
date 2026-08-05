@@ -116,15 +116,18 @@ export function LorApplyForm({ config }: Props) {
             </div>
           )}
 
-          {sorted.map((q) => (
+          {sorted.map((q) => {
+            const fieldId = `lor-${q.id}`;
+            return (
             <div key={q.id}>
-              <label className={labelCls}>
+              <label className={labelCls} htmlFor={q.type === "radio" ? undefined : fieldId}>
                 {q.label}
                 {q.required && <span className="ml-1 text-red-400/70">*</span>}
               </label>
 
               {q.type === "textarea" ? (
                 <textarea
+                  id={fieldId}
                   className={inputCls + " resize-none"}
                   rows={4}
                   placeholder={q.placeholder}
@@ -136,6 +139,7 @@ export function LorApplyForm({ config }: Props) {
                 />
               ) : q.type === "select" ? (
                 <select
+                  id={fieldId}
                   className={inputCls}
                   required={q.required}
                   value={answers[q.id] ?? ""}
@@ -149,7 +153,8 @@ export function LorApplyForm({ config }: Props) {
                   ))}
                 </select>
               ) : q.type === "radio" ? (
-                <div className="space-y-2">
+                <div className="space-y-2" role="group" aria-labelledby={`${fieldId}-legend`}>
+                  <span id={`${fieldId}-legend`} className="sr-only">{q.label}</span>
                   {(q.options ?? []).map((opt) => (
                     <label key={opt} className="flex cursor-pointer items-center gap-2.5">
                       <input
@@ -169,6 +174,7 @@ export function LorApplyForm({ config }: Props) {
                 </div>
               ) : (
                 <input
+                  id={fieldId}
                   type={q.id === "email" ? "email" : "text"}
                   className={inputCls}
                   placeholder={q.placeholder}
@@ -180,7 +186,8 @@ export function LorApplyForm({ config }: Props) {
                 />
               )}
             </div>
-          ))}
+            );
+          })}
 
           <div className="pt-2">
             <button

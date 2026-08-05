@@ -119,10 +119,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }
 
   // Don't render layout on the login page
-  if (pathname === "/admin/login") return <>{children}</>;
+  if (pathname === "/admin/login") {
+    return (
+      <>
+        <meta name="robots" content="noindex, nofollow" />
+        {children}
+      </>
+    );
+  }
 
   return (
     <div className="flex min-h-screen bg-[#0a0a0f]">
+      <meta name="robots" content="noindex, nofollow" />
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div
@@ -211,6 +219,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <header className="flex h-16 items-center justify-between border-b border-white/[0.06] bg-[#0d0d14] px-4 lg:hidden">
           <button
             onClick={() => setSidebarOpen(true)}
+            aria-label="Open sidebar menu"
             className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/[0.08] text-white/60 hover:text-white"
           >
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

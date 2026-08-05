@@ -63,7 +63,7 @@ function CyclingImage({
   );
 }
 
-export function Story() {
+export function Story({ items }: { items?: GalleryItem[] }) {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -72,8 +72,11 @@ export function Story() {
   const yFeatured = useTransform(scrollYProgress, [0, 1], ["0%", "-12%"]);
   const yGrid = useTransform(scrollYProgress, [0, 1], ["0%", "-6%"]);
 
-  const featured = gallery.find((g) => g.span === "feature")!;
-  const supporting = gallery.filter((g) => g.span !== "feature");
+  // Falls back to the bundled JSON when the KV read fails or returns nothing,
+  // so the section still renders if the store is unreachable.
+  const source = items?.length ? items : gallery;
+  const featured = source.find((g) => g.span === "feature") ?? source[0];
+  const supporting = source.filter((g) => g !== featured);
 
   // Collect unique university names for the marquee strip
   const universities = Array.from(new Set(campusLeads.map((c) => c.university)));

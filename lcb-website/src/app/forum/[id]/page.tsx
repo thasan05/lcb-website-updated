@@ -10,7 +10,7 @@ import { FooterLive } from "@/components/layout/FooterLive";
 import { BackToTop } from "@/components/ui/BackToTop";
 import { ShareButtons } from "./ShareButtons";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 
 const FORUM_BASE = "https://forum.linkedincommunitybangladesh.com";
 

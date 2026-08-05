@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { kvGet, kvSet } from "@/lib/kv";
+import { kvGet, kvUpdate } from "@/lib/kv";
+import { revalidateContent } from "@/lib/revalidate";
+import { isValidId, isValidUrl, parseBody, errorResponse } from "@/lib/api-validation";
 
 const KEY            = "data:story-gallery";
 const MAX_BODY_BYTES = 32 * 1024; // 32 KB
@@ -16,18 +18,6 @@ type GalleryItem = {
 
 // ── Validation ────────────────────────────────────────────────────────────────
 
-function isValidId(v: unknown): v is string {
-  return typeof v === "string" && v.length > 0 && v.length < 200;
-}
-
-function isValidUrl(v: unknown): v is string {
-  if (typeof v !== "string") return false;
-  try {
-    const u = new URL(v);
-    return u.protocol === "https:" || v.startsWith("/");
-  } catch { return false; }
-}
-
 function isValidItem(item: unknown): item is GalleryItem {
   if (typeof item !== "object" || item === null) return false;
   const m = item as Record<string, unknown>;
@@ -38,17 +28,9 @@ function isValidItem(item: unknown): item is GalleryItem {
   if (m.span    !== undefined && typeof m.span    !== "string") return false;
   if (m.srcs !== undefined) {
     if (!Array.isArray(m.srcs)) return false;
-    if (!(m.srcs as unknown[]).every(isValidUrl))   return false;
+    if (!(m.srcs as unknown[]).every((s) => isValidUrl(s))) return false;
   }
   return true;
-}
-
-async function parseBody(request: NextRequest) {
-  const cl = Number(request.headers.get("content-length") ?? 0);
-  if (cl > MAX_BODY_BYTES) throw new Error("Request body too large");
-  const text = await request.text();
-  if (text.length > MAX_BODY_BYTES) throw new Error("Request body too large");
-  return JSON.parse(text) as unknown;
 }
 
 // ── Handlers ──────────────────────────────────────────────────────────────────
@@ -56,24 +38,23 @@ async function parseBody(request: NextRequest) {
 export async function GET() {
   try {
     return NextResponse.json(await kvGet<GalleryItem[]>(KEY));
-  } catch {
-    return NextResponse.json({ error: "Read failed" }, { status: 500 });
+  } catch (err) {
+    return errorResponse(err, "Failed to read story gallery");
   }
 }
 
 export async function PUT(request: NextRequest) {
   try {
-    const body = await parseBody(request);
+    const body = await parseBody(request, MAX_BODY_BYTES);
     if (!isValidItem(body)) {
       return NextResponse.json({ error: "Invalid item data" }, { status: 400 });
     }
-    const items = (await kvGet<GalleryItem[]>(KEY)).map((item) =>
-      item.id === body.id ? body : item
+    await kvUpdate<GalleryItem[]>(KEY, (current) =>
+      (current ?? []).map((item) => (item.id === body.id ? body : item))
     );
-    await kvSet(KEY, items);
+    revalidateContent("story-gallery");
     return NextResponse.json({ success: true });
   } catch (err) {
-    const msg = err instanceof Error ? err.message : "Write failed";
-    return NextResponse.json({ error: msg }, { status: 500 });
+    return errorResponse(err, "Failed to update story gallery item");
   }
 }

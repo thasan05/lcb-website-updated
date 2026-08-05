@@ -7,7 +7,7 @@ import { Forum } from "@/components/sections/Forum";
 import { FooterLive } from "@/components/layout/FooterLive";
 import { BackToTop } from "@/components/ui/BackToTop";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 
 export const metadata = {
   title: `Forum · ${siteConfig.shortName}`,
@@ -90,6 +90,7 @@ export default async function ForumPage() {
 
       {/* Content */}
       <main className="relative flex-1">
+        <h1 className="sr-only">Forum — Thought Leadership &amp; Career Stories</h1>
         {/* Atmospheric top glow */}
         <div
           aria-hidden

@@ -23,12 +23,15 @@ import type { NewsItem } from "@/content/news";
 import type { Article } from "@/content/articles";
 import type { PressItem } from "@/content/press";
 import type { LorConfig } from "@/content/lor";
+import type { GalleryItem } from "@/content/gallery";
 
 type GalleryCategory = { id: string; label: string };
 type GalleryImage    = { id: string; src: string; category: string; alt: string; caption?: string };
 type GalleryManifest = { version: number; categories: GalleryCategory[]; images: GalleryImage[] };
 
-export const dynamic = "force-dynamic";
+// ISR: served from cache, rebuilt at most every 5 min. Admin writes call
+// revalidateContent() so saves appear immediately rather than after the window.
+export const revalidate = 300;
 
 const TEAM_KEYS: Record<string, string> = {
   central:        "team:central",
@@ -51,7 +54,7 @@ async function getTeamData(): Promise<Record<string, TeamMember[]>> {
 }
 
 export default async function HomePage() {
-  const [appsConfig, teamData, liveEvents, liveNews, liveGallery, liveArticles, livePress, lorConfig] = await Promise.all([
+  const [appsConfig, teamData, liveEvents, liveNews, liveGallery, liveArticles, livePress, lorConfig, liveStory] = await Promise.all([
     getApplicationsConfig(),
     getTeamData(),
     kvGet<Event[]>("data:events").catch(() => null),
@@ -60,6 +63,7 @@ export default async function HomePage() {
     kvGet<Article[]>("data:articles").catch(() => null),
     kvGet<PressItem[]>("data:press").catch(() => null),
     kvGet<LorConfig>("data:lor-config").catch(() => null),
+    kvGet<GalleryItem[]>("data:story-gallery").catch(() => null),
   ]);
 
   // JSON-LD structured data
@@ -129,7 +133,7 @@ export default async function HomePage() {
       <Navbar />
       <main className="relative">
         <Hero applicationsConfig={appsConfig} />
-        <Story />
+        <Story items={liveStory ?? undefined} />
         <Stats />
         <Events liveEvents={liveEvents ?? undefined} />
         <Team liveMembers={teamData} />

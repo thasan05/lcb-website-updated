@@ -216,7 +216,7 @@ export default function TeamAdminPage() {
                 <div className="flex items-center gap-3">
                   {form.image ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={form.image} alt="" className="h-14 w-14 rounded-xl object-cover" />
+                    <img src={form.image} alt={form.name || "Team member photo"} className="h-14 w-14 rounded-xl object-cover" />
                   ) : (
                     <div className="flex h-14 w-14 items-center justify-center rounded-xl border border-white/[0.08] bg-white/[0.04] text-lg text-white/20">
                       {form.name ? form.name.split(" ").slice(0,2).map(n=>n[0]).join("").toUpperCase() : "?"}

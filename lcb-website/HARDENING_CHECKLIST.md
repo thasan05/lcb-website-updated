@@ -40,7 +40,7 @@ curl -s https://linkedincommunitybangladesh.com/api/admin/magazines
 ## Input Validation
 
 - [x] All admin API routes validate each field (type, length, format)
-- [x] URL fields validated: must be `https:` or relative `/`
+- [x] URL fields validated: must be `https:` or relative `/` — shared helpers in `src/lib/api-validation.ts`, do not hand-roll per route
 - [x] Body size limits on all routes (16–64 KB depending on content type)
 - [x] Article/event/news HTML content sanitized on write (`sanitizeHtml()`)
 - [x] `SafeHtml` component sanitizes before `dangerouslySetInnerHTML`
@@ -70,7 +70,7 @@ curl -s https://linkedincommunitybangladesh.com/api/admin/magazines
 - [x] User-submitted LOR answers HTML-escaped before email interpolation
 - [x] `escapeHtml()` covers `&`, `<`, `>`, `"`, `'`
 - [x] `sanitizeHtml()` removes: `<script>`, `<iframe>`, `<object>`, `on*` attrs, dangerous protocols
-- [ ] One-time sanitization job run against all existing KV content *(required)*
+- [x] One-time sanitization job available: `npm run sanitize-content` (dry run) / `-- --apply` (write). Run against production once.
 - [ ] Review after any new `dangerouslySetInnerHTML` introduction
 
 ---
@@ -90,12 +90,13 @@ curl -s https://linkedincommunitybangladesh.com/api/admin/magazines
 
 ## Dependency Security
 
-- [x] `next@^16.2.9` (latest stable, security backports applied)
+- [x] `next@^16.3.0` (patches 9 high-severity CVEs present in 16.2.9)
 - [x] `react@^19.2.7` (stable release, no longer RC)
 - [x] `postcss@^8.5.15` devdep (above patched threshold)
 - [x] No `NEXT_PUBLIC_` env vars exposing secrets to client bundles
+- [x] `npm audit` clean as of 2026-08-05 (0 vulnerabilities)
 - [ ] `npm audit` run before each deployment (target: 0 high/critical)
-- [ ] `html2canvas` replaced with maintained alternative *(recommended)*
+- [x] `html2canvas` removed — it was an unused dependency
 - [ ] Dependencies pinned to exact versions to prevent supply-chain drift *(recommended)*
 
 ---
