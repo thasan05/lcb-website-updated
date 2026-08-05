@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server";
 import { kvGet, kvUpdate } from "@/lib/kv";
 import { revalidateContent } from "@/lib/revalidate";
 import { sanitizeHtml } from "@/lib/sanitize";
-import { isValidId, isValidStr, isValidOptionalStr, isValidOptionalUrl, parseBody, errorResponse, ConflictError, NotFoundError } from "@/lib/api-validation";
+import { isValidId, isValidStr, isValidOptionalStr, isValidOptionalUrl, parseBody, errorResponse, ConflictError, NotFoundError, firstIssue, URL_RULE } from "@/lib/api-validation";
 import type { Article } from "@/content/articles";
 
 const KEY            = "data:articles";
@@ -11,27 +11,39 @@ const MAX_BODY_BYTES = 64 * 1024; // 64 KB — content can be long
 
 // ── Validation ────────────────────────────────────────────────────────────────
 
-function isValidArticle(a: unknown): a is Article {
-  if (typeof a !== "object" || a === null) return false;
+function validateArticle(a: unknown): string | null {
+  if (typeof a !== "object" || a === null) return "Request body must be an object";
   const m = a as Record<string, unknown>;
-  if (!isValidId(m.id))                           return false;
-  if (!isValidStr(m.title, 300))                  return false;
-  if (!isValidStr(m.excerpt, 1000))               return false;
-  if (!isValidStr(m.content, 50000))              return false;
-  if (!isValidStr(m.authorName, 200))             return false;
-  if (!isValidStr(m.authorDesignation, 300))      return false;
-  if (!isValidOptionalStr(m.authorCompany, 300))  return false;
-  if (!isValidOptionalUrl(m.authorPhoto))         return false;
-  if (!isValidStr(m.date, 50))                    return false;
-  if (!isValidStr(m.dateLabel, 100))              return false;
-  if (!isValidOptionalUrl(m.coverImage))          return false;
-  if (m.tags !== undefined) {
-    if (!Array.isArray(m.tags)) return false;
-    if ((m.tags as unknown[]).some((t) => typeof t !== "string" || (t as string).length > 100)) return false;
-  }
-  if (typeof m.published !== "boolean") return false;
-  if (m.featured !== undefined && typeof m.featured !== "boolean") return false;
-  return true;
+
+  const tagsIssue = ((): string | null => {
+    if (m.tags === undefined) return null;
+    if (!Array.isArray(m.tags)) return "Tags must be a list";
+    if ((m.tags as unknown[]).some((t) => typeof t !== "string" || (t as string).length > 100)) {
+      return "Each tag must be text of at most 100 characters";
+    }
+    return null;
+  })();
+
+  return firstIssue([
+    [isValidId(m.id), "An id is required"],
+    [isValidStr(m.title, 300), "Title is required (max 300 characters)"],
+    [isValidStr(m.excerpt, 1000), "Excerpt is required (max 1000 characters)"],
+    [isValidStr(m.content, 50000), "Content is required (max 50,000 characters)"],
+    [isValidStr(m.authorName, 200), "Author name is required (max 200 characters)"],
+    [isValidStr(m.authorDesignation, 300), "Author designation is required (max 300 characters)"],
+    [isValidOptionalStr(m.authorCompany, 300), "Author company must be text (max 300 characters)"],
+    [isValidOptionalUrl(m.authorPhoto), `Author photo ${URL_RULE} — leave it empty if unused`],
+    [isValidStr(m.date, 50), "Date is required"],
+    [isValidStr(m.dateLabel, 100), "Date label is required (max 100 characters)"],
+    [isValidOptionalUrl(m.coverImage), `Cover image ${URL_RULE} — leave it empty if unused`],
+    [tagsIssue === null, tagsIssue ?? ""],
+    [typeof m.published === "boolean", "published must be true or false"],
+    [m.featured === undefined || typeof m.featured === "boolean", "featured must be true or false"],
+  ]);
+}
+
+function isValidArticle(a: unknown): a is Article {
+  return validateArticle(a) === null;
 }
 
 // ── Handlers ─────────────────────────────────────────────────────────────────
@@ -49,7 +61,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await parseBody(request, MAX_BODY_BYTES);
     if (!isValidArticle(body)) {
-      return NextResponse.json({ error: "Invalid article data" }, { status: 400 });
+      return NextResponse.json({ error: validateArticle(body)! }, { status: 400 });
     }
     body.content = sanitizeHtml(body.content);
     await kvUpdate<Article[]>(KEY, (current) => {
@@ -89,7 +101,7 @@ export async function PUT(request: NextRequest) {
 
     // Single update
     if (!isValidArticle(body)) {
-      return NextResponse.json({ error: "Invalid article data" }, { status: 400 });
+      return NextResponse.json({ error: validateArticle(body)! }, { status: 400 });
     }
     body.content = sanitizeHtml(body.content);
     await kvUpdate<Article[]>(KEY, (current) => {

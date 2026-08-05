@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { kvGet, kvUpdate } from "@/lib/kv";
 import { revalidateContent } from "@/lib/revalidate";
-import { isValidId, isValidUrl, parseBody, errorResponse, ValidationError } from "@/lib/api-validation";
+import { isValidId, isValidUrl, parseBody, errorResponse, ValidationError, firstIssue, URL_RULE } from "@/lib/api-validation";
 
 const KEY = "data:gallery-manifest";
 const MAX_BODY_BYTES = 64 * 1024; // 64 KB — manifests should never be larger
@@ -23,16 +23,20 @@ type Manifest = {
 
 // ── Validation helpers ────────────────────────────────────────────────────────
 
-function isValidImage(img: unknown): img is GalleryImage {
-  if (typeof img !== "object" || img === null) return false;
+function validateImage(img: unknown): string | null {
+  if (typeof img !== "object" || img === null) return "Request body must be an object";
   const m = img as Record<string, unknown>;
-  return (
-    isValidId(m.id) &&
-    isValidUrl(m.src) &&
-    typeof m.category === "string" &&
-    typeof m.alt === "string" &&
-    (m.caption === undefined || typeof m.caption === "string")
-  );
+  return firstIssue([
+    [isValidId(m.id), "An id is required"],
+    [isValidUrl(m.src), `Image ${URL_RULE}`],
+    [typeof m.category === "string", "Category is required"],
+    [typeof m.alt === "string", "Alt text must be text (it may be empty)"],
+    [m.caption === undefined || typeof m.caption === "string", "Caption must be text"],
+  ]);
+}
+
+function isValidImage(img: unknown): img is GalleryImage {
+  return validateImage(img) === null;
 }
 
 // ── Handlers ──────────────────────────────────────────────────────────────────
@@ -49,7 +53,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await parseBody(request, MAX_BODY_BYTES);
     if (!isValidImage(body)) {
-      return NextResponse.json({ error: "Invalid image data" }, { status: 400 });
+      return NextResponse.json({ error: validateImage(body)! }, { status: 400 });
     }
     await kvUpdate<Manifest>(KEY, (manifest) => ({
       ...manifest,
@@ -88,8 +92,9 @@ export async function PUT(request: NextRequest) {
         return NextResponse.json({ error: "Invalid images array" }, { status: 400 });
       }
       const incoming = payload.images as unknown[];
-      if (!incoming.every((img) => isValidImage(img))) {
-        return NextResponse.json({ error: "Invalid image data" }, { status: 400 });
+      const badImage = incoming.find((img) => !isValidImage(img));
+      if (badImage !== undefined) {
+        return NextResponse.json({ error: validateImage(badImage)! }, { status: 400 });
       }
       // The id-set and length checks compare against stored data, so they run
       // inside the mutator — against the same value the write commits against.
@@ -107,7 +112,7 @@ export async function PUT(request: NextRequest) {
     } else {
       // Single image update
       if (!isValidImage(payload)) {
-        return NextResponse.json({ error: "Invalid image data" }, { status: 400 });
+        return NextResponse.json({ error: validateImage(payload)! }, { status: 400 });
       }
       await kvUpdate<Manifest>(KEY, (m) => ({
         ...m,

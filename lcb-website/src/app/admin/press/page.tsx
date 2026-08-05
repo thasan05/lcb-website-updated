@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import type { PressItem } from "@/content/press";
+import { errorFromResponse } from "@/lib/admin-error";
 
 type FormState = Omit<PressItem, "id"> & { id?: string };
 
@@ -77,7 +78,7 @@ export default function PressAdminPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      if (!res.ok) throw new Error((await res.json()).error ?? "Save failed");
+      if (!res.ok) throw new Error(await errorFromResponse(res));
       closeForm(); await load();
     } catch (e) { setError((e as Error).message); }
     finally { setSaving(false); }

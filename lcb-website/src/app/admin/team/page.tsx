@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { uploadToCloudinary } from "@/lib/cloudinary-upload";
+import { errorFromResponse } from "@/lib/admin-error";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 type Social = { linkedin?: string; facebook?: string; website?: string };
@@ -132,10 +133,10 @@ export default function TeamAdminPage() {
         method, headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ categoryId: activeCat, member }),
       });
-      if (!res.ok) throw new Error("Save failed");
+      if (!res.ok) throw new Error(await errorFromResponse(res));
       await load(activeCat);
       closeForm();
-    } catch { setError("Save failed. Try again."); }
+    } catch (e) { setError((e as Error).message); }
     finally { setSaving(false); }
   }
 

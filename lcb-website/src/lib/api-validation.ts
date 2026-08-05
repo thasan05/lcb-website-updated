@@ -73,6 +73,21 @@ export class ValidationError extends Error {
   }
 }
 
+/**
+ * Returns the message for the first failed check, or null if all passed.
+ *
+ * Lets a route report *which* field it rejected and why, instead of a blanket
+ * "Invalid <thing>" that leaves the editor guessing. Checks are plain booleans,
+ * evaluated eagerly — every predicate here is safe on missing/wrong-typed input.
+ */
+export function firstIssue(checks: ReadonlyArray<readonly [boolean, string]>): string | null {
+  for (const [ok, message] of checks) if (!ok) return message;
+  return null;
+}
+
+// Standard phrasing for the URL rule shared by most content fields.
+export const URL_RULE = "must be an https:// URL or a site-relative path starting with /";
+
 export function errorResponse(err: unknown, fallback: string, status = 500) {
   if (err instanceof ConflictError) {
     return NextResponse.json({ error: err.message }, { status: 409 });

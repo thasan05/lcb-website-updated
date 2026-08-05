@@ -44,8 +44,10 @@ export async function PUT(req: NextRequest) {
 
     if (payload.type === "submission-status") {
       const { id, status, notes } = payload as { id?: unknown; status?: unknown; notes?: unknown };
-      if (!isValidId(id) || !["pending", "approved", "rejected"].includes(status as string))
-        return NextResponse.json({ error: "Invalid data" }, { status: 400 });
+      if (!isValidId(id))
+        return NextResponse.json({ error: "A submission id is required" }, { status: 400 });
+      if (!["pending", "approved", "rejected"].includes(status as string))
+        return NextResponse.json({ error: "Status must be one of: pending, approved, rejected" }, { status: 400 });
       if (notes !== undefined && typeof notes !== "string")
         return NextResponse.json({ error: "Invalid notes" }, { status: 400 });
       // Atomic: a status change must not clobber a submission that arrives

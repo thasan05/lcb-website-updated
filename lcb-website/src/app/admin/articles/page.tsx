@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import type { Article } from "@/content/articles";
 import { uploadToCloudinary } from "@/lib/cloudinary-upload";
 import { RichTextEditor } from "@/components/ui/RichTextEditor";
+import { errorFromResponse } from "@/lib/admin-error";
 
 type FormState = Omit<Article, "id"> & { id?: string };
 
@@ -133,10 +134,7 @@ export default function ArticlesAdminPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      if (!res.ok) {
-        const d = await res.json();
-        throw new Error(d.error ?? "Save failed");
-      }
+      if (!res.ok) throw new Error(await errorFromResponse(res));
       closeForm();
       await load();
     } catch (err) {

@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { kvGet, kvUpdate } from "@/lib/kv";
 import { revalidateContent } from "@/lib/revalidate";
-import { isValidId, parseBody, errorResponse } from "@/lib/api-validation";
+import { isValidId, parseBody, errorResponse, firstIssue } from "@/lib/api-validation";
 
 const MAX_BODY_BYTES = 32 * 1024; // 32 KB
 
@@ -21,17 +21,24 @@ function isValidCategoryId(id: unknown): id is string {
   return typeof id === "string" && id in CATEGORY_KEYS;
 }
 
-function isValidMember(m: unknown): m is Record<string, unknown> {
-  if (typeof m !== "object" || m === null) return false;
+function validateMember(m: unknown): string | null {
+  if (typeof m !== "object" || m === null) return "Member must be an object";
   const obj = m as Record<string, unknown>;
-  // Every member must have a non-empty string id
-  if (!isValidId(obj.id)) return false;
-  // name (or equivalent) must be a non-empty string ≤ 300 chars
-  if (obj.name !== undefined && (typeof obj.name !== "string" || obj.name.length > 300)) return false;
-  // Reject deeply nested objects / excessively long strings (DoS guard)
-  const json = JSON.stringify(m);
-  if (json.length > 8000) return false;
-  return true;
+  return firstIssue([
+    // Every member must have a non-empty string id
+    [isValidId(obj.id), "An id is required"],
+    // name (or equivalent) must be a non-empty string ≤ 300 chars
+    [
+      obj.name === undefined || (typeof obj.name === "string" && obj.name.length <= 300),
+      "Name must be text of at most 300 characters",
+    ],
+    // Reject deeply nested objects / excessively long strings (DoS guard)
+    [JSON.stringify(m).length <= 8000, "Member record is too large (max 8 KB)"],
+  ]);
+}
+
+function isValidMember(m: unknown): m is Record<string, unknown> {
+  return validateMember(m) === null;
 }
 
 function kvKeyFor(categoryId: string): string {
@@ -75,7 +82,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid categoryId" }, { status: 400 });
     }
     if (!isValidMember(member)) {
-      return NextResponse.json({ error: "Invalid member data" }, { status: 400 });
+      return NextResponse.json({ error: validateMember(member)! }, { status: 400 });
     }
     const key = kvKeyFor(categoryId);
     await kvUpdate<unknown[]>(key, (current) => [member, ...(current ?? [])]);
@@ -97,7 +104,7 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: "Invalid categoryId" }, { status: 400 });
     }
     if (!isValidMember(member)) {
-      return NextResponse.json({ error: "Invalid member data" }, { status: 400 });
+      return NextResponse.json({ error: validateMember(member)! }, { status: 400 });
     }
     const key = kvKeyFor(categoryId);
     const memberId = (member as Record<string, unknown>).id as string;

@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import type { ApplicationsConfig } from "@/lib/admin";
+import { errorFromResponse } from "@/lib/admin-error";
 
 function Toggle({
   checked,
@@ -55,11 +56,11 @@ export default function ApplicationsPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(config),
       });
-      if (!res.ok) throw new Error("Failed");
+      if (!res.ok) throw new Error(await errorFromResponse(res));
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
-    } catch {
-      setError("Save failed. Try again.");
+    } catch (e) {
+      setError((e as Error).message);
     } finally {
       setSaving(false);
     }

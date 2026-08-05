@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import Image from "next/image";
 import type { Magazine } from "@/content/magazines";
+import { errorFromResponse } from "@/lib/admin-error";
 
 function slugify(text: string) {
   return text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
@@ -116,10 +117,7 @@ export default function MagazineAdminPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(mag),
       });
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error ?? "Save failed");
-      }
+      if (!res.ok) throw new Error(await errorFromResponse(res));
       closeForm();
       await load();
     } catch (e) {
