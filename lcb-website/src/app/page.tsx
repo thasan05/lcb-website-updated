@@ -14,8 +14,8 @@ import { LorSection } from "@/components/sections/LorSection";
 import { Testimonials } from "@/components/sections/Testimonials";
 import { CTA } from "@/components/sections/CTA";
 import { PageViewTracker } from "@/components/ui/PageViewTracker";
-import { getApplicationsConfig } from "@/lib/admin";
-import { kvGet } from "@/lib/kv";
+import type { ApplicationsConfig } from "@/lib/admin";
+import { kvGetCached, kvGetCachedOr } from "@/lib/kv-cached";
 import { siteConfig } from "@/content/site";
 import type { TeamMember } from "@/data/team";
 import type { Event } from "@/content/events";
@@ -45,7 +45,7 @@ const TEAM_KEYS: Record<string, string> = {
 async function getTeamData(): Promise<Record<string, TeamMember[]>> {
   try {
     const entries = await Promise.all(
-      Object.entries(TEAM_KEYS).map(async ([id, key]) => [id, await kvGet<TeamMember[]>(key)] as const)
+      Object.entries(TEAM_KEYS).map(async ([id, key]) => [id, await kvGetCached<TeamMember[]>(key)] as const)
     );
     return Object.fromEntries(entries);
   } catch {
@@ -54,16 +54,19 @@ async function getTeamData(): Promise<Record<string, TeamMember[]>> {
 }
 
 export default async function HomePage() {
+  // Reads go through the Data Cache (see kv-cached.ts): one Upstash round trip
+  // per key per window instead of 14 per visitor. Admin writes drop the matching
+  // tag, so edits still show up immediately.
   const [appsConfig, teamData, liveEvents, liveNews, liveGallery, liveArticles, livePress, lorConfig, liveStory] = await Promise.all([
-    getApplicationsConfig(),
+    kvGetCachedOr<ApplicationsConfig | undefined>("data:applications", undefined),
     getTeamData(),
-    kvGet<Event[]>("data:events").catch(() => null),
-    kvGet<NewsItem[]>("data:news").catch(() => null),
-    kvGet<GalleryManifest>("data:gallery-manifest").catch(() => null),
-    kvGet<Article[]>("data:articles").catch(() => null),
-    kvGet<PressItem[]>("data:press").catch(() => null),
-    kvGet<LorConfig>("data:lor-config").catch(() => null),
-    kvGet<GalleryItem[]>("data:story-gallery").catch(() => null),
+    kvGetCachedOr<Event[] | null>("data:events", null),
+    kvGetCachedOr<NewsItem[] | null>("data:news", null),
+    kvGetCachedOr<GalleryManifest | null>("data:gallery-manifest", null),
+    kvGetCachedOr<Article[] | null>("data:articles", null),
+    kvGetCachedOr<PressItem[] | null>("data:press", null),
+    kvGetCachedOr<LorConfig | null>("data:lor-config", null),
+    kvGetCachedOr<GalleryItem[] | null>("data:story-gallery", null),
   ]);
 
   // JSON-LD structured data

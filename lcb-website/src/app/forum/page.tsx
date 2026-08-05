@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { kvGet } from "@/lib/kv";
+import { kvGetCached } from "@/lib/kv-cached";
 import { siteConfig } from "@/content/site";
 import type { Article } from "@/content/articles";
 import { Forum } from "@/components/sections/Forum";
@@ -42,7 +42,7 @@ function ForumEmptyState() {
 }
 
 export default async function ForumPage() {
-  const articles = await kvGet<Article[]>("data:articles").catch(() => [] as Article[]);
+  const articles = await kvGetCached<Article[]>("data:articles").catch(() => [] as Article[]);
   const published = (articles ?? []).filter((a) => a.published);
 
   return (

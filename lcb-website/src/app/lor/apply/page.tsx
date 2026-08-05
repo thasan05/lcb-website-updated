@@ -1,4 +1,4 @@
-import { kvGet } from "@/lib/kv";
+import { kvGetCached } from "@/lib/kv-cached";
 import type { LorConfig } from "@/content/lor";
 import { LorApplyForm } from "./LorApplyForm";
 import { Navbar } from "@/components/layout/Navbar";
@@ -10,7 +10,7 @@ export const revalidate = 300;
 export default async function LorApplyPage() {
   let config: LorConfig | null = null;
   try {
-    config = await kvGet<LorConfig>("data:lor-config");
+    config = await kvGetCached<LorConfig>("data:lor-config");
   } catch {
     /* fall through */
   }

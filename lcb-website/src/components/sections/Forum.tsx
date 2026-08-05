@@ -34,7 +34,7 @@ function AuthorAvatar({
         className="relative shrink-0 overflow-hidden rounded-full border border-white/10"
         style={{ width: size, height: size }}
       >
-        <Image src={photo} alt={name} fill className="object-cover" />
+        <Image src={photo} alt={name} fill sizes="64px" className="object-cover" />
       </div>
     );
   }
@@ -67,7 +67,7 @@ function ArticleCard({
       <>
         {article.coverImage && (
           <div className="relative h-64 w-full overflow-hidden">
-            <Image src={article.coverImage} alt={article.title} fill className="object-cover transition-transform duration-500 group-hover:scale-105" />
+            <Image src={article.coverImage} alt={article.title} fill sizes="(max-width: 1024px) 100vw, 1024px" className="object-cover transition-transform duration-500 group-hover:scale-105" />
             <div className="absolute inset-0 bg-gradient-to-t from-[#040614] via-[#040614]/40 to-transparent" />
           </div>
         )}
@@ -104,7 +104,7 @@ function ArticleCard({
     <>
       {article.coverImage && (
         <div className="relative h-40 w-full overflow-hidden">
-          <Image src={article.coverImage} alt={article.title} fill className="object-cover transition-transform duration-500 group-hover:scale-105" />
+          <Image src={article.coverImage} alt={article.title} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover transition-transform duration-500 group-hover:scale-105" />
           <div className="absolute inset-0 bg-gradient-to-t from-[#040614]/60 to-transparent" />
         </div>
       )}
@@ -187,6 +187,7 @@ function ArticleModal({
                 src={article.coverImage}
                 alt={article.title}
                 fill
+                sizes="(max-width: 640px) 100vw, 640px"
                 className="object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#080d1e] via-transparent to-transparent" />
