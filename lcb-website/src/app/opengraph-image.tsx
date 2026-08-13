@@ -107,7 +107,7 @@ export default function OGImage() {
               marginTop: 8,
             }}
           >
-            {["24K+ Members", "40+ Campus Leads", "192+ Career Sessions", "Nationwide"].map(
+            {["24K+ Members", "125+ Campus Leads", "250+ Career Sessions", "Nationwide"].map(
               (s, i) => (
                 <div
                   key={i}
