@@ -13,13 +13,13 @@ export const stats: Stat[] = [
     description: "Students, professionals & creators reached nationwide.",
   },
   {
-    value: "40",
+    value: "125",
     suffix: "+",
     label: "Campus Leads",
     description: "Across leading universities from Dhaka to Chittagong.",
   },
   {
-    value: "120",
+    value: "250",
     suffix: "+",
     label: "Sessions Hosted",
     description: "Masterclasses, workshops & networking nights.",

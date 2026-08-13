@@ -58,8 +58,8 @@ function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: numbe
 
 const MILESTONES = [
   { value: "24K+", label: "Lives Impacted" },
-  { value: "40+",  label: "Campus Leads" },
-  { value: "120+", label: "Sessions Hosted" },
+  { value: "125+", label: "Campus Leads" },
+  { value: "250+", label: "Sessions Hosted" },
   { value: "1st",  label: "In Bangladesh" },
 ];
 
