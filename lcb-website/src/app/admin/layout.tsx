@@ -33,6 +33,15 @@ const navItems = [
     ),
   },
   {
+    href: "/admin/stats",
+    label: "Stats",
+    icon: (
+      <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M3 20h18M7 20V10m5 10V4m5 16v-6" />
+      </svg>
+    ),
+  },
+  {
     href: "/admin/applications",
     label: "Applications",
     icon: (

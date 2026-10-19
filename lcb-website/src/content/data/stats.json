@@ -1,0 +1,29 @@
+{
+  "updatedLabel": "August 2026",
+  "items": [
+    {
+      "value": "24",
+      "suffix": "K+",
+      "label": "Lives Impacted",
+      "description": "Students, professionals & creators reached nationwide."
+    },
+    {
+      "value": "125",
+      "suffix": "+",
+      "label": "Campus Leads",
+      "description": "Across leading universities from Dhaka to Chittagong."
+    },
+    {
+      "value": "250",
+      "suffix": "+",
+      "label": "Sessions Hosted",
+      "description": "Masterclasses, workshops & networking nights."
+    },
+    {
+      "value": "1",
+      "suffix": "st",
+      "label": "In Bangladesh",
+      "description": "The nation's first LinkedIn-based professional community."
+    }
+  ]
+}

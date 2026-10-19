@@ -4,6 +4,7 @@ import { BackToTop } from "@/components/ui/BackToTop";
 import { Hero } from "@/components/sections/Hero";
 import { Story } from "@/components/sections/Story";
 import { Stats } from "@/components/sections/Stats";
+import type { StatsConfig } from "@/content/stats";
 import { Events } from "@/components/sections/Events";
 import { Team } from "@/components/sections/Team";
 import { Gallery } from "@/components/sections/Gallery";
@@ -57,7 +58,7 @@ export default async function HomePage() {
   // Reads go through the Data Cache (see kv-cached.ts): one Upstash round trip
   // per key per window instead of 14 per visitor. Admin writes drop the matching
   // tag, so edits still show up immediately.
-  const [appsConfig, teamData, liveEvents, liveNews, liveGallery, liveArticles, livePress, lorConfig, liveStory] = await Promise.all([
+  const [appsConfig, teamData, liveEvents, liveNews, liveGallery, liveArticles, livePress, lorConfig, liveStory, liveStats] = await Promise.all([
     kvGetCachedOr<ApplicationsConfig | undefined>("data:applications", undefined),
     getTeamData(),
     kvGetCachedOr<Event[] | null>("data:events", null),
@@ -67,6 +68,7 @@ export default async function HomePage() {
     kvGetCachedOr<PressItem[] | null>("data:press", null),
     kvGetCachedOr<LorConfig | null>("data:lor-config", null),
     kvGetCachedOr<GalleryItem[] | null>("data:story-gallery", null),
+    kvGetCachedOr<StatsConfig | null>("data:stats", null),
   ]);
 
   // JSON-LD structured data
@@ -137,7 +139,7 @@ export default async function HomePage() {
       <main className="relative">
         <Hero applicationsConfig={appsConfig} />
         <Story items={liveStory ?? undefined} />
-        <Stats />
+        <Stats config={liveStats ?? undefined} />
         <Events liveEvents={liveEvents ?? undefined} />
         <Team liveMembers={teamData} />
         <Gallery liveManifest={liveGallery ?? undefined} />

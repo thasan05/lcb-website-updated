@@ -4,11 +4,18 @@ import { motion, useInView, useMotionValue, useTransform, animate } from "framer
 import { useEffect, useRef } from "react";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
-import { stats } from "@/content/stats";
+import { stats as fallbackStats } from "@/content/stats";
+import type { StatsConfig } from "@/content/stats";
 import { ease } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 
-export function Stats() {
+const DEFAULT_UPDATED_LABEL = "August 2026";
+
+/** `config` comes from KV (editable at /admin/stats); omitted falls back to the bundled values. */
+export function Stats({ config }: { config?: StatsConfig }) {
+  const stats = config?.items?.length ? config.items : fallbackStats;
+  const updatedLabel = config?.updatedLabel?.trim() || DEFAULT_UPDATED_LABEL;
+
   return (
     <Section spacing="tight" className="relative">
       <Container>
@@ -43,7 +50,7 @@ export function Stats() {
               </span>
             </div>
             <span className="text-[11px] uppercase tracking-[0.22em] text-white/30">
-              Updated May 2026
+              Updated {updatedLabel}
             </span>
           </div>
 

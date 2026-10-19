@@ -14,6 +14,7 @@ const PATHS_BY_CONTENT: Record<string, string[]> = {
   applications:    ["/"],
   magazines:       ["/magazine"],
   lor:             ["/", "/lor/apply"],
+  stats:           ["/", "/shout"],
 };
 
 // Dynamic route templates that must be revalidated as a whole segment.
@@ -35,6 +36,7 @@ const KV_KEYS_BY_CONTENT: Record<string, string[]> = {
   applications:    ["data:applications"],
   magazines:       ["data:magazines"],
   lor:             ["data:lor-config"],
+  stats:           ["data:stats"],
   team: [
     "team:central", "team:campus-leads", "team:lcb-heads",
     "team:professionals", "team:initiatives", "team:star-awards",

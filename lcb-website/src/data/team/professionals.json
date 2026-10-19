@@ -1,14 +1,603 @@
 [
-  { "id": "pro-jahid-hossain-sunny", "name": "Jahid Hossain Sunny", "role": "Zonal Manager", "company": "Banglalink", "image": "/team/central/ct-100118.jpg" },
-  { "id": "pro-md-abir-hossain", "name": "Md Abir Hossain", "role": "Zonal Manager", "company": "Banglalink", "image": "/team/central/ct-100122.jpg" },
-  { "id": "pro-fabiya-ahsan-ahona", "name": "Fabiya Ahsan Ahona", "role": "Territory Manager", "company": "Marico Bangladesh Limited", "image": "/team/central/ct-100125.jpg" },
-  { "id": "pro-kayum-rosul-razu", "name": "Kayum Rosul Razu", "role": "Operational Process Engineer", "company": "Midas Safety Bangladesh Ltd.", "image": "/team/central/ct-100127.jpg" },
-  { "id": "pro-md-habib-un-nabi", "name": "Md Habib Un Nabi", "role": "Territory Manager", "company": "Dabur Bangladesh", "image": "/team/central/ct-100130.jpg" },
-  { "id": "pro-tasnim-ara-elahi", "name": "Tasnim Ara Elahi", "role": "Officer", "company": "Eastern Bank PLC", "image": "/team/central/ct-100132.jpg" },
-  { "id": "pro-sadia-afrin-rimi", "name": "Sadia Afrin Rimi", "role": "Assistant Executive", "company": "Four H Group", "image": "/team/central/ct-100134.jpg" },
-  { "id": "pro-atm-shahed-pervez", "name": "A T M Shahed Pervez", "role": "Lecturer, IBA", "company": "Rajshahi University", "image": "/team/central/ct-100135.jpg" },
-  { "id": "pro-md-abu-talha", "name": "Md Abu Talha", "role": "Leaf Officer", "company": "British American Tobacco Bangladesh", "image": "/team/central/ct-100136.jpg" },
-  { "id": "pro-md-ezaz-ahamed-khan", "name": "Md. Ezaz Ahamed Khan", "role": "Senior Brand Executive", "company": "MJL Bangladesh PLC.", "image": "/team/central/ct-100137.jpg" },
-  { "id": "pro-md-asadul-islam-anik", "name": "Md Asadul Islam Anik", "role": "Manager", "company": "Edison Real Estate Ltd", "image": "/team/central/ct-100138.jpg" },
-  { "id": "pro-tashfeen-ahmad", "name": "Tashfeen Ahmad", "role": "Assistant Brand Manager", "company": "Akij Venture Group", "image": "/team/central/ct-100139.jpg" }
+  {
+    "id": "pro-jahid-hossain-sunny",
+    "name": "Jahid Hossain Sunny",
+    "role": "Zonal Manager",
+    "company": "Banglalink",
+    "image": "/team/central/ct-100118.jpg",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/jahid-hossain-sunny-14a44714a?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
+    }
+  },
+  {
+    "id": "pro-md-abir-hossain",
+    "name": "Md Abir Hossain",
+    "role": "Zonal Manager",
+    "company": "Banglalink",
+    "image": "/team/central/ct-100122.jpg",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/mohammad-abir-81a720199?utm_source=share_via&utm_content=profile&utm_medium=member_ios"
+    }
+  },
+  {
+    "id": "pro-fabiya-ahsan-ahona",
+    "name": "Fabiya Ahsan Ahona",
+    "role": "Territory Manager",
+    "company": "Marico Bangladesh Limited",
+    "image": "/team/central/ct-100125.jpg"
+  },
+  {
+    "id": "pro-kayum-rosul-razu",
+    "name": "Kayum Rosul Razu",
+    "role": "Operational Process Engineer",
+    "company": "Midas Safety Bangladesh Ltd.",
+    "image": "/team/central/ct-100127.jpg",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/kayum-razu"
+    }
+  },
+  {
+    "id": "pro-md-habib-un-nabi",
+    "name": "MD HABIB UN NABI",
+    "role": "Territory Manager",
+    "company": "Dabur Bangladesh",
+    "image": "/team/central/ct-100130.jpg",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/habib-un-nabi-b66972281"
+    }
+  },
+  {
+    "id": "pro-tasnim-ara-elahi",
+    "name": "Tasnim Ara Elahi",
+    "role": "Officer",
+    "company": "Eastern Bank PLC",
+    "image": "/team/central/ct-100132.jpg",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/tasnim-ara-elahi-05a872185?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
+    }
+  },
+  {
+    "id": "pro-sadia-afrin-rimi",
+    "name": "Sadia Afrin Rimi",
+    "role": "Assistant Executive",
+    "company": "Four H Group",
+    "image": "/team/central/ct-100134.jpg",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/sadia-afrin-rimi-768a68336"
+    }
+  },
+  {
+    "id": "pro-a-t-m-shahed-pervez",
+    "name": "A T M Shahed Pervez",
+    "role": "Lecturer, IBA",
+    "company": "Rajshahi University",
+    "image": "/team/central/ct-100135.jpg",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/atm-shahed-pervez?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
+    }
+  },
+  {
+    "id": "pro-md-abu-talha",
+    "name": "Md Abu Talha",
+    "role": "Leaf Officer",
+    "company": "British American Tobacco Bangladesh",
+    "image": "/team/central/ct-100136.jpg",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/abu-talha25/"
+    }
+  },
+  {
+    "id": "pro-md-ezaz-ahamed-khan",
+    "name": "Md. Ezaz Ahamed Khan",
+    "role": "Senior Brand Executive",
+    "company": "MJL Bangladesh PLC.",
+    "image": "/team/central/ct-100137.jpg",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/md-ezaz-ahamed-khan-810228155"
+    }
+  },
+  {
+    "id": "pro-md-asadul-islam-anik",
+    "name": "Md Asadul Islam Anik",
+    "role": "Manager",
+    "company": "Edison Real Estate Ltd",
+    "image": "/team/central/ct-100138.jpg",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/md-asadul-islam-anik/"
+    }
+  },
+  {
+    "id": "pro-tashfeen-ahmad",
+    "name": "Tashfeen Ahmad",
+    "role": "Assistant Brand Manager",
+    "company": "Akij Venture Group",
+    "image": "/team/central/ct-100139.jpg",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/tashfeen-ahmad/"
+    }
+  },
+  {
+    "id": "pro-s-m-muqtadirul-huq",
+    "name": "S M Muqtadirul Huq",
+    "role": "Assistant Brand Manager",
+    "company": "Akij Venture Group",
+    "image": "/team/central/ct-100140.jpg",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/muqtadirulhuq/"
+    }
+  },
+  {
+    "id": "pro-abu-helal-rashid-reza",
+    "name": "Abu Helal Rashid Reza",
+    "role": "General Manager",
+    "company": "Edison Real Estate Limited",
+    "image": "/team/central/ct-100141.jpg",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/abu-helal-rashid-reza-01062057"
+    }
+  },
+  {
+    "id": "pro-mahmudur-rahman",
+    "name": "Mahmudur Rahman",
+    "role": "Senior Zonal Manager",
+    "company": "Banglalink",
+    "image": "/team/central/ct-100142.jpg",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/mahmudur-rahman-555b8628a?utm_source=share_via&utm_content=profile&utm_medium=member_android"
+    }
+  },
+  {
+    "id": "pro-md-alamin-hossain",
+    "name": "Md Alamin Hossain",
+    "role": "HSSE Professional",
+    "company": "Auditor & Trainer",
+    "image": "/team/central/ct-100143.jpg",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/md-al-amin-hossain-915b991a0"
+    }
+  },
+  {
+    "id": "pro-asif-haque",
+    "name": "Asif Haque",
+    "role": "Research Officer",
+    "company": "ICDDR,B",
+    "image": "/team/central/ct-100144.jpg",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/asifhaque07"
+    }
+  },
+  {
+    "id": "pro-rafiq-bin-sadek-reshad",
+    "name": "Rafiq Bin Sadek Reshad",
+    "role": "Executive",
+    "company": "Edison Industries",
+    "image": "/team/central/ct-100145.jpg"
+  },
+  {
+    "id": "pro-mahfuz-pgc",
+    "name": "Mahfuz PGC",
+    "role": "Factory Commercial",
+    "company": "Padma Group of Converters",
+    "image": "/team/central/ct-100146.jpg",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/mahfuzur-rahman-prime?utm_source=share_via&utm_content=profile&utm_medium=member_android"
+    }
+  },
+  {
+    "id": "pro-muid-mahmud-khan-kwoshik",
+    "name": "Muid Mahmud Khan Kwoshik",
+    "role": "MTO",
+    "company": "Edison Real Estate",
+    "image": "/team/central/ct-100147.jpg",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/muid-mahmud-khan-kwoshik-0726702a3?utm_source=share_via&utm_content=profile&utm_medium=member_ios"
+    }
+  },
+  {
+    "id": "pro-iffat-ara",
+    "name": "Iffat Ara",
+    "role": "Brand Marketing & PR Lead",
+    "company": "Chartered Life Insurance PLC.",
+    "image": "/team/central/ct-100148.jpg",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/iffataramehenaz/"
+    }
+  },
+  {
+    "id": "pro-md-rokibur-rahman-razu",
+    "name": "Md Rokibur Rahman Razu",
+    "role": "Sr. Executive- Brand and Communications",
+    "company": "Fiber@Home Ltd.",
+    "image": "/team/central/ct-100149.jpg",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/razurahmanbd"
+    }
+  },
+  {
+    "id": "pro-md-ferouz-patowary",
+    "name": "Md Ferouz Patowary",
+    "role": "Head of the Department - Department of Utility",
+    "company": "PHP Family",
+    "image": "/team/central/ct-100150.jpg",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/ferouz-07/"
+    }
+  },
+  {
+    "id": "pro-tipu-sultan",
+    "name": "Tipu Sultan",
+    "role": "Executive",
+    "company": "Anwar Group of Industries",
+    "image": "/team/central/ct-100151.jpg",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/tipu-sultan-2122b53bb?utm_source=share_via&utm_content=profile&utm_medium=member_android"
+    }
+  },
+  {
+    "id": "pro-syed-istiak-hossen",
+    "name": "Syed Istiak Hossen",
+    "role": "Manager, Brand & MArketing",
+    "company": "Northern Group",
+    "image": "/team/central/ct-100152.jpg",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/syed-istiak-hossen-38275412a"
+    }
+  },
+  {
+    "id": "pro-md-araf-hossain",
+    "name": "Md Araf Hossain",
+    "role": "Territory Officer",
+    "company": "Banglalink Digital",
+    "image": "/team/central/ct-100153.jpg",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/md-araf-hossain-104ba7203?utm_source=share_via&utm_content=profile&utm_medium=member_android"
+    }
+  },
+  {
+    "id": "pro-adv-md-fazlay-rubby",
+    "name": "Adv. Md. Fazlay Rubby",
+    "role": "Legal Counsel",
+    "company": "Coca-Cola Bangladesh Beverages Ltd.",
+    "image": "/team/central/ct-100154.jpg",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/md-fazlay-rubby-b866a7210"
+    }
+  },
+  {
+    "id": "pro-oliur-islam-noman",
+    "name": "Oliur Islam Noman",
+    "role": "Executive",
+    "company": "Chardike Limited",
+    "image": "/team/central/ct-100155.jpg",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/oliur-islam-noman-911b77187?utm_source=share_via&utm_content=profile&utm_medium=member_ios"
+    }
+  },
+  {
+    "id": "pro-rivana-chowdhury",
+    "name": "Rivana Chowdhury",
+    "role": "Assistant HR Manager",
+    "company": "Amari Dhaka",
+    "image": "/team/central/ct-100156.jpg",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/reshma-chowdhury-611347215?utm_source=share_via&utm_content=profile&utm_medium=member_android"
+    }
+  },
+  {
+    "id": "pro-tahera-tasfia-haque-prova",
+    "name": "Tahera Tasfia Haque Prova",
+    "role": "Director of Engineer",
+    "company": "TVM",
+    "image": "/team/central/ct-100157.jpg",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/tahera-tasfia-haque-prova-30312b16b/"
+    }
+  },
+  {
+    "id": "pro-kathryn-proma-mitra",
+    "name": "Kathryn Proma Mitra",
+    "role": "Assistant Manager",
+    "company": "Ajinomoto Bangladesh Ltd.",
+    "image": "/team/central/ct-100158.jpg",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/kathryn-m-680b56200/"
+    }
+  },
+  {
+    "id": "pro-md-mustafizur-rahaman",
+    "name": "Md Mustafizur Rahaman",
+    "role": "General manager",
+    "company": "Continental Works Ltd.",
+    "image": "/team/central/ct-100159.jpg",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/md-mustafizur-rahaman-0b905522"
+    }
+  },
+  {
+    "id": "pro-md-ibtesham-hossain",
+    "name": "Md. Ibtesham Hossain",
+    "role": "Territory Manager",
+    "company": "Unilever Bangladesh Ltd.",
+    "image": "/team/central/ct-100160.jpg",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/md-ibtesham-hossain-444534166"
+    }
+  },
+  {
+    "id": "pro-nadeem-farhan",
+    "name": "Nadeem Farhan",
+    "role": "Territory Manager",
+    "company": "Berger Paints Bangladesh Ltd.",
+    "image": "/team/central/ct-100161.jpg"
+  },
+  {
+    "id": "pro-humayun-rashid",
+    "name": "Humayun Rashid",
+    "role": "Energy Efficiency Professional",
+    "company": "JICA-BIFFL-YC",
+    "image": "/team/central/ct-100162.jpg",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/engr-humayun-rashid/"
+    }
+  },
+  {
+    "id": "pro-abdullah-kaosar",
+    "name": "Abdullah Kaosar",
+    "role": "Manager, Brand Marketing",
+    "company": "BYD Bangladesh",
+    "image": "/team/central/ct-100163.jpg",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/shyakh/"
+    }
+  },
+  {
+    "id": "pro-md-kamrul-hasan",
+    "name": "Md. Kamrul Hasan",
+    "role": "Auditor QA/QC",
+    "company": "Centric Brands Asia Bangladesh Ltd",
+    "image": "/team/central/ct-100164.jpg",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/kamrulhasandu"
+    }
+  },
+  {
+    "id": "pro-md-al-amin-azad",
+    "name": "Md. Al Amin Azad",
+    "role": "Sr. Manager, Head of Sales",
+    "company": "Sales & Business Development",
+    "image": "/team/central/ct-100165.jpg",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/alaminazad"
+    }
+  },
+  {
+    "id": "pro-md-abid-shaharia",
+    "name": "Md. Abid Shaharia",
+    "role": "Trainee Executive",
+    "company": "DataPath Ltd.",
+    "image": "/team/central/ct-100166.jpg",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/abidshaharia"
+    }
+  },
+  {
+    "id": "pro-md-jaouadul-karim",
+    "name": "Md. Jaouadul Karim",
+    "role": "Monitoring & Evaluation Associate",
+    "company": "Centre for Policy Dialogue (CPD)",
+    "image": "/team/central/ct-100167.jpg",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/xjishan/"
+    }
+  },
+  {
+    "id": "pro-tofayelur-rahman",
+    "name": "Tofayelur Rahman",
+    "role": "Senior Territory Sales Manager",
+    "company": "Reckitt Benckiser Bangladesh PLC",
+    "image": "/team/central/ct-100168.jpg",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/tofayelur-rahman-7664b5192"
+    }
+  },
+  {
+    "id": "pro-md-emdadullah",
+    "name": "Md. Emdadullah",
+    "role": "Manager & Lead, Procurement",
+    "company": "Apex Holdings Limited",
+    "image": "/team/central/ct-100169.jpg",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/md-emdadullah-cscl%E2%84%A2-pgdscm-pgditm-b5987767"
+    }
+  },
+  {
+    "id": "pro-muhammad-raihan-patwary",
+    "name": "Muhammad Raihan Patwary",
+    "role": "Territory Officer",
+    "company": "Robi",
+    "image": "/team/central/ct-100170.jpg",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/raihanpatwary123/"
+    }
+  },
+  {
+    "id": "pro-farhan-izan",
+    "name": "Farhan Izan",
+    "role": "AGM",
+    "company": "House of Mahtab",
+    "image": "/team/central/ct-100171.jpg",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/farhan-izan-77ba32a8/"
+    }
+  },
+  {
+    "id": "pro-atiqul-islam-regan",
+    "name": "Atiqul Islam Regan",
+    "role": "Sr. Manager, Marketing & Sales",
+    "company": "Fiber@Home Ltd.",
+    "image": "/team/central/ct-100172.jpg",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/atiqulislamregan"
+    }
+  },
+  {
+    "id": "pro-esrat-jebin-lira",
+    "name": "Esrat Jebin Lira",
+    "role": "Executive, Supply Chain",
+    "company": "Akij Venture",
+    "image": "/team/central/ct-100173.jpg",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/esratjebinlira"
+    }
+  },
+  {
+    "id": "pro-nuzhat-nawal-pritu",
+    "name": "Nuzhat Nawal pritu",
+    "role": "Corporate Relations Executive",
+    "company": "Corporate Relations",
+    "image": "/team/central/ct-100174.jpg",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/nuzhat-nawal-pritu-818382354?utm_source=share_via&utm_content=profile&utm_medium=member_android"
+    }
+  },
+  {
+    "id": "pro-md-anisur-rahman-tonmoy",
+    "name": "Md.Anisur Rahman Tonmoy",
+    "role": "Executive",
+    "company": "Savor International Limited",
+    "image": "/team/central/ct-100175.jpg",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/anisur-rahman-tonmoy-85354b2b8?utm_source=share_via&utm_content=profile&utm_medium=member_android"
+    }
+  },
+  {
+    "id": "pro-muhammad-salahuddin",
+    "name": "Muhammad Salahuddin",
+    "role": "Head of Marketing and Branding",
+    "company": "Matribhumi Group",
+    "image": "/team/central/ct-100176.jpg",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/engr-salahuddin"
+    }
+  },
+  {
+    "id": "pro-md-jahid-hasan",
+    "name": "Md. Jahid Hasan",
+    "role": "Jr. Executive, IT",
+    "company": "Bombay Sweets & Co. Ltd.",
+    "image": "/team/central/ct-100177.jpg",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/jahidhasan86/"
+    }
+  },
+  {
+    "id": "pro-imtiaz-arefin-alif",
+    "name": "Imtiaz Arefin Alif",
+    "role": "Sr. Executive, Marketing",
+    "company": "Meghna Executive Holdings",
+    "image": "/team/central/ct-100178.jpg",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/imtiazalif/"
+    }
+  },
+  {
+    "id": "pro-rubia-siddiqua",
+    "name": "Rubia Siddiqua",
+    "role": "Logistician",
+    "company": "International Committee of the Red Cross",
+    "image": "/team/central/ct-100179.jpg",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/rubia-siddiqua-cscp-0521aba6/"
+    }
+  },
+  {
+    "id": "pro-k-shaheduzzaman",
+    "name": "K.Shaheduzzaman",
+    "role": "Manager, Warranty",
+    "company": "Wärtsilä Energy",
+    "image": "/team/central/ct-100180.jpg",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/shaheduzzaman-shahed-projectprofessional/"
+    }
+  },
+  {
+    "id": "pro-ahmad-imtiaz-sobhan",
+    "name": "Ahmad Imtiaz Sobhan",
+    "role": "Head of HR & Admin",
+    "company": "Chartered Life Insurance",
+    "image": "/team/central/ct-100181.jpg",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/ahmad-imtiaz-sobhan-chrbp-phri-53b5b244?utm_source=share_via&utm_content=profile&utm_medium=member_android"
+    }
+  },
+  {
+    "id": "pro-saikat-sarker",
+    "name": "Saikat Sarker",
+    "role": "Assistant Manager (Team Lead)",
+    "company": "MGI",
+    "image": "/team/central/ct-100182.jpg",
+    "social": {
+      "linkedin": "https://bd.linkedin.com/in/saikat-sarker-bd"
+    }
+  },
+  {
+    "id": "pro-anisur-rahman-oly",
+    "name": "Anisur Rahman Oly",
+    "role": "Assistant Manager",
+    "company": "Pathao Ltd",
+    "image": "/team/central/ct-100183.jpg",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/anisur-rahman-oly-a44723102/"
+    }
+  },
+  {
+    "id": "pro-faisal-ahmed",
+    "name": "Faisal Ahmed",
+    "role": "Territory Sales Manager",
+    "company": "LafargeHolcim Bangladesh",
+    "image": "/team/central/ct-100184.jpg",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/faisal-ahmed-a955ab1ab?utm_source=share_via&utm_content=profile&utm_medium=member_android"
+    }
+  },
+  {
+    "id": "pro-habibur-rahman-khan",
+    "name": "HABIBUR RAHMAN KHAN",
+    "role": "Senior Account Executive",
+    "company": "AkijBashir Group",
+    "image": "/team/central/ct-100185.jpg",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/habiburrahmankhan80/"
+    }
+  },
+  {
+    "id": "pro-nishat-jarin",
+    "name": "Nishat Jarin",
+    "role": "Admin Assistant",
+    "company": "RSGT BD",
+    "image": "/team/central/ct-100186.jpg",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/nishatjarin/"
+    }
+  },
+  {
+    "id": "pro-abdul-latif-khan",
+    "name": "Abdul Latif Khan",
+    "role": "Director",
+    "company": "E&G Engineering Ltd.",
+    "image": "/team/central/ct-100187.jpg",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/abdul-latif-khan-86825237/"
+    }
+  },
+  {
+    "id": "pro-md-ajim",
+    "name": "Md. Ajim",
+    "role": "TSA, ATMSL",
+    "company": "British American Tobacco Bangladesh",
+    "image": "/team/central/ct-100188.jpg",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/mdajim"
+    }
+  }
 ]

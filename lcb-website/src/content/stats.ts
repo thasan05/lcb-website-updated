@@ -5,6 +5,17 @@ export type Stat = {
   description: string;
 };
 
+/**
+ * Editable via /admin/stats, stored in KV under `data:stats`.
+ *
+ * The `stats` array below is the seed/fallback: it is what a brand-new database
+ * is populated from, and what the homepage falls back to if the KV read fails.
+ */
+export type StatsConfig = {
+  updatedLabel: string;
+  items: Stat[];
+};
+
 export const stats: Stat[] = [
   {
     value: "24",

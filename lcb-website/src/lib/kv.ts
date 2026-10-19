@@ -14,6 +14,7 @@ const FILE_MAP: Record<string, string> = {
   "data:news":              "src/content/data/news.json",
   "data:events":            "src/content/data/events.json",
   "data:applications":      "src/content/data/applications.json",
+  "data:stats":             "src/content/data/stats.json",
   "data:story-gallery":     "src/content/data/story-gallery.json",
   "data:gallery-manifest":  "src/data/gallery/manifest.json",
   "data:lor-config":        "src/content/data/lor-config.json",

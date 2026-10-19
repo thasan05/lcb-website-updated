@@ -23,7 +23,7 @@ export const teamCategories: TeamCategory[] = [
   {
     id: "campus-leads",
     label: "Campus Leads",
-    description: "75 student leaders representing LCB across 44+ universities nationwide.",
+    description: "151 student leaders representing LCB across 67+ universities nationwide.",
     members: campusLeads,
   },
   {
@@ -41,7 +41,7 @@ export const teamCategories: TeamCategory[] = [
   {
     id: "initiatives",
     label: "Initiatives",
-    description: "13 active initiatives driven by LCB community members.",
+    description: "19 active initiatives driven by LCB community members.",
     members: initiatives,
   },
   {
