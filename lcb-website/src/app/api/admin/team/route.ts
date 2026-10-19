@@ -7,7 +7,7 @@ import { teamCategories } from "@/data/team";
 
 const MAX_BODY_BYTES = 32 * 1024; // 32 KB
 
-const CURRENT_ROSTER_VERSION = "2026-10-19-sync-v1";
+const CURRENT_ROSTER_VERSION = "2026-10-19-sync-v2";
 
 const CATEGORY_KEYS: Record<string, string> = {
   central:        "team:central",
@@ -15,7 +15,6 @@ const CATEGORY_KEYS: Record<string, string> = {
   heads:          "team:lcb-heads",
   professionals:  "team:professionals",
   initiatives:    "team:initiatives",
-  "star-awards":  "team:star-awards",
 };
 
 // ── Validation ────────────────────────────────────────────────────────────────

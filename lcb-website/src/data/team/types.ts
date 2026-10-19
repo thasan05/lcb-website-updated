@@ -46,8 +46,7 @@ export type TeamCategoryId =
   | "campus-leads"
   | "heads"
   | "professionals"
-  | "initiatives"
-  | "star-awards";
+  | "initiatives";
 
 export interface TeamCategory {
   id: TeamCategoryId;

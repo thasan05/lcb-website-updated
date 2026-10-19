@@ -11,7 +11,6 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { FadeIn } from "@/components/motion/FadeIn";
 import { TeamCategoryNav } from "@/components/team/TeamCategoryNav";
 import { TeamCard } from "@/components/team/TeamCard";
-import { HallOfFameCard } from "@/components/team/HallOfFameCard";
 import { teamCategories, type TeamMember, type TeamCategoryId } from "@/data/team";
 
 const INITIAL_VISIBLE = 4;
@@ -120,44 +119,29 @@ export function Team({ liveMembers = {} }: Props) {
 
         {/* ── Member grid ──────────────────────────────────────────────── */}
         <AnimatePresence mode="wait">
-          {activeCategoryId === "star-awards" ? (
-            <motion.div
-              key="star-awards"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-              className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
-            >
-              {visibleMembers.map((member, i) => (
-                <HallOfFameCard key={member.id} member={member} index={i} />
-              ))}
-            </motion.div>
-          ) : (
-            <motion.div
-              key={activeCategoryId}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-              className="mt-10 grid grid-cols-1 gap-4 min-[400px]:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
-            >
-              {visibleMembers.map((member, i) => (
-                <motion.div
-                  key={member.id}
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{
-                    duration: 0.4,
-                    delay: Math.min(i * 0.05, 0.35),
-                    ease: [0.22, 1, 0.36, 1],
-                  }}
-                >
-                  <TeamCard member={member} />
-                </motion.div>
-              ))}
-            </motion.div>
-          )}
+          <motion.div
+            key={activeCategoryId}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+            className="mt-10 grid grid-cols-1 gap-4 min-[400px]:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
+          >
+            {visibleMembers.map((member, i) => (
+              <motion.div
+                key={member.id}
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                  duration: 0.4,
+                  delay: Math.min(i * 0.05, 0.35),
+                  ease: [0.22, 1, 0.36, 1],
+                }}
+              >
+                <TeamCard member={member} />
+              </motion.div>
+            ))}
+          </motion.div>
         </AnimatePresence>
 
         {/* ── View more / collapse ─────────────────────────────────────── */}
@@ -216,20 +200,6 @@ export function Team({ liveMembers = {} }: Props) {
                   <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" strokeWidth={2} />
                 </Link>
               </div>
-            </div>
-          </FadeIn>
-        )}
-
-        {/* ── Star awards extra detail ──────────────────────────────────── */}
-        {activeCategoryId === "star-awards" && (
-          <FadeIn delay={0.1} className="mt-10">
-            <div className="relative overflow-hidden rounded-3xl border border-brand-400/20 bg-gradient-to-b from-brand-500/[0.06] to-transparent p-7 backdrop-blur-xl sm:p-8">
-              <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-400/40 to-transparent" />
-              <p className="text-sm text-white/50">
-                LCB Star Awards recognise community members who went beyond — organising events,
-                growing chapters, and inspiring others across Bangladesh.
-                New awards are announced quarterly.
-              </p>
             </div>
           </FadeIn>
         )}

@@ -35,7 +35,6 @@ const CATEGORIES: CategoryMeta[] = [
   { id: "heads",         label: "LCB Heads",      description: "Senior leadership team", extraFields: [] },
   { id: "professionals", label: "Professionals",  description: "Industry professionals", extraFields: ["company"] },
   { id: "initiatives",   label: "Initiatives",    description: "Initiative leads", extraFields: [] },
-  { id: "star-awards",   label: "LCB Stars",      description: "Star award recipients", extraFields: ["university", "achievements"] },
 ];
 
 function slugify(text: string) {

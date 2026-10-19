@@ -7,7 +7,6 @@ import { campusLeads } from "./campus-leads";
 import { lcbHeads } from "./lcb-heads";
 import { professionals } from "./professionals";
 import { initiatives } from "./initiatives";
-import { starAwards } from "./star-awards";
 import { type TeamCategory } from "./types";
 
 export { type TeamMember, type TeamCategory, type TeamCategoryId, type TeamSocial } from "./types";
@@ -43,12 +42,6 @@ export const teamCategories: TeamCategory[] = [
     label: "Initiatives",
     description: "19 active initiatives driven by LCB community members.",
     members: initiatives,
-  },
-  {
-    id: "star-awards",
-    label: "LCB Stars",
-    description: "Community members recognised for extraordinary impact.",
-    members: starAwards,
   },
 ];
 

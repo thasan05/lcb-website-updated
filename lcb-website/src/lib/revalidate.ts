@@ -39,7 +39,7 @@ const KV_KEYS_BY_CONTENT: Record<string, string[]> = {
   stats:           ["data:stats"],
   team: [
     "team:central", "team:campus-leads", "team:lcb-heads",
-    "team:professionals", "team:initiatives", "team:star-awards",
+    "team:professionals", "team:initiatives",
   ],
 };
 

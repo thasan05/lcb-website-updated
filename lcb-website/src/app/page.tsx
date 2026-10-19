@@ -41,10 +41,9 @@ const TEAM_KEYS: Record<string, string> = {
   heads:          "team:lcb-heads",
   professionals:  "team:professionals",
   initiatives:    "team:initiatives",
-  "star-awards":  "team:star-awards",
 };
 
-const CURRENT_ROSTER_VERSION = "2026-10-19-sync-v1";
+const CURRENT_ROSTER_VERSION = "2026-10-19-sync-v2";
 
 async function getTeamData(): Promise<Record<string, TeamMember[]>> {
   try {

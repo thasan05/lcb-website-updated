@@ -25,7 +25,6 @@ const FILE_MAP: Record<string, string> = {
   "team:lcb-heads":        "src/data/team/lcb-heads.json",
   "team:professionals":    "src/data/team/professionals.json",
   "team:initiatives":      "src/data/team/initiatives.json",
-  "team:star-awards":      "src/data/team/star-awards.json",
 };
 
 // This fs fallback only runs in local dev (no Upstash env vars set) — never in
