@@ -34,13 +34,15 @@ const FILE_MAP: Record<string, string> = {
 // to avoid bundling the whole project into the serverless output.
 function fileRead<T>(kvKey: string): T {
   const rel = FILE_MAP[kvKey];
-  if (!rel) throw new Error(`No file mapping for KV key: ${kvKey}`);
-  return JSON.parse(fs.readFileSync(path.join(/*turbopackIgnore: true*/ process.cwd(), rel), "utf-8")) as T;
+  if (!rel) return null as T;
+  const fullPath = path.join(/*turbopackIgnore: true*/ process.cwd(), rel);
+  if (!fs.existsSync(fullPath)) return null as T;
+  return JSON.parse(fs.readFileSync(fullPath, "utf-8")) as T;
 }
 
 function fileWrite<T>(kvKey: string, data: T): void {
   const rel = FILE_MAP[kvKey];
-  if (!rel) throw new Error(`No file mapping for KV key: ${kvKey}`);
+  if (!rel) return;
   fs.writeFileSync(
     path.join(/*turbopackIgnore: true*/ process.cwd(), rel),
     JSON.stringify(data, null, 2) + "\n",
@@ -50,7 +52,7 @@ function fileWrite<T>(kvKey: string, data: T): void {
 
 let _redis: import("@upstash/redis").Redis | null | undefined = undefined; // undefined = not yet checked
 
-async function getRedis() {
+export async function getRedis() {
   if (_redis !== undefined) return _redis;
   if (!process.env.UPSTASH_REDIS_REST_URL || !process.env.UPSTASH_REDIS_REST_TOKEN) {
     _redis = null;

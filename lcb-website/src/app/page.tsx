@@ -18,7 +18,8 @@ import { PageViewTracker } from "@/components/ui/PageViewTracker";
 import type { ApplicationsConfig } from "@/lib/admin";
 import { kvGetCached, kvGetCachedOr } from "@/lib/kv-cached";
 import { siteConfig } from "@/content/site";
-import type { TeamMember } from "@/data/team";
+import { kvGet, kvSet } from "@/lib/kv";
+import { teamCategories, type TeamMember } from "@/data/team";
 import type { Event } from "@/content/events";
 import type { NewsItem } from "@/content/news";
 import type { Article } from "@/content/articles";
@@ -43,14 +44,32 @@ const TEAM_KEYS: Record<string, string> = {
   "star-awards":  "team:star-awards",
 };
 
+const CURRENT_ROSTER_VERSION = "2026-10-19-sync-v1";
+
 async function getTeamData(): Promise<Record<string, TeamMember[]>> {
   try {
+    const storedVersion = await kvGet<string | null>("meta:team-roster-version").catch(() => null);
+    if (storedVersion !== CURRENT_ROSTER_VERSION) {
+      // Sync static roster from bundled JSON into Redis
+      await Promise.all(
+        teamCategories.map(async (cat) => {
+          const key = TEAM_KEYS[cat.id];
+          if (key) {
+            await kvSet(key, cat.members);
+          }
+        })
+      );
+      await kvSet("meta:team-roster-version", CURRENT_ROSTER_VERSION);
+      return Object.fromEntries(teamCategories.map((c) => [c.id, c.members]));
+    }
+
     const entries = await Promise.all(
       Object.entries(TEAM_KEYS).map(async ([id, key]) => [id, await kvGetCached<TeamMember[]>(key)] as const)
     );
     return Object.fromEntries(entries);
-  } catch {
-    return {};
+  } catch (err) {
+    console.error("getTeamData fallback to static teamCategories:", err);
+    return Object.fromEntries(teamCategories.map((c) => [c.id, c.members]));
   }
 }
 

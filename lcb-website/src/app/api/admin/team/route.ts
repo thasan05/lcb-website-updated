@@ -1,10 +1,13 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { kvGet, kvUpdate } from "@/lib/kv";
+import { kvGet, kvSet, kvUpdate } from "@/lib/kv";
 import { revalidateContent } from "@/lib/revalidate";
 import { isValidId, parseBody, errorResponse, firstIssue } from "@/lib/api-validation";
+import { teamCategories } from "@/data/team";
 
 const MAX_BODY_BYTES = 32 * 1024; // 32 KB
+
+const CURRENT_ROSTER_VERSION = "2026-10-19-sync-v1";
 
 const CATEGORY_KEYS: Record<string, string> = {
   central:        "team:central",
@@ -54,6 +57,17 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const categoryId = searchParams.get("category");
 
+    // Ensure Redis is synchronized with the latest bundled roster
+    const storedVersion = await kvGet<string | null>("meta:team-roster-version").catch(() => null);
+    if (storedVersion !== CURRENT_ROSTER_VERSION) {
+      for (const cat of teamCategories) {
+        const key = CATEGORY_KEYS[cat.id];
+        if (key) await kvSet(key, cat.members);
+      }
+      await kvSet("meta:team-roster-version", CURRENT_ROSTER_VERSION);
+      revalidateContent("team");
+    }
+
     if (categoryId) {
       if (!isValidCategoryId(categoryId)) {
         return NextResponse.json({ error: "Unknown category" }, { status: 400 });
@@ -77,6 +91,18 @@ export async function POST(request: NextRequest) {
     if (typeof body !== "object" || body === null) {
       return NextResponse.json({ error: "Invalid body" }, { status: 400 });
     }
+
+    // Support forced sync action
+    if ((body as { action?: string }).action === "sync-roster") {
+      for (const cat of teamCategories) {
+        const key = CATEGORY_KEYS[cat.id];
+        if (key) await kvSet(key, cat.members);
+      }
+      await kvSet("meta:team-roster-version", CURRENT_ROSTER_VERSION);
+      revalidateContent("team");
+      return NextResponse.json({ success: true, synced: true });
+    }
+
     const { categoryId, member } = body as { categoryId?: unknown; member?: unknown };
     if (!isValidCategoryId(categoryId)) {
       return NextResponse.json({ error: "Invalid categoryId" }, { status: 400 });

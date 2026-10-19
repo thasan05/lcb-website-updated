@@ -31,11 +31,22 @@ export function Team({ liveMembers = {} }: Props) {
     setShowScrollHint(false);
   };
 
-  const staticCategory = teamCategories.find((c) => c.id === activeCategoryId)!;
-  const activeCategory = {
-    ...staticCategory,
-    members: liveMembers[activeCategoryId] ?? staticCategory.members,
-  };
+  const categories = teamCategories.map((c) => {
+    const live = liveMembers[c.id];
+    const members =
+      live && live.length >= c.members.length
+        ? live
+        : live && live.length > 0
+        ? live
+        : c.members;
+    return {
+      ...c,
+      members,
+    };
+  });
+
+  const activeCategory =
+    categories.find((c) => c.id === activeCategoryId) || categories[0];
 
   const visibleMembers = showAll
     ? activeCategory.members
@@ -85,7 +96,7 @@ export function Team({ liveMembers = {} }: Props) {
           <div className="overflow-x-auto scrollbar-none pb-1">
             <div className="flex justify-center min-w-max mx-auto px-4 sm:px-0">
               <TeamCategoryNav
-                categories={teamCategories}
+                categories={categories}
                 activeId={activeCategoryId}
                 onChange={handleCategoryChange}
               />
