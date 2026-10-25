@@ -1,8 +1,19 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Image from "next/image";
-import { ArrowUpRight, ChevronLeft, ChevronRight, Search, X } from "lucide-react";
+import {
+  ArrowUpRight,
+  Calendar,
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  ExternalLink,
+  Eye,
+  Link2,
+  Search,
+  X,
+} from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { Eyebrow } from "@/components/ui/Eyebrow";
@@ -18,10 +29,76 @@ import { cn } from "@/lib/utils";
 const NEWS_PER_PAGE = 4;
 const CATEGORIES: NewsCategory[] = ["Announcement", "Event", "Milestone", "Partnership", "Spotlight"];
 
+const CATEGORY_STYLES: Record<NewsCategory, { badge: string; text: string }> = {
+  Announcement: {
+    badge: "border-blue-400/30 bg-blue-500/15 text-blue-300",
+    text: "text-blue-300",
+  },
+  Event: {
+    badge: "border-purple-400/30 bg-purple-500/15 text-purple-300",
+    text: "text-purple-300",
+  },
+  Milestone: {
+    badge: "border-amber-400/30 bg-amber-500/15 text-amber-300",
+    text: "text-amber-300",
+  },
+  Partnership: {
+    badge: "border-emerald-400/30 bg-emerald-500/15 text-emerald-300",
+    text: "text-emerald-300",
+  },
+  Spotlight: {
+    badge: "border-pink-400/30 bg-pink-500/15 text-pink-300",
+    text: "text-pink-300",
+  },
+};
+
+export function getNewsStoryUrl(item: NewsItem): string {
+  if (item.href && item.href.trim()) return item.href.trim();
+  if (item.social?.linkedin && item.social.linkedin.trim()) return item.social.linkedin.trim();
+  if (item.social?.facebook && item.social.facebook.trim()) return item.social.facebook.trim();
+  if (item.social?.instagram && item.social.instagram.trim()) return item.social.instagram.trim();
+  return "";
+}
+
+export function isExternalUrl(url?: string): boolean {
+  if (!url) return false;
+  return url.startsWith("http://") || url.startsWith("https://");
+}
+
+async function copyToClipboard(text: string): Promise<boolean> {
+  try {
+    if (typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(text);
+      return true;
+    }
+  } catch {
+    // fallback below
+  }
+  try {
+    if (typeof document !== "undefined") {
+      const input = document.createElement("textarea");
+      input.value = text;
+      input.style.position = "fixed";
+      input.style.opacity = "0";
+      document.body.appendChild(input);
+      input.focus();
+      input.select();
+      const successful = document.execCommand("copy");
+      document.body.removeChild(input);
+      return successful;
+    }
+  } catch {
+    // ignore
+  }
+  return false;
+}
+
 export function News({ liveNews }: { liveNews?: NewsItem[] }) {
   const [page, setPage] = useState(1);
   const [query, setQuery] = useState("");
   const [catFilter, setCatFilter] = useState<NewsCategory | "All">("All");
+  const [selectedItem, setSelectedItem] = useState<NewsItem | null>(null);
+  const [highlightedId, setHighlightedId] = useState<string | null>(null);
 
   const source = (liveNews ?? staticNews).filter((n) => n.published !== false);
 
@@ -39,6 +116,34 @@ export function News({ liveNews }: { liveNews?: NewsItem[] }) {
     return [...base].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   }, [source, query, catFilter]);
 
+  // Deep linking and anchor scroll support
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    function handleHash() {
+      const hash = window.location.hash.replace("#", "");
+      if (!hash || hash === "news") return;
+      const targetId = hash.startsWith("news-") ? hash.replace("news-", "") : hash;
+      const index = sorted.findIndex((n) => n.id === targetId);
+      if (index !== -1) {
+        const targetPage = Math.floor(index / NEWS_PER_PAGE) + 1;
+        setPage(targetPage);
+        setTimeout(() => {
+          const el = document.getElementById(`news-${targetId}`);
+          if (el) {
+            el.scrollIntoView({ behavior: "smooth", block: "center" });
+            setHighlightedId(targetId);
+            setTimeout(() => setHighlightedId(null), 3500);
+          }
+        }, 150);
+      }
+    }
+
+    handleHash();
+    window.addEventListener("hashchange", handleHash);
+    return () => window.removeEventListener("hashchange", handleHash);
+  }, [sorted]);
+
   function changeFilter(cat: NewsCategory | "All") {
     setCatFilter(cat);
     setPage(1);
@@ -54,13 +159,16 @@ export function News({ liveNews }: { liveNews?: NewsItem[] }) {
   const totalPages = Math.max(1, Math.ceil(sorted.length / NEWS_PER_PAGE));
   const pageItems  = sorted.slice((page - 1) * NEWS_PER_PAGE, page * NEWS_PER_PAGE);
 
-  // Page 1: honour the explicit  featured: true  flag.
+  // Page 1: honour the explicit featured: true flag.
   // Other pages: treat first item on that page as featured.
   const featured =
     page === 1
       ? (pageItems.find((n) => n.featured) ?? pageItems[0])
       : pageItems[0];
   const rest = pageItems.filter((n) => n.id !== featured?.id);
+
+  const featuredStoryUrl = featured ? getNewsStoryUrl(featured) : "";
+  const isFeaturedExternal = isExternalUrl(featuredStoryUrl);
 
   return (
     <Section id="news">
@@ -137,8 +245,25 @@ export function News({ liveNews }: { liveNews?: NewsItem[] }) {
           <div className="mt-16 grid grid-cols-1 gap-6 lg:grid-cols-12">
             {/* Featured — large card */}
             <FadeIn className="lg:col-span-7">
-              <GlassCard as="article" className="group h-full overflow-hidden">
-                <div className="relative aspect-[4/3] overflow-hidden sm:aspect-[16/10]">
+              <GlassCard
+                as="article"
+                id={`news-${featured.id}`}
+                className={cn(
+                  "group h-full overflow-hidden transition-all duration-300",
+                  highlightedId === featured.id && "ring-2 ring-brand-400 shadow-[0_0_35px_rgba(79,156,235,0.45)]"
+                )}
+              >
+                {/* Thumbnail / cover */}
+                <div
+                  className="group/feat relative aspect-[4/3] cursor-pointer overflow-hidden sm:aspect-[16/10]"
+                  onClick={() => setSelectedItem(featured)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") setSelectedItem(featured);
+                  }}
+                  aria-label={`Preview full story: ${featured.title}`}
+                >
                   <Image
                     src={featured.image}
                     alt={featured.title}
@@ -148,10 +273,20 @@ export function News({ liveNews }: { liveNews?: NewsItem[] }) {
                     className="object-cover transition-transform duration-[1500ms] ease-out group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-ink-100 via-ink-100/30 to-transparent" />
-                  <span className="absolute left-5 top-5 rounded-full border border-white/[0.14] bg-black/40 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.18em] text-white/90 backdrop-blur">
+                  <span
+                    className={cn(
+                      "absolute left-5 top-5 rounded-full border px-3 py-1 text-[10px] font-medium uppercase tracking-[0.18em] backdrop-blur",
+                      CATEGORY_STYLES[featured.category]?.badge ?? "border-white/[0.14] bg-black/40 text-white/90"
+                    )}
+                  >
                     {featured.category}
                   </span>
+                  <span className="absolute right-5 top-5 inline-flex items-center gap-1.5 rounded-full border border-white/[0.14] bg-black/50 px-3 py-1 text-[11px] font-medium text-white/80 opacity-0 backdrop-blur transition-opacity duration-300 group-hover/feat:opacity-100">
+                    <Eye className="h-3.5 w-3.5" />
+                    Quick view
+                  </span>
                 </div>
+
                 <div className="p-8 sm:p-10">
                   <div className="flex items-center gap-3">
                     <p className="text-xs uppercase tracking-[0.18em] text-white/40">
@@ -162,74 +297,209 @@ export function News({ liveNews }: { liveNews?: NewsItem[] }) {
                       Featured
                     </p>
                   </div>
+
                   <h3 className="mt-4 font-display text-3xl font-medium text-white sm:text-4xl [text-wrap:balance]">
-                    {featured.title}
+                    {isFeaturedExternal ? (
+                      <a
+                        href={featuredStoryUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="transition-colors hover:text-brand-200 focus-visible:outline-none focus-visible:underline"
+                      >
+                        {featured.title}
+                      </a>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => setSelectedItem(featured)}
+                        className="text-left transition-colors hover:text-brand-200 focus-visible:outline-none focus-visible:underline"
+                      >
+                        {featured.title}
+                      </button>
+                    )}
                   </h3>
+
                   <SafeHtml
                     html={featured.summary}
                     className="mt-4 max-w-xl text-[15px] leading-relaxed text-white/55"
                   />
-                  {featured.social && (
-                    <SocialLinks social={featured.social} size="md" />
-                  )}
-                  <span className="mt-5 inline-flex items-center gap-2 text-sm font-medium text-brand-300 transition-colors group-hover:text-white">
-                    Read the full story
-                    <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                  </span>
+
+                  {/* Action & Links Footer */}
+                  <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-white/[0.06] pt-5">
+                    <div className="flex flex-wrap items-center gap-3">
+                      {isFeaturedExternal ? (
+                        <a
+                          href={featuredStoryUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-2 rounded-xl border border-brand-400/30 bg-brand-500/15 px-4 py-2 text-sm font-medium text-brand-300 transition-all hover:border-brand-400/50 hover:bg-brand-500/25 hover:text-white hover:shadow-glow focus-visible:outline-none focus-visible:underline"
+                        >
+                          Read the full story
+                          <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                        </a>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => setSelectedItem(featured)}
+                          className="inline-flex items-center gap-2 rounded-xl border border-brand-400/30 bg-brand-500/15 px-4 py-2 text-sm font-medium text-brand-300 transition-all hover:border-brand-400/50 hover:bg-brand-500/25 hover:text-white hover:shadow-glow"
+                        >
+                          Read the full story
+                          <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                        </button>
+                      )}
+
+                      <button
+                        type="button"
+                        onClick={() => setSelectedItem(featured)}
+                        className="inline-flex items-center gap-1.5 rounded-xl border border-white/[0.10] bg-white/[0.03] px-3.5 py-2 text-xs font-medium text-white/60 transition-all hover:border-white/[0.20] hover:bg-white/[0.07] hover:text-white"
+                      >
+                        <Eye className="h-3.5 w-3.5" />
+                        Quick view
+                      </button>
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-2">
+                      <SocialLinks social={featured.social} href={featured.href} size="md" />
+                      <CopyLinkButton
+                        url={featuredStoryUrl}
+                        itemId={featured.id}
+                        title={featured.title}
+                        size="md"
+                      />
+                    </div>
+                  </div>
                 </div>
               </GlassCard>
             </FadeIn>
 
             {/* Secondary stack */}
             <Stagger stagger={0.1} className="space-y-6 lg:col-span-5">
-              {rest.map((item) => (
-                <FadeIn key={item.id}>
-                  <GlassCard as="article" className="group flex gap-5 p-5 sm:p-6">
-                    {/* Thumbnail */}
-                    <div className="relative aspect-square w-24 shrink-0 overflow-hidden rounded-2xl sm:w-32">
-                      <Image
-                        src={item.image}
-                        alt={item.title}
-                        fill
-                        sizes="160px"
-                        unoptimized={item.image.endsWith(".svg")}
-                        className="object-cover transition-transform duration-[1500ms] group-hover:scale-105"
-                      />
-                      <div className="pointer-events-none absolute inset-0 rounded-2xl border border-white/[0.06]" />
-                    </div>
-                    {/* Text */}
-                    <div className="flex min-w-0 flex-1 flex-col justify-between">
-                      <div>
-                        <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                          <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-brand-300">
-                            {item.category}
-                          </span>
-                          <span className="h-[3px] w-[3px] rounded-full bg-white/30" />
-                          <span className="text-[11px] uppercase tracking-[0.15em] text-white/40">
-                            {item.dateLabel}
-                          </span>
+              {rest.map((item) => {
+                const itemStoryUrl = getNewsStoryUrl(item);
+                const isItemExternal = isExternalUrl(itemStoryUrl);
+
+                return (
+                  <FadeIn key={item.id}>
+                    <GlassCard
+                      as="article"
+                      id={`news-${item.id}`}
+                      className={cn(
+                        "group flex gap-5 p-5 sm:p-6 transition-all duration-300",
+                        highlightedId === item.id && "ring-2 ring-brand-400 shadow-[0_0_35px_rgba(79,156,235,0.45)]"
+                      )}
+                    >
+                      {/* Thumbnail */}
+                      <button
+                        type="button"
+                        onClick={() => setSelectedItem(item)}
+                        className="group/img relative aspect-square w-24 shrink-0 overflow-hidden rounded-2xl text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 sm:w-32"
+                        aria-label={`Preview ${item.title}`}
+                      >
+                        <Image
+                          src={item.image}
+                          alt={item.title}
+                          fill
+                          sizes="160px"
+                          unoptimized={item.image.endsWith(".svg")}
+                          className="object-cover transition-transform duration-[1500ms] group-hover:scale-105"
+                        />
+                        <div className="pointer-events-none absolute inset-0 rounded-2xl border border-white/[0.06]" />
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity duration-300 group-hover/img:opacity-100">
+                          <Eye className="h-5 w-5 text-white/90 drop-shadow" />
                         </div>
-                        <h4 className="mt-2 line-clamp-2 font-display text-base font-medium text-white sm:text-lg [text-wrap:balance]">
-                          {item.title}
-                        </h4>
-                        <SafeHtml html={item.summary} className="mt-1.5 line-clamp-2 text-sm text-white/55" />
+                      </button>
+
+                      {/* Text content */}
+                      <div className="flex min-w-0 flex-1 flex-col justify-between">
+                        <div>
+                          <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                            <span className={cn("text-[10px] font-medium uppercase tracking-[0.18em]", CATEGORY_STYLES[item.category]?.text ?? "text-brand-300")}>
+                              {item.category}
+                            </span>
+                            <span className="h-[3px] w-[3px] rounded-full bg-white/30" />
+                            <span className="text-[11px] uppercase tracking-[0.15em] text-white/40">
+                              {item.dateLabel}
+                            </span>
+                          </div>
+
+                          <h4 className="mt-2 line-clamp-2 font-display text-base font-medium text-white sm:text-lg [text-wrap:balance]">
+                            {isItemExternal ? (
+                              <a
+                                href={itemStoryUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="transition-colors hover:text-brand-300 focus-visible:outline-none focus-visible:underline"
+                              >
+                                {item.title}
+                              </a>
+                            ) : (
+                              <button
+                                type="button"
+                                onClick={() => setSelectedItem(item)}
+                                className="text-left transition-colors hover:text-brand-300 focus-visible:outline-none focus-visible:underline"
+                              >
+                                {item.title}
+                              </button>
+                            )}
+                          </h4>
+
+                          <SafeHtml html={item.summary} className="mt-1.5 line-clamp-2 text-sm text-white/55" />
+                        </div>
+
+                        {/* Secondary Card Footer */}
+                        <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-white/[0.04] pt-2 sm:pt-3">
+                          <div className="flex items-center gap-2">
+                            {isItemExternal ? (
+                              <a
+                                href={itemStoryUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1.5 text-xs font-medium text-white/60 transition-colors hover:text-brand-300 group-hover:text-brand-300 focus-visible:outline-none focus-visible:underline"
+                              >
+                                Read more
+                                <ArrowUpRight
+                                  className="h-3 w-3 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                                  strokeWidth={2}
+                                />
+                              </a>
+                            ) : (
+                              <button
+                                type="button"
+                                onClick={() => setSelectedItem(item)}
+                                className="inline-flex items-center gap-1.5 text-xs font-medium text-white/60 transition-colors hover:text-brand-300 group-hover:text-brand-300"
+                              >
+                                Read more
+                                <ArrowUpRight
+                                  className="h-3 w-3 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                                  strokeWidth={2}
+                                />
+                              </button>
+                            )}
+                            <button
+                              type="button"
+                              onClick={() => setSelectedItem(item)}
+                              className="text-[11px] text-white/35 transition-colors hover:text-white/70"
+                              title="Quick preview details"
+                            >
+                              · Preview
+                            </button>
+                          </div>
+
+                          <div className="flex items-center gap-1.5">
+                            <SocialLinks social={item.social} href={item.href} size="sm" />
+                            <CopyLinkButton
+                              url={itemStoryUrl}
+                              itemId={item.id}
+                              title={item.title}
+                              size="sm"
+                            />
+                          </div>
+                        </div>
                       </div>
-                      <div className="mt-3 flex items-center justify-between gap-2">
-                        <span className="inline-flex items-center gap-1.5 text-xs font-medium text-white/55 transition-colors group-hover:text-brand-300">
-                          Read more
-                          <ArrowUpRight
-                            className="h-3 w-3 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                            strokeWidth={2}
-                          />
-                        </span>
-                        {item.social && (
-                          <SocialLinks social={item.social} size="sm" />
-                        )}
-                      </div>
-                    </div>
-                  </GlassCard>
-                </FadeIn>
-              ))}
+                    </GlassCard>
+                  </FadeIn>
+                );
+              })}
             </Stagger>
           </div>
         )}
@@ -240,25 +510,326 @@ export function News({ liveNews }: { liveNews?: NewsItem[] }) {
             <Pagination current={page} total={totalPages} onChange={setPage} />
           </div>
         )}
+
+        {/* ── Story Details Modal ─────────────────────────────────────────── */}
+        {selectedItem && (
+          <NewsModal
+            item={selectedItem}
+            onClose={() => setSelectedItem(null)}
+          />
+        )}
       </Container>
     </Section>
   );
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Social link pills — LinkedIn / Facebook / Instagram
+// Copy Link Button Component
+// ─────────────────────────────────────────────────────────────────────────────
+
+function CopyLinkButton({
+  url,
+  itemId,
+  title,
+  size = "sm",
+}: {
+  url?: string;
+  itemId: string;
+  title: string;
+  size?: "sm" | "md";
+}) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const linkToCopy =
+      url && isExternalUrl(url)
+        ? url
+        : typeof window !== "undefined"
+        ? `${window.location.origin}/#news-${itemId}`
+        : `https://www.linkedincommunitybangladesh.com/#news-${itemId}`;
+
+    const ok = await copyToClipboard(linkToCopy);
+    if (ok) {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  if (size === "md") {
+    return (
+      <button
+        type="button"
+        onClick={handleCopy}
+        aria-label={`Copy link for ${title}`}
+        title={copied ? "Link copied to clipboard!" : "Copy link"}
+        className={cn(
+          "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[11px] font-medium transition-all duration-200",
+          copied
+            ? "border-emerald-500/50 bg-emerald-500/15 text-emerald-300 shadow-[0_0_12px_rgba(16,185,129,0.25)]"
+            : "border-white/[0.10] bg-white/[0.04] text-white/55 hover:border-white/[0.22] hover:bg-white/[0.08] hover:text-white"
+        )}
+      >
+        {copied ? (
+          <>
+            <Check className="h-3 w-3 text-emerald-400" />
+            <span>Copied!</span>
+          </>
+        ) : (
+          <>
+            <Link2 className="h-3 w-3" />
+            <span>Copy link</span>
+          </>
+        )}
+      </button>
+    );
+  }
+
+  // sm size: circle icon matching social icon pills
+  return (
+    <button
+      type="button"
+      onClick={handleCopy}
+      aria-label={`Copy link for ${title}`}
+      title={copied ? "Link copied to clipboard!" : "Copy link"}
+      className={cn(
+        "flex h-6 w-6 items-center justify-center rounded-full border transition-all duration-200",
+        copied
+          ? "border-emerald-500/50 bg-emerald-500/15 text-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.3)]"
+          : "border-white/[0.08] bg-white/[0.03] text-white/35 hover:border-white/[0.22] hover:text-white"
+      )}
+    >
+      {copied ? <Check className="h-3 w-3 text-emerald-400" /> : <Link2 className="h-3 w-3" />}
+    </button>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Story Details Modal Component
+// ─────────────────────────────────────────────────────────────────────────────
+
+function NewsModal({
+  item,
+  onClose,
+}: {
+  item: NewsItem;
+  onClose: () => void;
+}) {
+  const storyUrl = getNewsStoryUrl(item);
+  const isExternal = isExternalUrl(storyUrl);
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") onClose();
+    }
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [onClose]);
+
+  const siteLink = typeof window !== "undefined"
+    ? `${window.location.origin}/#news-${item.id}`
+    : `https://www.linkedincommunitybangladesh.com/#news-${item.id}`;
+
+  const shareTargetUrl = isExternal ? storyUrl : siteLink;
+  const encodedUrl = encodeURIComponent(shareTargetUrl);
+  const encodedTitle = encodeURIComponent(item.title);
+
+  const handleCopyLink = async () => {
+    const ok = await copyToClipboard(shareTargetUrl);
+    if (ok) {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6"
+      role="dialog"
+      aria-modal="true"
+      aria-label={item.title}
+    >
+      {/* Backdrop */}
+      <div
+        className="absolute inset-0 bg-black/75 backdrop-blur-md transition-opacity"
+        onClick={onClose}
+        aria-hidden="true"
+      />
+
+      {/* Modal Dialog Card */}
+      <div className="relative z-10 flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-3xl border border-white/[0.12] bg-[#090d1f] shadow-2xl">
+        {/* Close button */}
+        <button
+          onClick={onClose}
+          aria-label="Close dialog"
+          className="absolute right-4 top-4 z-20 flex h-9 w-9 items-center justify-center rounded-full border border-white/[0.12] bg-black/60 text-white/70 backdrop-blur transition hover:bg-black/80 hover:text-white"
+        >
+          <X className="h-4 w-4" />
+        </button>
+
+        <div className="overflow-y-auto">
+          {/* Cover image */}
+          {item.image && (
+            <div className="relative aspect-[16/9] w-full shrink-0 overflow-hidden bg-black/30">
+              <Image
+                src={item.image}
+                alt={item.title}
+                fill
+                sizes="(max-width: 672px) 100vw, 672px"
+                unoptimized={item.image.endsWith(".svg")}
+                className="object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#090d1f] via-transparent to-transparent" />
+              <div className="absolute left-5 top-5 flex items-center gap-2">
+                <span
+                  className={cn(
+                    "rounded-full border px-3 py-1 text-[10px] font-medium uppercase tracking-[0.18em] backdrop-blur",
+                    CATEGORY_STYLES[item.category]?.badge ?? "border-white/[0.14] bg-black/50 text-white/90"
+                  )}
+                >
+                  {item.category}
+                </span>
+                {item.featured && (
+                  <span className="rounded-full border border-brand-400/40 bg-brand-500/30 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.18em] text-brand-200 backdrop-blur">
+                    Featured
+                  </span>
+                )}
+              </div>
+            </div>
+          )}
+
+          <div className="p-6 sm:p-8">
+            <div className="flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-white/40">
+              <Calendar className="h-3.5 w-3.5 text-white/40" />
+              <span>{item.dateLabel}</span>
+            </div>
+
+            <h2 className="mt-3 font-display text-2xl font-medium text-white sm:text-3xl leading-snug">
+              {item.title}
+            </h2>
+
+            <div className="mt-5 border-t border-white/[0.06] pt-5">
+              <SafeHtml
+                html={item.summary}
+                className="prose prose-invert prose-sm max-w-none text-white/75 prose-headings:text-white prose-a:text-brand-300 prose-strong:text-white/90 text-[15px] leading-relaxed"
+              />
+            </div>
+
+            {/* Official Source Links */}
+            {(item.social || item.href) && (
+              <div className="mt-6 border-t border-white/[0.06] pt-5">
+                <p className="mb-3 text-[11px] font-medium uppercase tracking-[0.18em] text-white/40">Official Links & Sources</p>
+                <SocialLinks social={item.social} href={item.href} size="md" />
+              </div>
+            )}
+
+            {/* Actions Footer */}
+            <div className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-white/[0.08] pt-6">
+              <div className="flex flex-wrap items-center gap-2">
+                {isExternal && (
+                  <a
+                    href={storyUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 rounded-xl bg-brand-500 px-4 py-2 text-sm font-medium text-white shadow-glow transition hover:bg-brand-400"
+                  >
+                    Open original story
+                    <ArrowUpRight className="h-4 w-4" />
+                  </a>
+                )}
+                <button
+                  type="button"
+                  onClick={handleCopyLink}
+                  className={cn(
+                    "inline-flex items-center gap-1.5 rounded-xl border px-3.5 py-2 text-xs font-medium transition",
+                    copied
+                      ? "border-emerald-500/50 bg-emerald-500/15 text-emerald-300"
+                      : "border-white/[0.10] bg-white/[0.04] text-white/70 hover:border-white/[0.22] hover:bg-white/[0.08] hover:text-white"
+                  )}
+                >
+                  {copied ? (
+                    <>
+                      <Check className="h-3.5 w-3.5 text-emerald-400" />
+                      <span>Link copied!</span>
+                    </>
+                  ) : (
+                    <>
+                      <Link2 className="h-3.5 w-3.5" />
+                      <span>Copy link</span>
+                    </>
+                  )}
+                </button>
+              </div>
+
+              {/* Quick Share buttons */}
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs text-white/35 mr-1">Share:</span>
+                <a
+                  href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="Share on LinkedIn"
+                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/[0.08] bg-white/[0.03] text-white/45 transition hover:border-[#0A66C2]/40 hover:bg-[#0A66C2]/15 hover:text-[#0A66C2]"
+                >
+                  <LinkedInIcon className="h-3.5 w-3.5" />
+                </a>
+                <a
+                  href={`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="Share on Facebook"
+                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/[0.08] bg-white/[0.03] text-white/45 transition hover:border-[#1877F2]/40 hover:bg-[#1877F2]/15 hover:text-[#1877F2]"
+                >
+                  <FacebookIcon className="h-3.5 w-3.5" />
+                </a>
+                <a
+                  href={`https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="Share on X"
+                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/[0.08] bg-white/[0.03] text-white/45 transition hover:border-white/30 hover:bg-white/10 hover:text-white"
+                >
+                  <svg className="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Social link pills — LinkedIn / Facebook / Instagram / Website
 // ─────────────────────────────────────────────────────────────────────────────
 
 type SocialLinksProps = {
-  social: NonNullable<NewsItem["social"]>;
+  social?: NewsItem["social"];
+  href?: string;
   size: "md" | "sm";
 };
 
-function SocialLinks({ social, size }: SocialLinksProps) {
+function SocialLinks({ social, href, size }: SocialLinksProps) {
+  const hasSocial = social && (social.linkedin || social.facebook || social.instagram);
+  const showHref = href && isExternalUrl(href) && (!social?.linkedin || href !== social.linkedin);
+
+  if (!hasSocial && !showHref) return null;
+
   if (size === "md") {
     return (
-      <div className="mt-5 flex flex-wrap items-center gap-2">
-        {social.linkedin && (
+      <div className="flex flex-wrap items-center gap-2">
+        {social?.linkedin && (
           <a
             href={social.linkedin}
             target="_blank"
@@ -270,7 +841,7 @@ function SocialLinks({ social, size }: SocialLinksProps) {
             LinkedIn
           </a>
         )}
-        {social.facebook && (
+        {social?.facebook && (
           <a
             href={social.facebook}
             target="_blank"
@@ -282,7 +853,7 @@ function SocialLinks({ social, size }: SocialLinksProps) {
             Facebook
           </a>
         )}
-        {social.instagram && (
+        {social?.instagram && (
           <a
             href={social.instagram}
             target="_blank"
@@ -294,6 +865,18 @@ function SocialLinks({ social, size }: SocialLinksProps) {
             Instagram
           </a>
         )}
+        {showHref && (
+          <a
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+            className="inline-flex items-center gap-1.5 rounded-full border border-white/[0.10] bg-white/[0.04] px-3 py-1.5 text-[11px] font-medium text-white/55 transition-all duration-200 hover:border-brand-400/50 hover:bg-brand-500/10 hover:text-brand-300"
+          >
+            <ExternalLink className="h-3 w-3" />
+            Article
+          </a>
+        )}
       </div>
     );
   }
@@ -301,40 +884,52 @@ function SocialLinks({ social, size }: SocialLinksProps) {
   // sm — icon-only circles for secondary cards
   return (
     <div className="flex items-center gap-1.5">
-      {social.linkedin && (
+      {social?.linkedin && (
         <a
           href={social.linkedin}
           target="_blank"
           rel="noopener noreferrer"
           onClick={(e) => e.stopPropagation()}
-          title="LinkedIn"
+          title="Open LinkedIn Post"
           className="flex h-6 w-6 items-center justify-center rounded-full border border-white/[0.08] bg-white/[0.03] text-white/35 transition-all duration-200 hover:border-[#0A66C2]/50 hover:text-[#0A66C2]"
         >
           <LinkedInIcon className="h-3 w-3" />
         </a>
       )}
-      {social.facebook && (
+      {social?.facebook && (
         <a
           href={social.facebook}
           target="_blank"
           rel="noopener noreferrer"
           onClick={(e) => e.stopPropagation()}
-          title="Facebook"
+          title="Open Facebook Post"
           className="flex h-6 w-6 items-center justify-center rounded-full border border-white/[0.08] bg-white/[0.03] text-white/35 transition-all duration-200 hover:border-[#1877F2]/50 hover:text-[#1877F2]"
         >
           <FacebookIcon className="h-3 w-3" />
         </a>
       )}
-      {social.instagram && (
+      {social?.instagram && (
         <a
           href={social.instagram}
           target="_blank"
           rel="noopener noreferrer"
           onClick={(e) => e.stopPropagation()}
-          title="Instagram"
+          title="Open Instagram Post"
           className="flex h-6 w-6 items-center justify-center rounded-full border border-white/[0.08] bg-white/[0.03] text-white/35 transition-all duration-200 hover:border-[#E1306C]/50 hover:text-[#E1306C]"
         >
           <InstagramIcon className="h-3 w-3" />
+        </a>
+      )}
+      {showHref && (
+        <a
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={(e) => e.stopPropagation()}
+          title="Open External Article"
+          className="flex h-6 w-6 items-center justify-center rounded-full border border-white/[0.08] bg-white/[0.03] text-white/35 transition-all duration-200 hover:border-brand-400/50 hover:text-brand-300"
+        >
+          <ExternalLink className="h-3 w-3" />
         </a>
       )}
     </div>
