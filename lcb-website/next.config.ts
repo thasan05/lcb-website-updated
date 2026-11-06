@@ -153,6 +153,12 @@ const nextConfig: NextConfig = {
     "/**": ["./src/content/data/**/*.json", "./src/data/**/*.json"],
     "/card": ["./src/app/card/studio.html"],
   },
+  outputFileTracingExcludes: {
+    "**/*": [
+      "node_modules/sharp/**/*",
+      "node_modules/@img/**/*",
+    ],
+  },
 };
 
 export default nextConfig;
