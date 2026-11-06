@@ -1,13 +1,12 @@
 import { ImageResponse } from "next/og";
 import fs from "node:fs";
 import path from "node:path";
-import sharp from "sharp";
 import { kvGetCachedOr } from "@/lib/kv-cached";
 import { news as staticNews, type NewsItem } from "@/content/news";
 import { CATEGORY_COLORS, formatBroadDescription } from "@/lib/news-metadata";
 
 export const size = { width: 1200, height: 630 };
-export const contentType = "image/jpeg";
+export const contentType = "image/png";
 export const runtime = "nodejs";
 export const alt = "LCB Newsroom Story Preview";
 
@@ -29,40 +28,23 @@ async function getNewsItem(id: string): Promise<NewsItem | null> {
 }
 
 /**
- * Optimizes local and remote story images into a lightweight ~80KB JPEG base64 payload.
- * This guarantees Satori memory safety and ensures WhatsApp, LinkedIn, and Twitter crawlers
- * always render the broad 1200x630 hero card preview without hitting image size limits.
+ * Loads local or remote story images into a lightweight base64 payload.
  */
 async function getImageDataUri(imagePath?: string): Promise<string | null> {
   if (!imagePath) return null;
   if (imagePath.endsWith(".svg")) return null;
 
-  if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) {
-    try {
-      const res = await fetch(imagePath, { signal: AbortSignal.timeout(4000) });
-      if (res.ok) {
-        const arrayBuf = await res.arrayBuffer();
-        const buf = Buffer.from(arrayBuf);
-        const optimized = await sharp(buf)
-          .resize(600, 720, { fit: "cover", position: "centre" })
-          .jpeg({ quality: 80, mozjpeg: true })
-          .toBuffer();
-        return `data:image/jpeg;base64,${optimized.toString("base64")}`;
-      }
-    } catch {
-      return imagePath;
-    }
-  }
-
   try {
     const clean = imagePath.startsWith("/") ? imagePath.slice(1) : imagePath;
     const fullPath = path.join(process.cwd(), "public", clean);
     if (fs.existsSync(fullPath)) {
-      const optimized = await sharp(fullPath)
-        .resize(600, 720, { fit: "cover", position: "centre" })
-        .jpeg({ quality: 80, mozjpeg: true })
-        .toBuffer();
-      return `data:image/jpeg;base64,${optimized.toString("base64")}`;
+      const stat = fs.statSync(fullPath);
+      if (stat.size <= 256 * 1024) {
+        const buf = fs.readFileSync(fullPath);
+        const ext = path.extname(fullPath).toLowerCase();
+        const mime = ext === ".png" ? "image/png" : ext === ".webp" ? "image/webp" : "image/jpeg";
+        return `data:${mime};base64,${buf.toString("base64")}`;
+      }
     }
   } catch {
     // ignore
@@ -79,7 +61,7 @@ export default async function NewsOGImage({
   const item = await getNewsItem(id);
 
   if (!item) {
-    const fallbackRes = new ImageResponse(
+    return new ImageResponse(
       (
         <div
           style={{
@@ -102,11 +84,6 @@ export default async function NewsOGImage({
       ),
       { ...size }
     );
-    const pngBuf = Buffer.from(await fallbackRes.arrayBuffer());
-    const jpgBuf = await sharp(pngBuf).jpeg({ quality: 80 }).toBuffer();
-    return new Response(jpgBuf, {
-      headers: { "Content-Type": "image/jpeg" },
-    });
   }
 
   const categoryStyle = CATEGORY_COLORS[item.category] ?? {
@@ -436,19 +413,5 @@ export default async function NewsOGImage({
     { ...size }
   );
 
-  // Compress the PNG image into a lightweight, high-performance MozJPEG (~60-80KB)
-  // This guarantees that WhatsApp on mobile phones (strictly limited to 300KB)
-  // will always fetch and display the broad hero card preview.
-  const rawPng = Buffer.from(await rawRes.arrayBuffer());
-  const optimizedJpeg = await sharp(rawPng)
-    .jpeg({ quality: 82, mozjpeg: true })
-    .toBuffer();
-
-  return new Response(optimizedJpeg, {
-    headers: {
-      "Content-Type": "image/jpeg",
-      "Content-Length": String(optimizedJpeg.length),
-      "Cache-Control": "public, max-age=31536000, immutable",
-    },
-  });
+  return rawRes;
 }
