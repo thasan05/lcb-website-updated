@@ -4,7 +4,7 @@ export const siteConfig = {
   tagline: "Bangladesh's First LinkedIn-Based Professional Community",
   description:
     "Empowering students, creators, developers, founders, and future leaders across Bangladesh through the nation's premier LinkedIn-based professional growth movement.",
-  url: "https://linkedincommunitybangladesh.com",
+  url: "https://www.linkedincommunitybangladesh.com",
   ogImage: "/og.png",
 
   // Public-facing socials (from user-provided links)

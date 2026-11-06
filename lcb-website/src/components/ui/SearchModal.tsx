@@ -46,7 +46,42 @@ function buildIndex(): Result[] {
     icon:     <Newspaper className="h-3.5 w-3.5" />,
   }));
 
-  return [...members, ...eventResults, ...newsResults];
+  const coreDestinations: Result[] = [
+    {
+      id: "nav-about",
+      title: "About LCB Movement",
+      subtitle: "Our story, mission, and nationwide vision",
+      section: "About",
+      href: "#story",
+      icon: <Users className="h-3.5 w-3.5" />,
+    },
+    {
+      id: "nav-magazine",
+      title: "LCB Magazine & Editorial Issues",
+      subtitle: "Official community publication and PDF downloads",
+      section: "Magazine",
+      href: "/magazine",
+      icon: <Newspaper className="h-3.5 w-3.5" />,
+    },
+    {
+      id: "nav-lor",
+      title: "Letter of Recommendation (LOR) Portal",
+      subtitle: "Apply for official recommendation and verification",
+      section: "LOR",
+      href: "/lor/apply",
+      icon: <Calendar className="h-3.5 w-3.5" />,
+    },
+    {
+      id: "nav-shout",
+      title: "Community Shoutout Card Studio",
+      subtitle: "Generate official member badges and social graphics",
+      section: "Tools",
+      href: "/shout",
+      icon: <Users className="h-3.5 w-3.5" />,
+    },
+  ];
+
+  return [...coreDestinations, ...members, ...eventResults, ...newsResults];
 }
 
 const INDEX = buildIndex();

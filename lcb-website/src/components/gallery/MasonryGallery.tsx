@@ -93,11 +93,11 @@ export function MasonryGallery({
       {/* ── Masonry grid ────────────────────────────────────────────────── */}
       <AnimatePresence mode="wait">
         <motion.div
-          key="all"
+          key={activeCategory}
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+          exit={{ opacity: 0, y: -8 }}
+          transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
           className="columns-2 gap-4 md:columns-3 lg:columns-4"
         >
           {visible.map((img, i) => (
