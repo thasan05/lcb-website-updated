@@ -92,6 +92,31 @@ export async function middleware(request: NextRequest) {
       }
       return NextResponse.redirect(new URL("/admin/login", request.url));
     }
+
+    // ── CSRF defense-in-depth on mutating admin API requests ─────────────────
+    const method = request.method.toUpperCase();
+    if (["POST", "PUT", "DELETE", "PATCH"].includes(method) && pathname.startsWith("/api/admin")) {
+      const origin = request.headers.get("origin");
+      if (origin) {
+        try {
+          const originHost = new URL(origin).host;
+          const allowedHosts = [
+            host,
+            "www.linkedincommunitybangladesh.com",
+            "linkedincommunitybangladesh.com",
+            "localhost:3000",
+          ].filter(Boolean);
+          if (!allowedHosts.includes(originHost)) {
+            return NextResponse.json(
+              { error: "Cross-origin request forbidden" },
+              { status: 403 }
+            );
+          }
+        } catch {
+          return NextResponse.json({ error: "Invalid request origin" }, { status: 403 });
+        }
+      }
+    }
   }
 
   return NextResponse.next();

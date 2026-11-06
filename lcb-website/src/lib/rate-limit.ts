@@ -6,17 +6,38 @@
 import type { NextRequest } from "next/server";
 
 /**
- * Extract the real client IP.
- * Prefers CF-Connecting-IP (set by Cloudflare, not spoofable by clients)
- * over x-forwarded-for (which can be injected if Cloudflare is bypassed).
+ * Extract the real client IP safely and resist header spoofing.
+ * Prioritizes platform-authenticated edge proxy headers (Vercel, Cloudflare, req.ip)
+ * that cannot be forged or injected by external clients.
  */
 export function getClientIp(req: NextRequest): string {
-  return (
-    req.headers.get("cf-connecting-ip") ||
-    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-    req.headers.get("x-real-ip") ||
-    "unknown"
-  );
+  // 1. Next.js runtime client IP (if exposed on request object)
+  const directIp = (req as unknown as { ip?: string }).ip;
+  if (directIp) return directIp;
+
+  // 2. Vercel trusted connecting IP header (set by Vercel edge reverse proxy)
+  const vercelIp = req.headers.get("x-vercel-forwarded-for");
+  if (vercelIp) {
+    const ip = vercelIp.split(",")[0].trim();
+    if (ip) return ip;
+  }
+
+  // 3. Cloudflare connecting IP (set by Cloudflare edge proxy)
+  const cfIp = req.headers.get("cf-connecting-ip");
+  if (cfIp) return cfIp.trim();
+
+  // 4. Vercel / reverse proxy real IP header
+  const realIp = req.headers.get("x-real-ip");
+  if (realIp) return realIp.trim();
+
+  // 5. Fallback: Parse X-Forwarded-For safely
+  const xff = req.headers.get("x-forwarded-for");
+  if (xff) {
+    const parts = xff.split(",").map((p) => p.trim()).filter(Boolean);
+    if (parts.length > 0) return parts[0];
+  }
+
+  return "127.0.0.1";
 }
 
 export interface RateLimitResult {

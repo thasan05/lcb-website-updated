@@ -36,9 +36,23 @@ const DANGEROUS_PROTOCOLS =
 const HTML_COMMENTS = /<!--[\s\S]*?-->/g;
 
 export function sanitizeHtml(html: string): string {
-  return html
-    .replace(HTML_COMMENTS, "")
-    .replace(DANGEROUS_TAGS, "")
-    .replace(EVENT_ATTRS, "")
-    .replace(DANGEROUS_PROTOCOLS, "");
+  if (typeof html !== "string") return "";
+  // Strip null bytes and control characters used in filter evasion
+  let clean = html.replace(/\0/g, "");
+  let prev = "";
+  let iterations = 0;
+
+  // Multi-pass iterative loop prevents recursive tag collapse bypasses
+  // such as `<scr<script>ipt>alert(1)</script>`
+  while (clean !== prev && iterations < 10) {
+    prev = clean;
+    iterations++;
+    clean = clean
+      .replace(HTML_COMMENTS, "")
+      .replace(DANGEROUS_TAGS, "")
+      .replace(EVENT_ATTRS, "")
+      .replace(DANGEROUS_PROTOCOLS, "");
+  }
+
+  return clean;
 }

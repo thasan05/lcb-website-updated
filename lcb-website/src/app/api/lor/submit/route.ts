@@ -115,8 +115,17 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
 
+    // Validate email format if provided
+    const emailVal = answers["email"] || answers["email-address"];
+    if (emailVal) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(emailVal) || emailVal.length > 254) {
+        return NextResponse.json({ error: "Invalid email address format" }, { status: 400 });
+      }
+    }
+
     const submission: LorSubmission = {
-      id: `lor-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      id: `lor-${Date.now()}-${crypto.randomUUID().slice(0, 8)}`,
       answers,
       submittedAt: new Date().toISOString(),
       status: "pending",

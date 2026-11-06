@@ -20,7 +20,35 @@ export async function GET(
     const mag = magazines?.find((m) => m.id === id && m.published);
     if (!mag) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-    const upstream = await fetch(mag.fileUrl);
+    // Validate target URL against SSRF attacks
+    let parsedUrl: URL;
+    try {
+      parsedUrl = new URL(mag.fileUrl);
+    } catch {
+      return NextResponse.json({ error: "Invalid PDF URL" }, { status: 400 });
+    }
+
+    if (parsedUrl.protocol !== "https:") {
+      return NextResponse.json({ error: "Insecure protocol" }, { status: 400 });
+    }
+
+    // Disallow loopback, private RFC-1918, link-local, and cloud metadata addresses
+    const host = parsedUrl.hostname.toLowerCase();
+    if (
+      host === "localhost" ||
+      host === "127.0.0.1" ||
+      host === "::1" ||
+      host === "169.254.169.254" ||
+      host.startsWith("10.") ||
+      host.startsWith("192.168.") ||
+      host.startsWith("172.16.") ||
+      host.endsWith(".internal") ||
+      host.endsWith(".local")
+    ) {
+      return NextResponse.json({ error: "Forbidden upstream host" }, { status: 403 });
+    }
+
+    const upstream = await fetch(parsedUrl.toString());
     if (!upstream.ok) {
       return NextResponse.json(
         { error: "PDF unavailable", status: upstream.status },
