@@ -481,12 +481,25 @@ main, header, footer { position: relative; z-index: 2; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
-    animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
-  .word-reveal > span { opacity: 1; transform: none; }
-  .hero-cta-primary { animation: none; }
-  .hero-cta-secondary::before { animation: none; }
+
+  /* Disable spatial translation, scale, and spring physics while preserving opacity & color transitions */
+  .will-change-transform,
+  .hero-anim,
+  .tilt-card,
+  .word-reveal > span {
+    transform: none !important;
+    transition-property: opacity, background-color, border-color, color !important;
+  }
+
+  .word-reveal > span { opacity: 1 !important; }
+  .hero-cta-primary { animation: none !important; }
+  .hero-cta-secondary::before { animation: none !important; }
+  .animate-pulse,
+  .animate-ping,
+  .shimmer-text {
+    animation: none !important;
+  }
 }

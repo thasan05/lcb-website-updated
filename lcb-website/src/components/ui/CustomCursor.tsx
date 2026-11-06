@@ -23,20 +23,32 @@ export function CustomCursor() {
     if (typeof window === "undefined") return;
     if (window.matchMedia("(hover: none)").matches) return;
 
+    let isVisible = false;
+
     const onMove = (e: MouseEvent) => {
       mouseX.set(e.clientX);
       mouseY.set(e.clientY);
-      if (!visible) setVisible(true);
+      if (!isVisible) {
+        isVisible = true;
+        setVisible(true);
+      }
     };
 
     const onOver = (e: MouseEvent) => {
-      const el = e.target as HTMLElement;
+      const el = e.target as HTMLElement | null;
+      if (!el) return;
       const isInteractive = el.closest("a, button, [role='button'], input, select, textarea, [data-interactive='true']") !== null;
       setHovering(isInteractive);
     };
 
-    const onLeave = () => setVisible(false);
-    const onEnter = () => setVisible(true);
+    const onLeave = () => {
+      isVisible = false;
+      setVisible(false);
+    };
+    const onEnter = () => {
+      isVisible = true;
+      setVisible(true);
+    };
 
     window.addEventListener("mousemove", onMove, { passive: true });
     window.addEventListener("mouseover", onOver, { passive: true });
@@ -49,7 +61,7 @@ export function CustomCursor() {
       document.removeEventListener("mouseleave", onLeave);
       document.removeEventListener("mouseenter", onEnter);
     };
-  }, [mouseX, mouseY, isAdmin, visible]);
+  }, [mouseX, mouseY, isAdmin]);
 
   if (!visible || isAdmin) return null;
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, createContext, useContext, ReactNode } from "react";
+import { useEffect, useRef, useState, useCallback, createContext, useContext, ReactNode } from "react";
 import Lenis from "lenis";
 
 type LenisContextType = {
@@ -18,6 +18,7 @@ export function useLenis() {
 }
 
 export function SmoothScrollProvider({ children }: { children: ReactNode }) {
+  const [lenis, setLenis] = useState<Lenis | null>(null);
   const lenisRef = useRef<Lenis | null>(null);
 
   useEffect(() => {
@@ -28,7 +29,7 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
     }
 
     // Initialize Lenis with Apple-signature inertia curve
-    const lenis = new Lenis({
+    const instance = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Apple exponential glide
       orientation: "vertical",
@@ -39,12 +40,13 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
       infinite: false,
     });
 
-    lenisRef.current = lenis;
+    lenisRef.current = instance;
+    setLenis(instance);
 
     // Connect Lenis to requestAnimationFrame loop
     let rafId: number;
     function raf(time: number) {
-      lenis.raf(time);
+      instance.raf(time);
       rafId = requestAnimationFrame(raf);
     }
     rafId = requestAnimationFrame(raf);
@@ -60,7 +62,7 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
         const elem = document.querySelector(href) as HTMLElement | null;
         if (elem) {
           e.preventDefault();
-          lenis.scrollTo(elem, {
+          instance.scrollTo(elem, {
             offset: -70,
             duration: 1.4,
           });
@@ -74,12 +76,13 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
     return () => {
       document.removeEventListener("click", handleAnchorClick, { capture: true });
       cancelAnimationFrame(rafId);
-      lenis.destroy();
+      instance.destroy();
       lenisRef.current = null;
+      setLenis(null);
     };
   }, []);
 
-  const scrollTo = (target: string | number | HTMLElement, options?: { offset?: number; duration?: number }) => {
+  const scrollTo = useCallback((target: string | number | HTMLElement, options?: { offset?: number; duration?: number }) => {
     if (lenisRef.current) {
       lenisRef.current.scrollTo(target, {
         offset: options?.offset ?? -70,
@@ -89,10 +92,10 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
       const elem = document.querySelector(target);
       elem?.scrollIntoView({ behavior: "smooth" });
     }
-  };
+  }, []);
 
   return (
-    <LenisContext.Provider value={{ lenis: lenisRef.current, scrollTo }}>
+    <LenisContext.Provider value={{ lenis, scrollTo }}>
       {children}
     </LenisContext.Provider>
   );

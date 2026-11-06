@@ -67,9 +67,18 @@ export async function generateMetadata({
       secureUrl: ogImageUrl,
       width: 1200,
       height: 630,
-      type: "image/jpeg",
+      type: "image/png",
       alt: `${item.title} — ${item.category} | LCB Newsroom`,
     },
+    ...(rawImage
+      ? [
+          {
+            url: rawImage,
+            secureUrl: rawImage,
+            alt: item.title,
+          },
+        ]
+      : []),
   ];
 
   return {

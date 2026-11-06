@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowUpRight, Compass } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { siteConfig } from "@/content/site";
 import { useLenis } from "@/components/motion/SmoothScroll";
 
@@ -11,12 +11,20 @@ export function DynamicFloatingBar() {
   const { scrollTo } = useLenis();
 
   useEffect(() => {
+    let ticking = false;
+
     const onScroll = () => {
-      // Show when scrolled past hero (approx 500px) and hide near bottom
-      const scrolledPast = window.scrollY > 500;
-      const nearBottom =
-        window.innerHeight + window.scrollY >= document.body.offsetHeight - 500;
-      setVisible(scrolledPast && !nearBottom);
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          const scrollY = window.scrollY;
+          const scrolledPast = scrollY > 500;
+          const nearBottom =
+            window.innerHeight + scrollY >= document.body.offsetHeight - 500;
+          setVisible(scrolledPast && !nearBottom);
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
 
     window.addEventListener("scroll", onScroll, { passive: true });

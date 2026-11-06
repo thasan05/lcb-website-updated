@@ -9,7 +9,6 @@ import { FadeIn } from "@/components/motion/FadeIn";
 import { ScrollScrubText } from "@/components/motion/ScrollScrubText";
 import { gallery, type GalleryItem } from "@/content/gallery";
 import { campusLeads } from "@/content/campusLeads";
-import { ease } from "@/lib/motion";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // CyclingImage — handles single photo or multi-photo crossfade carousel.

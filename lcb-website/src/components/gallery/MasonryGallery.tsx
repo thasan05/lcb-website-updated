@@ -77,7 +77,7 @@ export function MasonryGallery({
                 key={cat.id}
                 onClick={() => changeCategory(cat.id)}
                 className={[
-                  "rounded-full px-4 py-2 text-sm font-medium transition-all duration-200",
+                  "rounded-full px-4 py-2 text-sm font-medium transition-all duration-200 focus-ring",
                   isActive
                     ? "bg-brand-500 text-white shadow-glow"
                     : "border border-white/[0.08] bg-white/[0.03] text-white/55 hover:border-white/[0.14] hover:text-white",
