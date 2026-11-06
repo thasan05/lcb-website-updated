@@ -63,6 +63,18 @@ const nextConfig: NextConfig = {
         destination: "/shout",
         has: [{ type: "host", value: "shout.linkedincommunitybangladesh.com" }],
       },
+      {
+        source: "/og.png",
+        destination: "/opengraph-image",
+      },
+      {
+        source: "/news/:id/og.jpg",
+        destination: "/news/:id/opengraph-image",
+      },
+      {
+        source: "/news/:id/opengraph-image.jpg",
+        destination: "/news/:id/opengraph-image",
+      },
     ];
   },
 

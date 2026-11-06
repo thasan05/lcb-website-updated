@@ -8,6 +8,7 @@ import { CustomCursor } from "@/components/ui/CustomCursor";
 import { ToastProvider } from "@/components/ui/Toast";
 import { WebMCP } from "@/components/ui/WebMCP";
 import { MotionProvider } from "@/components/motion/MotionProvider";
+import { SmoothScrollProvider } from "@/components/motion/SmoothScroll";
 
 const geistSans = Geist({
   subsets: ["latin"],
@@ -91,12 +92,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     >
       <body className="font-sans antialiased">
         <MotionProvider>
-          <ToastProvider>
-            <ScrollProgress />
-            <CustomCursor />
-            <WebMCP />
-            {children}
-          </ToastProvider>
+          <SmoothScrollProvider>
+            <ToastProvider>
+              <ScrollProgress />
+              <CustomCursor />
+              <WebMCP />
+              {children}
+            </ToastProvider>
+          </SmoothScrollProvider>
         </MotionProvider>
         <Analytics />
       </body>

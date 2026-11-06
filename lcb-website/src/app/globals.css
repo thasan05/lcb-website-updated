@@ -40,10 +40,26 @@
 }
 
 html {
-  scroll-behavior: smooth;
   background: rgb(var(--bg-base));
   color-scheme: dark;
   overflow-x: hidden;
+}
+
+/* Lenis smooth scroll optimizations */
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
 }
 
 body {
@@ -54,18 +70,18 @@ body {
 }
 
 ::selection {
-  background: rgba(var(--brand), 0.35);
+  background: rgba(34, 211, 238, 0.25);
   color: rgb(var(--fg));
 }
 
-::-webkit-scrollbar { width: 10px; height: 10px; }
-::-webkit-scrollbar-track { background: rgb(var(--bg-base)); }
+/* Apple-style minimalist scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.16);
   border-radius: 9999px;
-  border: 2px solid rgb(var(--bg-base));
 }
-::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.12); }
+::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.28); }
 
 /* ============================================================
    ATMOSPHERIC BACKGROUND

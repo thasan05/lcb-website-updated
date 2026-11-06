@@ -1,7 +1,9 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
+import { motion } from "framer-motion";
 import Image from "next/image";
+import Link from "next/link";
 import {
   ArrowUpRight,
   Calendar,
@@ -12,6 +14,7 @@ import {
   Eye,
   Link2,
   Search,
+  Share2,
   X,
 } from "lucide-react";
 import { Container } from "@/components/ui/Container";
@@ -24,6 +27,11 @@ import { FadeIn } from "@/components/motion/FadeIn";
 import { SafeHtml } from "@/components/ui/RichTextEditor";
 import { news as staticNews, type NewsItem, type NewsCategory } from "@/content/news";
 import { cn } from "@/lib/utils";
+import {
+  getNewsCanonicalUrl,
+  formatShareMessage,
+  formatBroadDescription,
+} from "@/lib/news-metadata";
 
 /** Items visible per page: 1 featured large card + up to 3 secondary */
 const NEWS_PER_PAGE = 4;
@@ -210,21 +218,31 @@ export function News({ liveNews }: { liveNews?: NewsItem[] }) {
               </button>
             )}
           </div>
-          <div className="flex flex-wrap gap-1.5">
-            {(["All", ...CATEGORIES] as const).map((cat) => (
-              <button
-                key={cat}
-                onClick={() => changeFilter(cat as NewsCategory | "All")}
-                className={cn(
-                  "rounded-full px-3.5 py-1.5 text-xs font-medium transition-all duration-200",
-                  catFilter === cat
-                    ? "bg-brand-500 text-white shadow-glow"
-                    : "border border-white/[0.08] bg-white/[0.03] text-white/50 hover:border-white/[0.14] hover:text-white"
-                )}
-              >
-                {cat}
-              </button>
-            ))}
+          <div className="relative inline-flex flex-wrap items-center gap-1 rounded-full border border-white/[0.10] bg-[#0c0d14]/80 p-1.5 backdrop-blur-2xl">
+            {(["All", ...CATEGORIES] as const).map((cat) => {
+              const isSelected = catFilter === cat;
+              return (
+                <button
+                  key={cat}
+                  onClick={() => changeFilter(cat as NewsCategory | "All")}
+                  className={cn(
+                    "relative rounded-full px-3.5 py-1.5 text-xs font-medium tracking-tight transition-colors duration-200 focus-ring",
+                    isSelected
+                      ? "text-white"
+                      : "text-white/50 hover:text-white/80"
+                  )}
+                >
+                  {isSelected && (
+                    <motion.span
+                      layoutId="news-category-pill"
+                      className="absolute inset-0 rounded-full bg-white/[0.14] shadow-[0_2px_12px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.25)]"
+                      transition={{ type: "spring", stiffness: 450, damping: 35 }}
+                    />
+                  )}
+                  <span className="relative z-10">{cat}</span>
+                </button>
+              );
+            })}
           </div>
         </FadeIn>
 
@@ -338,14 +356,13 @@ export function News({ liveNews }: { liveNews?: NewsItem[] }) {
                           <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                         </a>
                       ) : (
-                        <button
-                          type="button"
-                          onClick={() => setSelectedItem(featured)}
+                        <Link
+                          href={`/news/${featured.id}`}
                           className="inline-flex items-center gap-2 rounded-xl border border-brand-400/30 bg-brand-500/15 px-4 py-2 text-sm font-medium text-brand-300 transition-all hover:border-brand-400/50 hover:bg-brand-500/25 hover:text-white hover:shadow-glow"
                         >
                           Read the full story
                           <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                        </button>
+                        </Link>
                       )}
 
                       <button
@@ -361,7 +378,6 @@ export function News({ liveNews }: { liveNews?: NewsItem[] }) {
                     <div className="flex flex-wrap items-center gap-2">
                       <SocialLinks social={featured.social} href={featured.href} size="md" />
                       <CopyLinkButton
-                        url={featuredStoryUrl}
                         itemId={featured.id}
                         title={featured.title}
                         size="md"
@@ -463,9 +479,8 @@ export function News({ liveNews }: { liveNews?: NewsItem[] }) {
                                 />
                               </a>
                             ) : (
-                              <button
-                                type="button"
-                                onClick={() => setSelectedItem(item)}
+                              <Link
+                                href={`/news/${item.id}`}
                                 className="inline-flex items-center gap-1.5 text-xs font-medium text-white/60 transition-colors hover:text-brand-300 group-hover:text-brand-300"
                               >
                                 Read more
@@ -473,7 +488,7 @@ export function News({ liveNews }: { liveNews?: NewsItem[] }) {
                                   className="h-3 w-3 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
                                   strokeWidth={2}
                                 />
-                              </button>
+                              </Link>
                             )}
                             <button
                               type="button"
@@ -488,7 +503,6 @@ export function News({ liveNews }: { liveNews?: NewsItem[] }) {
                           <div className="flex items-center gap-1.5">
                             <SocialLinks social={item.social} href={item.href} size="sm" />
                             <CopyLinkButton
-                              url={itemStoryUrl}
                               itemId={item.id}
                               title={item.title}
                               size="sm"
@@ -528,12 +542,10 @@ export function News({ liveNews }: { liveNews?: NewsItem[] }) {
 // ─────────────────────────────────────────────────────────────────────────────
 
 function CopyLinkButton({
-  url,
   itemId,
   title,
   size = "sm",
 }: {
-  url?: string;
   itemId: string;
   title: string;
   size?: "sm" | "md";
@@ -547,7 +559,7 @@ function CopyLinkButton({
     const linkToCopy =
       typeof window !== "undefined"
         ? `${window.location.origin}/news/${itemId}`
-        : `https://www.linkedincommunitybangladesh.com/news/${itemId}`;
+        : getNewsCanonicalUrl(itemId);
 
     const ok = await copyToClipboard(linkToCopy);
     if (ok) {
@@ -634,18 +646,41 @@ function NewsModal({
 
   const siteLink = typeof window !== "undefined"
     ? `${window.location.origin}/news/${item.id}`
-    : `https://www.linkedincommunitybangladesh.com/news/${item.id}`;
+    : getNewsCanonicalUrl(item.id);
 
   const shareTargetUrl = siteLink;
   const encodedUrl = encodeURIComponent(shareTargetUrl);
   const encodedTitle = encodeURIComponent(item.title);
-  const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(`${item.title}\n${shareTargetUrl}`)}`;
+  const formattedShareMsg = formatShareMessage({
+    title: item.title,
+    category: item.category,
+    dateLabel: item.dateLabel,
+    summary: item.summary,
+    url: shareTargetUrl,
+  });
+  const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(formattedShareMsg)}`;
+  const broadDesc = formatBroadDescription(item.summary, 180);
+  const telegramUrl = `https://t.me/share/url?url=${encodedUrl}&text=${encodeURIComponent(`*${item.title}*\n${broadDesc}`)}`;
 
   const handleCopyLink = async () => {
     const ok = await copyToClipboard(shareTargetUrl);
     if (ok) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  const handleNativeShare = async () => {
+    if (typeof navigator !== "undefined" && navigator.share) {
+      try {
+        await navigator.share({
+          title: item.title,
+          text: `${item.title}\n\n${broadDesc}`,
+          url: shareTargetUrl,
+        });
+      } catch {
+        // User dismissed
+      }
     }
   };
 
@@ -733,17 +768,38 @@ function NewsModal({
             {/* Actions Footer */}
             <div className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-white/[0.08] pt-6">
               <div className="flex flex-wrap items-center gap-2">
+                <Link
+                  href={`/news/${item.id}`}
+                  onClick={onClose}
+                  className="inline-flex items-center gap-2 rounded-xl bg-brand-500/15 border border-brand-400/30 px-3.5 py-2 text-xs font-medium text-brand-300 transition hover:bg-brand-500/25 hover:border-brand-400/50 hover:text-white"
+                >
+                  <span>Full story page</span>
+                  <ArrowUpRight className="h-3.5 w-3.5" />
+                </Link>
+
                 {isExternal && (
                   <a
                     href={storyUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 rounded-xl bg-brand-500 px-4 py-2 text-sm font-medium text-white shadow-glow transition hover:bg-brand-400"
+                    className="inline-flex items-center gap-2 rounded-xl bg-brand-500 px-4 py-2 text-xs sm:text-sm font-medium text-white shadow-glow transition hover:bg-brand-400"
                   >
-                    Open original story
+                    <span>Original story</span>
                     <ArrowUpRight className="h-4 w-4" />
                   </a>
                 )}
+
+                {typeof navigator !== "undefined" && typeof navigator.share === "function" && (
+                  <button
+                    type="button"
+                    onClick={handleNativeShare}
+                    className="inline-flex items-center gap-1.5 rounded-xl border border-brand-400/40 bg-brand-500/20 px-3.5 py-2 text-xs font-medium text-brand-200 transition hover:bg-brand-500/30 hover:text-white"
+                  >
+                    <Share2 className="h-3.5 w-3.5 text-brand-300" />
+                    <span>Share</span>
+                  </button>
+                )}
+
                 <button
                   type="button"
                   onClick={handleCopyLink}
@@ -775,11 +831,20 @@ function NewsModal({
                   href={whatsappUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  title="Share on WhatsApp"
+                  title="Share with detailed preview on WhatsApp"
                   className="flex h-8 items-center gap-1 rounded-lg border border-white/[0.08] bg-white/[0.03] px-2 text-xs text-white/55 transition hover:border-[#25D366]/40 hover:bg-[#25D366]/15 hover:text-[#25D366]"
                 >
-                  <WhatsAppIcon className="h-3.5 w-3.5" />
+                  <WhatsAppIcon className="h-3.5 w-3.5 text-[#25D366]" />
                   <span className="hidden sm:inline">WhatsApp</span>
+                </a>
+                <a
+                  href={telegramUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="Share on Telegram"
+                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/[0.08] bg-white/[0.03] text-white/45 transition hover:border-[#229ED9]/40 hover:bg-[#229ED9]/15 hover:text-[#229ED9]"
+                >
+                  <TelegramIcon className="h-3.5 w-3.5 text-[#229ED9]" />
                 </a>
                 <a
                   href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`}
@@ -951,6 +1016,14 @@ function WhatsAppIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
       <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.885-9.885 9.885m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+    </svg>
+  );
+}
+
+function TelegramIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.121l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.832.942z" />
     </svg>
   );
 }

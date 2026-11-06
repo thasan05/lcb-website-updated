@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { motion } from "framer-motion";
 import { ArrowUpRight, Calendar, MapPin, ChevronLeft, ChevronRight, ChevronDown, Search, X } from "lucide-react";
 import { EventImage } from "@/components/ui/EventImage";
 import { Container } from "@/components/ui/Container";
@@ -116,22 +117,32 @@ export function Events({ liveEvents }: { liveEvents?: Event[] }) {
             )}
           </div>
 
-          {/* Format filter pills */}
-          <div className="flex flex-wrap gap-1.5">
-            {(["All", ...FORMATS] as const).map((fmt) => (
-              <button
-                key={fmt}
-                onClick={() => changeFilter(fmt)}
-                className={cn(
-                  "rounded-full px-3.5 py-1.5 text-xs font-medium transition-all duration-200",
-                  fmtFilter === fmt
-                    ? "bg-brand-500 text-white shadow-glow"
-                    : "border border-white/[0.08] bg-white/[0.03] text-white/50 hover:border-white/[0.14] hover:text-white"
-                )}
-              >
-                {fmt}
-              </button>
-            ))}
+          {/* Format filter pills — Apple segmented control */}
+          <div className="relative inline-flex items-center gap-1 rounded-full border border-white/[0.10] bg-[#0c0d14]/80 p-1.5 backdrop-blur-2xl">
+            {(["All", ...FORMATS] as const).map((fmt) => {
+              const isSelected = fmtFilter === fmt;
+              return (
+                <button
+                  key={fmt}
+                  onClick={() => changeFilter(fmt)}
+                  className={cn(
+                    "relative rounded-full px-4 py-1.5 text-xs font-medium tracking-tight transition-colors duration-200 focus-ring",
+                    isSelected
+                      ? "text-white"
+                      : "text-white/50 hover:text-white/80"
+                  )}
+                >
+                  {isSelected && (
+                    <motion.span
+                      layoutId="event-filter-pill"
+                      className="absolute inset-0 rounded-full bg-white/[0.14] shadow-[0_2px_12px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.25)]"
+                      transition={{ type: "spring", stiffness: 450, damping: 35 }}
+                    />
+                  )}
+                  <span className="relative z-10">{fmt}</span>
+                </button>
+              );
+            })}
           </div>
         </FadeIn>
 

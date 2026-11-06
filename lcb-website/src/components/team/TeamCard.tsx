@@ -54,16 +54,16 @@ export function TeamCard({ member, className }: TeamCardProps) {
   return (
     <motion.article
       className={cn(
-        "group relative w-full overflow-hidden rounded-2xl select-none",
-        "border border-white/[0.08] bg-gradient-to-b from-white/[0.05] to-white/[0.01]",
-        "backdrop-blur-sm transition-colors duration-500 hover:border-white/[0.14]",
+        "group relative w-full overflow-hidden rounded-[24px] select-none",
+        "border border-white/[0.08] bg-gradient-to-b from-white/[0.05] to-white/[0.015]",
+        "backdrop-blur-md transition-all duration-500 hover:border-white/[0.18]",
         className
       )}
       whileHover={{ scale: 1.025, y: -4 }}
-      transition={{ type: "spring", stiffness: 300, damping: 26, mass: 0.8 }}
+      transition={{ type: "spring", stiffness: 350, damping: 28, mass: 0.8 }}
     >
       {/* Top hairline */}
-      <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-px bg-gradient-to-r from-transparent via-white/[0.18] to-transparent" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-px bg-gradient-to-r from-transparent via-white/[0.22] to-transparent" />
 
       {/* Hover glow ring */}
       <div

@@ -4,12 +4,16 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { ArrowLeft, ArrowUpRight, Calendar, ExternalLink } from "lucide-react";
 import { kvGetCachedOr } from "@/lib/kv-cached";
-import { siteConfig } from "@/content/site";
 import { news as staticNews, type NewsItem } from "@/content/news";
 import { SafeHtml } from "@/components/ui/RichTextEditor";
 import { Footer } from "@/components/layout/Footer";
 import { BackToTop } from "@/components/ui/BackToTop";
 import { NewsShareButtons } from "./NewsShareButtons";
+import {
+  formatBroadDescription,
+  getBaseUrl,
+  toAbsoluteUrl,
+} from "@/lib/news-metadata";
 
 export const revalidate = 300;
 export const dynamicParams = true;
@@ -21,20 +25,6 @@ const CATEGORY_STYLES: Record<string, { badge: string; text: string }> = {
   Partnership:  { badge: "border-emerald-400/30 bg-emerald-500/15 text-emerald-300", text: "text-emerald-300" },
   Spotlight:    { badge: "border-pink-400/30 bg-pink-500/15 text-pink-300", text: "text-pink-300" },
 };
-
-function toAbsoluteUrl(url?: string): string {
-  if (!url) return `${siteConfig.url}/og.png`;
-  if (url.startsWith("http://") || url.startsWith("https://")) return url;
-  return `${siteConfig.url}${url.startsWith("/") ? "" : "/"}${url}`;
-}
-
-function cleanHtml(html: string): string {
-  return html
-    .replace(/<[^>]*>/g, " ")
-    .replace(/&nbsp;/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-}
 
 async function getAllNews(): Promise<NewsItem[]> {
   try {
@@ -64,37 +54,67 @@ export async function generateMetadata({
   const item = await getNewsItem(id);
   if (!item) return { title: "News Not Found · LCB Newsroom" };
 
-  const absImage = toAbsoluteUrl(item.image);
-  const description = cleanHtml(item.summary).slice(0, 200);
-  const pageUrl = `${siteConfig.url}/news/${item.id}`;
+  const baseUrl = getBaseUrl();
+  const pageUrl = `${baseUrl}/news/${item.id}`;
+  const ogImageUrl = `${baseUrl}/news/${item.id}/opengraph-image`;
+
+  // Broader, rich description preserving sentences and words (up to 340 chars)
+  const broadDesc = formatBroadDescription(item.summary, 340);
+  const rawImage = item.image ? toAbsoluteUrl(item.image, baseUrl) : null;
+  const imageList = [
+    {
+      url: ogImageUrl,
+      secureUrl: ogImageUrl,
+      width: 1200,
+      height: 630,
+      type: "image/jpeg",
+      alt: `${item.title} — ${item.category} | LCB Newsroom`,
+    },
+  ];
 
   return {
+    metadataBase: new URL(baseUrl),
     title: `${item.title} · LCB Newsroom`,
-    description,
+    description: broadDesc,
+    category: item.category,
+    authors: [{ name: "LinkedIn Community Bangladesh", url: baseUrl }],
+    alternates: {
+      canonical: pageUrl,
+    },
     openGraph: {
       title: item.title,
-      description,
+      description: broadDesc,
       url: pageUrl,
       siteName: "LinkedIn Community Bangladesh",
       type: "article",
+      locale: "en_US",
       publishedTime: item.date,
-      images: [
-        {
-          url: absImage,
-          width: 1200,
-          height: 630,
-          alt: item.title,
-        },
-      ],
+      modifiedTime: item.date,
+      section: item.category,
+      tags: ["LCB", item.category, "LinkedIn Community Bangladesh", "Bangladesh", "Newsroom"],
+      images: imageList,
     },
     twitter: {
       card: "summary_large_image",
       title: item.title,
-      description,
-      images: [absImage],
+      description: broadDesc,
+      site: "@LCB_Community",
+      creator: "@LCB_Community",
+      images: [
+        {
+          url: ogImageUrl,
+          width: 1200,
+          height: 630,
+          type: "image/jpeg",
+          alt: item.title,
+        },
+      ],
     },
-    alternates: {
-      canonical: pageUrl,
+    other: {
+      "article:published_time": item.date,
+      "article:section": item.category,
+      "article:author": "LinkedIn Community Bangladesh",
+      "og:image:alt": item.title,
     },
   };
 }
@@ -113,7 +133,12 @@ export default async function NewsStoryPage({
     .filter((n) => n.id !== item.id && n.published !== false)
     .slice(0, 3);
 
-  const pageUrl = `${siteConfig.url}/news/${item.id}`;
+  const baseUrl = getBaseUrl();
+  const pageUrl = `${baseUrl}/news/${item.id}`;
+  const ogImageUrl = `${baseUrl}/news/${item.id}/opengraph-image`;
+  const rawImage = item.image ? toAbsoluteUrl(item.image, baseUrl) : null;
+  const broadDesc = formatBroadDescription(item.summary, 340);
+
   const primaryExternalUrl =
     item.href?.trim() ||
     item.social?.linkedin?.trim() ||
@@ -122,8 +147,45 @@ export default async function NewsStoryPage({
 
   const badgeStyle = CATEGORY_STYLES[item.category]?.badge ?? "border-white/[0.14] bg-white/[0.04] text-white/90";
 
+  // Structured Data (Schema.org NewsArticle) for search crawlers & rich snippets
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    headline: item.title,
+    description: broadDesc,
+    image: [ogImageUrl, ...(rawImage ? [rawImage] : [])],
+    datePublished: item.date,
+    dateModified: item.date,
+    articleSection: item.category,
+    url: pageUrl,
+    author: {
+      "@type": "Organization",
+      name: "LinkedIn Community Bangladesh",
+      url: baseUrl,
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "LinkedIn Community Bangladesh",
+      url: baseUrl,
+      logo: {
+        "@type": "ImageObject",
+        url: `${baseUrl}/logo.svg`,
+      },
+    },
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": pageUrl,
+    },
+  };
+
   return (
     <div className="flex min-h-screen flex-col bg-[#040614] text-white">
+      {/* Schema.org NewsArticle JSON-LD */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
       {/* Sticky Sub-Header */}
       <header className="sticky top-0 z-40 border-b border-white/[0.06] bg-[#040614]/85 backdrop-blur-xl">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
@@ -144,13 +206,15 @@ export default async function NewsStoryPage({
             </span>
           </Link>
 
-          <Link
-            href="/#news"
-            className="inline-flex items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.03] px-3.5 py-1.5 text-xs font-medium text-white/70 transition hover:border-white/[0.18] hover:bg-white/[0.08] hover:text-white"
-          >
-            <ArrowLeft className="h-3.5 w-3.5" />
-            <span>All News</span>
-          </Link>
+          <div className="flex items-center gap-2.5">
+            <Link
+              href="/#news"
+              className="inline-flex items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.03] px-3.5 py-1.5 text-xs font-medium text-white/70 transition hover:border-white/[0.18] hover:bg-white/[0.08] hover:text-white"
+            >
+              <ArrowLeft className="h-3.5 w-3.5" />
+              <span>All News</span>
+            </Link>
+          </div>
         </div>
       </header>
 
@@ -158,12 +222,25 @@ export default async function NewsStoryPage({
       <main className="flex-1 pb-20">
         <article className="mx-auto max-w-4xl px-4 pt-8 sm:px-6 lg:px-8">
           {/* Breadcrumb / Top Meta */}
-          <div className="flex flex-wrap items-center gap-2.5 text-xs text-white/40">
-            <Link href="/" className="hover:text-white transition">Home</Link>
-            <span>/</span>
-            <Link href="/#news" className="hover:text-white transition">Newsroom</Link>
-            <span>/</span>
-            <span className="text-white/60">{item.category}</span>
+          <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-white/40">
+            <div className="flex flex-wrap items-center gap-2.5">
+              <Link href="/" className="hover:text-white transition">Home</Link>
+              <span>/</span>
+              <Link href="/#news" className="hover:text-white transition">Newsroom</Link>
+              <span>/</span>
+              <span className="text-white/60">{item.category}</span>
+            </div>
+
+            {/* Quick Share pill */}
+            <div className="hidden sm:block">
+              <NewsShareButtons
+                url={pageUrl}
+                title={item.title}
+                category={item.category}
+                dateLabel={item.dateLabel}
+                summary={item.summary}
+              />
+            </div>
           </div>
 
           {/* Badges & Date */}
@@ -288,7 +365,13 @@ export default async function NewsStoryPage({
               </Link>
             )}
 
-            <NewsShareButtons url={pageUrl} title={item.title} />
+            <NewsShareButtons
+              url={pageUrl}
+              title={item.title}
+              category={item.category}
+              dateLabel={item.dateLabel}
+              summary={item.summary}
+            />
           </div>
 
           {/* Related / More Stories */}

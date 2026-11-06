@@ -6,7 +6,7 @@ import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
-type Variant = "primary" | "secondary" | "ghost";
+type Variant = "primary" | "secondary" | "ghost" | "apple-white";
 type Size = "sm" | "md" | "lg";
 
 type Props = {
@@ -24,15 +24,17 @@ type Props = {
 const variants: Record<Variant, string> = {
   primary:
     "shine-sweep bg-brand-500 text-white shadow-glow hover:shadow-glow-lg border border-brand-400/40 hover:bg-brand-400",
+  "apple-white":
+    "bg-white text-black font-semibold shadow-[0_0_24px_rgba(255,255,255,0.25)] hover:bg-white/90 border border-white",
   secondary:
-    "glass-strong text-white hover:bg-white/[0.08]",
-  ghost: "text-white/80 hover:text-white hover:bg-white/[0.04]",
+    "border border-white/15 bg-white/[0.07] text-white hover:bg-white/[0.12] hover:border-white/25 backdrop-blur-xl",
+  ghost: "text-white/80 hover:text-white hover:bg-white/[0.06]",
 };
 
 const sizes: Record<Size, string> = {
-  sm: "h-9 px-4 text-sm",
-  md: "h-11 px-5 text-[15px]",
-  lg: "h-[54px] px-7 text-base",
+  sm: "h-9 px-4 text-xs tracking-tight",
+  md: "h-11 px-5 text-sm tracking-tight",
+  lg: "h-[54px] px-8 text-base tracking-tight",
 };
 
 export function Button({
@@ -47,9 +49,8 @@ export function Button({
   ariaLabel,
 }: Props) {
   const classes = cn(
-    "group relative inline-flex items-center justify-center gap-2 rounded-full font-medium",
-    "transition-all duration-300 ease-out focus-ring",
-    "active:scale-[0.98]",
+    "group relative inline-flex items-center justify-center gap-2 rounded-full font-medium select-none",
+    "transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] focus-ring",
     variants[variant],
     sizes[size],
     className
@@ -57,7 +58,7 @@ export function Button({
 
   const inner = (
     <>
-      <span className="pointer-events-none absolute inset-0 rounded-full bg-gradient-to-b from-white/20 to-transparent opacity-60 mix-blend-overlay" />
+      <span className="pointer-events-none absolute inset-0 rounded-full bg-gradient-to-b from-white/20 to-transparent opacity-50 mix-blend-overlay" />
       <span className="relative z-10">{children}</span>
       {arrow && (
         <ArrowUpRight
@@ -70,7 +71,7 @@ export function Button({
 
   if (href) {
     return (
-      <motion.span whileHover={{ y: -1 }} whileTap={{ scale: 0.98 }} className="inline-block">
+      <motion.span whileHover={{ y: -1, scale: 1.01 }} whileTap={{ scale: 0.96 }} className="inline-block">
         <Link
           href={href}
           target={external ? "_blank" : undefined}
@@ -86,8 +87,8 @@ export function Button({
 
   return (
     <motion.button
-      whileHover={{ y: -1 }}
-      whileTap={{ scale: 0.98 }}
+      whileHover={{ y: -1, scale: 1.01 }}
+      whileTap={{ scale: 0.96 }}
       onClick={onClick}
       aria-label={ariaLabel}
       className={classes}
