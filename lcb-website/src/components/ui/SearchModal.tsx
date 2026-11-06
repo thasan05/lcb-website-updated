@@ -42,7 +42,7 @@ function buildIndex(): Result[] {
     title:    n.title,
     subtitle: n.category + " · " + n.date,
     section:  "Newsroom",
-    href:     "#news",
+    href:     `#news-${n.id}`,
     icon:     <Newspaper className="h-3.5 w-3.5" />,
   }));
 

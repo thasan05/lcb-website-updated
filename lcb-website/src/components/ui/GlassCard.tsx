@@ -12,9 +12,10 @@ type Props = {
   /** Enable cursor-reactive glow */
   glow?: boolean;
   as?: Tag;
+  id?: string;
 };
 
-export function GlassCard({ children, className, glow = true, as = "div" }: Props) {
+export function GlassCard({ children, className, glow = true, as = "div", id }: Props) {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
@@ -56,20 +57,20 @@ export function GlassCard({ children, className, glow = true, as = "div" }: Prop
   switch (as) {
     case "article":
       return (
-        <motion.article onMouseMove={onMouseMove} className={cardClass}>
+        <motion.article id={id} onMouseMove={onMouseMove} className={cardClass}>
           {inner}
         </motion.article>
       );
     case "li":
       return (
-        <motion.li onMouseMove={onMouseMove} className={cardClass}>
+        <motion.li id={id} onMouseMove={onMouseMove} className={cardClass}>
           {inner}
         </motion.li>
       );
     case "div":
     default:
       return (
-        <motion.div onMouseMove={onMouseMove} className={cardClass}>
+        <motion.div id={id} onMouseMove={onMouseMove} className={cardClass}>
           {inner}
         </motion.div>
       );
