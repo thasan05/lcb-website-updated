@@ -3,6 +3,7 @@ import { siteConfig } from "@/content/site";
 import { kvGet } from "@/lib/kv";
 import type { Article } from "@/content/articles";
 import type { Magazine } from "@/content/magazines";
+import { news as staticNews, type NewsItem } from "@/content/news";
 
 const STATIC_ROUTES: Array<{
   path: string;
@@ -26,9 +27,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: r.priority,
   }));
 
-  const [articles, magazines] = await Promise.all([
+  const [articles, magazines, liveNews] = await Promise.all([
     kvGet<Article[]>("data:articles").catch(() => [] as Article[]),
     kvGet<Magazine[]>("data:magazines").catch(() => [] as Magazine[]),
+    kvGet<NewsItem[]>("data:news").catch(() => [] as NewsItem[]),
   ]);
 
   const articleEntries: MetadataRoute.Sitemap = (articles ?? [])
@@ -49,5 +51,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.6,
     }));
 
-  return [...staticEntries, ...articleEntries, ...magazineEntries];
+  const allNews = liveNews && liveNews.length > 0 ? liveNews : staticNews;
+  const newsEntries: MetadataRoute.Sitemap = allNews
+    .filter((n) => n.published !== false)
+    .map((n) => ({
+      url: `${siteConfig.url}/news/${n.id}`,
+      lastModified: new Date(n.date),
+      changeFrequency: "weekly",
+      priority: 0.7,
+    }));
+
+  return [...staticEntries, ...articleEntries, ...magazineEntries, ...newsEntries];
 }
