@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X, Linkedin, Facebook, Users, Instagram, ArrowUpRight } from "lucide-react";
@@ -22,6 +23,8 @@ export function Navbar() {
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState<string>("");
   const { scrollTo } = useLenis();
+  const pathname = usePathname();
+  const router = useRouter();
 
   // Scroll-aware navbar styling
   useEffect(() => {
@@ -74,8 +77,14 @@ export function Navbar() {
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     if (href.startsWith("#")) {
       e.preventDefault();
-      scrollTo(href, { offset: -70, duration: 1.3 });
-      history.pushState(null, "", href);
+      if (pathname !== "/") {
+        router.push("/" + href);
+      } else {
+        scrollTo(href, { offset: -70, duration: 1.3 });
+        history.pushState(null, "", href);
+      }
+      setOpen(false);
+    } else if (href.startsWith("/")) {
       setOpen(false);
     }
   };
@@ -120,7 +129,10 @@ export function Navbar() {
           <ul className="hidden items-center gap-1 md:flex">
             {navigation.map((item) => {
               const isExternal = item.href.startsWith("http");
-              const isActive = !isExternal && active === item.href;
+              const isInternalRoute = item.href.startsWith("/") && !item.href.startsWith("/#");
+              const isActive = isInternalRoute
+                ? pathname === item.href
+                : (!isExternal && active === item.href);
               const linkCls = cn(
                 "relative rounded-full px-3.5 py-1.5 text-[13px] font-medium tracking-tight transition-all duration-300 focus-ring",
                 isActive
@@ -138,6 +150,21 @@ export function Navbar() {
                     >
                       {item.label}
                     </a>
+                  ) : isInternalRoute ? (
+                    <Link
+                      href={item.href}
+                      onClick={(e) => handleNavClick(e, item.href)}
+                      className={linkCls}
+                    >
+                      {isActive && (
+                        <motion.span
+                          layoutId="navbar-active-pill"
+                          className="absolute inset-0 -z-10 rounded-full bg-white/[0.12] shadow-[0_0_12px_rgba(255,255,255,0.08)]"
+                          transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                        />
+                      )}
+                      {item.label}
+                    </Link>
                   ) : (
                     <a
                       href={item.href}
@@ -247,6 +274,14 @@ export function Navbar() {
                         <span>{item.label}</span>
                         <ArrowUpRight className="h-5 w-5 text-white/40" />
                       </a>
+                    ) : item.href.startsWith("/") && !item.href.startsWith("/#") ? (
+                      <Link
+                        href={item.href}
+                        onClick={() => setOpen(false)}
+                        className="font-display text-3xl font-semibold tracking-tight text-white/80 hover:text-white transition-colors"
+                      >
+                        {item.label}
+                      </Link>
                     ) : (
                       <a
                         href={item.href}

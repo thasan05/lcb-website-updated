@@ -57,6 +57,7 @@ export const navigation = [
   { label: "Newsroom", href: "#news"    },
   { label: "Forum",    href: "https://forum.linkedincommunitybangladesh.com" },
   { label: "LOR",      href: "#lor" },
+  { label: "Structure", href: "/structure" },
 ] as const;
 
 export type SiteConfig = typeof siteConfig;

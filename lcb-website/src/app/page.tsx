@@ -13,6 +13,7 @@ import { News } from "@/components/sections/News";
 import { Forum } from "@/components/sections/Forum";
 import { Press } from "@/components/sections/Press";
 import { LorSection } from "@/components/sections/LorSection";
+import { StructureSection } from "@/components/sections/StructureSection";
 import { Testimonials } from "@/components/sections/Testimonials";
 import { CTA } from "@/components/sections/CTA";
 import { PageViewTracker } from "@/components/ui/PageViewTracker";
@@ -188,6 +189,7 @@ export default async function HomePage() {
         {lorConfig && (
           <LorSection config={{ open: lorConfig.open, closedMessage: lorConfig.closedMessage, rules: lorConfig.rules }} />
         )}
+        <StructureSection />
         <Testimonials />
         <CTA />
       </main>
