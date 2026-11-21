@@ -42,7 +42,7 @@ export function StructureSection() {
 
                 <p className="mt-2 max-w-2xl text-sm leading-relaxed text-white/60">
                   A transparent breakdown of LinkedIn Community Bangladesh leadership, Central Team departments,
-                  initiatives, and nationwide Campus Leads across 55+ universities and institutions.
+                  initiatives, and nationwide Campus Leads across 65+ universities and institutions.
                 </p>
 
                 {/* Quick stats pills */}
@@ -57,7 +57,7 @@ export function StructureSection() {
                   </span>
                   <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs font-medium text-white/80">
                     <GraduationCap className="h-3 w-3 text-amber-400" />
-                    <span>55+ Universities</span>
+                    <span>65+ Universities</span>
                   </span>
                 </div>
               </div>

@@ -111,7 +111,7 @@ function parseCSV(text: string): string[][] {
  * Normalizes common university names from the sheet to avoid duplicate entries with minor punctuation differences.
  */
 function normalizeUniName(raw: string): string {
-  const clean = raw.replace(/\.+$/, "").trim();
+  const clean = raw.replace(/[\.,\s]+$/, "").trim();
   const lower = clean.toLowerCase();
   if (lower.includes("jagannath university")) return "Jagannath University";
   if (lower.includes("comilla university")) return "Comilla University";
@@ -120,6 +120,11 @@ function normalizeUniName(raw: string): string {
     return "American International University-Bangladesh (AIUB)";
   if (lower.includes("gopalganj textile engineering"))
     return "Gopalganj textile engineering college, Gopalganj (BUTEX)";
+  if (lower === "dhaka university" || lower === "university of dhaka")
+    return "University of Dhaka";
+  if (lower.includes("rajshahi collage")) return "Rajshahi College";
+  if (lower.includes("pirojpur")) return "Pirojpur science and technology university";
+  if (lower.includes("port city")) return "Port City international university";
   return clean;
 }
 
@@ -174,7 +179,7 @@ export function parseSheetData(csvText: string): StructureData {
     return fallbackStructureData;
   }
 
-  // 2. Summary Metrics from rows 14-26 in column 2 & 3
+  // 2. Summary Metrics from rows 14-30 in column 2 & 3
   const summaryMetrics: Record<string, number> = {};
   for (let r = 14; r < Math.min(rows.length, 30); r++) {
     const row = rows[r];
@@ -187,8 +192,9 @@ export function parseSheetData(csvText: string): StructureData {
 
   // 3. Parse Initiatives (columns 12 to 17)
   const founderInitiatives: [string, number][] = [];
-  for (let r = 1; r < rows.length; r++) {
+  for (let r = 2; r < 30; r++) {
     const row = rows[r];
+    if (!row) continue;
     const name = row[13]?.trim() || "";
     if (!name || name === "Initiative Name") continue;
 
@@ -197,13 +203,13 @@ export function parseSheetData(csvText: string): StructureData {
     const underCode = row[15]?.trim() || "";
     const newTeam = (row[17] || "").trim().toLowerCase();
 
-    // Check if founder-led or assigned to a central team
-    if (newTeam.includes("founder")) {
-      founderInitiatives.push([name, count]);
-    } else if (deptMap[underCode]) {
+    // Primary official assignment: map directly by underCode (T101-T113)
+    if (underCode && deptMap[underCode]) {
       deptMap[underCode].initiatives.push([name, count]);
+    } else if (newTeam.includes("founder")) {
+      founderInitiatives.push([name, count]);
     } else {
-      // Try matching by newTeam name if specified
+      // Check if newTeam matches any department name
       let matched = false;
       if (newTeam) {
         for (const [, d] of Object.entries(deptMap)) {
@@ -282,6 +288,10 @@ export function parseSheetData(csvText: string): StructureData {
       0
     );
 
+  const n_people =
+    summaryMetrics["campus leads involved in initiative teams"] ||
+    fallbackStructureData.n_people;
+
   const now = new Date();
   const monthName = now.toLocaleString("en-US", { month: "long" });
   const year = now.getFullYear();
@@ -299,7 +309,7 @@ export function parseSheetData(csvText: string): StructureData {
     n_uni: n_uni > 0 ? n_uni : fallbackStructureData.n_uni,
     n_ini: n_ini > 0 ? n_ini : fallbackStructureData.n_ini,
     n_roles: n_roles > 0 ? n_roles : fallbackStructureData.n_roles,
-    n_people: fallbackStructureData.n_people,
+    n_people,
   };
 }
 
